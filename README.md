@@ -1,2 +1,2 @@
 # eShop
-A generic e-commerce web application
+*Development is in progress*
