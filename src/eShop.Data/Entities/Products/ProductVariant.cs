@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace eShop.Data.Entities.Products
 {
     public class ProductVariant
@@ -7,6 +9,7 @@ namespace eShop.Data.Entities.Products
         public Product Product { get; set; } = null!;
         public required string VariantName { get; set; }
         public int QuantityInStock { get; set; }
+        [Precision(14, 2)]
         public decimal? Price { get; set; }
         public bool IsActive { get; set; } = true;
     }

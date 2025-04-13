@@ -1,5 +1,6 @@
 using eShop.Data.Entities.Categories;
 using eShop.Data.Entities.Users;
+using Microsoft.EntityFrameworkCore;
 
 namespace eShop.Data.Entities.Products
 {
@@ -8,6 +9,7 @@ namespace eShop.Data.Entities.Products
         public required int Id { get; set; }
         public required string Uuid { get; set; }
         public required string Name { get; set; }
+        [Precision(14, 2)]
         public required decimal BasePrice { get; set; }
         public required string Description { get; set; }
         public string? ShortDescription { get; set; }
