@@ -6,7 +6,7 @@ namespace eShop.Data.Entities.Products
 {
     public class Product
     {
-        public required int Id { get; set; }
+        public int Id { get; set; }
         public required string Uuid { get; set; }
         public required string Name { get; set; }
         [Precision(14, 2)]
