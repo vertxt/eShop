@@ -6,7 +6,7 @@ namespace eShop.Data.Repositories
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         protected readonly ApplicationDbContext _context;
-        private readonly DbSet<TEntity> _entities;
+        protected readonly DbSet<TEntity> _entities;
 
         public Repository(ApplicationDbContext context)
         {
@@ -14,7 +14,7 @@ namespace eShop.Data.Repositories
             _entities = context.Set<TEntity>();
         }
 
-        public IQueryable<TEntity> GetAllAsync()
+        public IQueryable<TEntity> GetAll()
         {
             return _entities.AsQueryable<TEntity>();
         }
@@ -32,7 +32,7 @@ namespace eShop.Data.Repositories
 
         public async Task UpdateAsync(TEntity entity)
         {
-            _entities.Update(entity);
+            _entities.Entry(entity).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
 
