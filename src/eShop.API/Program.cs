@@ -1,3 +1,5 @@
+using System.Text;
+using eShop.API.Helpers;
 using eShop.Business.Interfaces;
 using eShop.Business.Services;
 using eShop.Data;
@@ -5,13 +7,27 @@ using eShop.Data.Entities.Users;
 using eShop.Data.Interfaces;
 using eShop.Data.Repositories;
 using eShop.Data.Seeds;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowClients",
+        policy =>
+        {
+            policy.WithOrigins("https://localhost:5001", "https://localhost:5002").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+        });
+});
+
 // Add services to the container.
 builder.Services.AddControllers();
+
+// Add AutoMapper to the container.
+builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -33,7 +49,26 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddAuthentication();
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var secretKey = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"] ?? "");
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(secretKey),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+    };
+});
 builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -55,6 +90,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
+app.UseCors("AllowClients");
 
 app.UseAuthentication();
 app.UseAuthorization();
