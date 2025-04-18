@@ -1,5 +1,7 @@
-using System.Text.Json;
+using eShop.Shared.Common.Pagination;
 using eShop.Shared.DTOs.Products;
+using eShop.Shared.Parameters;
+using eShop.Web.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eShop.Web.Controllers
@@ -10,20 +12,13 @@ namespace eShop.Web.Controllers
         
         public ProductsController(IHttpClientFactory httpClientFactory) => _httpClientFactory = httpClientFactory;
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(ProductParameters productParams)
         {
             var httpClient = _httpClientFactory.CreateClient("API");
-            var httpResponseMessage = await httpClient.GetAsync("products");
-            httpResponseMessage.EnsureSuccessStatusCode();
-            
-            var json = await httpResponseMessage.Content.ReadAsStringAsync();
-            var jsonSerializerOptions = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-            };
-            List<ProductDto>? products = JsonSerializer.Deserialize<List<ProductDto>>(json, jsonSerializerOptions);
-            
-            return View(products);
+            var queryString = productParams.ToQueryString();
+            var pagedProducts = await httpClient.GetFromJsonAsync<PagedList<ProductDto>>($"products?{queryString}");
+
+            return View(pagedProducts);
         }
     }
 }

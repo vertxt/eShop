@@ -1,7 +1,9 @@
 using eShop.Business.Interfaces;
 using eShop.Data.Entities.Products;
+using eShop.Business.Extensions;
 using eShop.Data.Interfaces;
-using Microsoft.EntityFrameworkCore;
+using eShop.Shared.Common.Pagination;
+using eShop.Shared.Parameters;
 using Microsoft.Extensions.Logging;
 
 namespace eShop.Business.Services
@@ -17,11 +19,14 @@ namespace eShop.Business.Services
             _logger = logger;
         }
 
-        public async Task<IEnumerable<Product>> GetAllProductsAsync()
+        public async Task<PagedList<Product>> GetProductsAsync(ProductParameters productParams)
         {
             try
             {
-                return await _productRepo.GetAll().ToListAsync();
+                return await _productRepo.GetAll()
+                    .Search(productParams.SearchTerm)
+                    .Sort(productParams.SortBy)
+                    .ToPagedList(productParams.PageNumber, productParams.PageSize);
             }
             catch (Exception ex)
             {

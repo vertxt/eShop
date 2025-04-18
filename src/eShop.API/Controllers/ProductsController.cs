@@ -1,7 +1,10 @@
 using AutoMapper;
+using eShop.API.Extensions;
 using eShop.Business.Interfaces;
 using eShop.Data.Entities.Products;
+using eShop.Shared.Common.Pagination;
 using eShop.Shared.DTOs.Products;
+using eShop.Shared.Parameters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eShop.API.Controller
@@ -22,11 +25,11 @@ namespace eShop.API.Controller
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProductsAsync()
+        public async Task<ActionResult<PagedList<ProductDto>>> GetProductsAsync([FromQuery]ProductParameters productParams)
         {
-            var products = await _productService.GetAllProductsAsync();
-            var productDtos = _mapper.Map<IEnumerable<ProductDto>>(products);
-            return Ok(productDtos);
+            var pagedProducts = await _productService.GetProductsAsync(productParams);
+
+            return Ok(pagedProducts.MapItems<Product, ProductDto>(_mapper));
         }
 
         [HttpGet("{id}")]

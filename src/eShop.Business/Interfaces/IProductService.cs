@@ -1,10 +1,12 @@
 using eShop.Data.Entities.Products;
+using eShop.Shared.Common.Pagination;
+using eShop.Shared.Parameters;
 
 namespace eShop.Business.Interfaces
 {
     public interface IProductService
     {
-        Task<IEnumerable<Product>> GetAllProductsAsync();
+        Task<PagedList<Product>> GetProductsAsync(ProductParameters productParams);
         Task<Product?> GetProductByIdAsync(int id);
         Task<Product?> GetProductByUuidAsync(string uuid);
         Task CreateProductAsync(Product newProduct);
