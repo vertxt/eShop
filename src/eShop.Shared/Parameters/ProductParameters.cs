@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace eShop.Shared.Parameters
 {
     public class ProductParameters : PaginationParameters
@@ -6,10 +8,11 @@ namespace eShop.Shared.Parameters
         public string SearchTerm { get; set; }
 
         // Filtering
-        public int? CategoryId  { get; set; }
+        public List<int> CategoryIds { get; set; } = new List<int>();
         public decimal? MinPrice { get; set; }
         public decimal? MaxPrice { get; set; }
-        
+        public bool? InStock { get; set; }
+
         // Sorting
         public string SortBy { get; set; } = "name";
     }

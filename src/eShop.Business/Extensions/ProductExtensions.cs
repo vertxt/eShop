@@ -1,4 +1,5 @@
 using eShop.Data.Entities.Products;
+using eShop.Shared.Parameters;
 
 namespace eShop.Business.Extensions
 {
@@ -24,6 +25,36 @@ namespace eShop.Business.Extensions
                 "name-desc" => query.OrderByDescending(p => p.Name),
                 _ => query
             };
+        }
+
+        public static IQueryable<Product> Filter(this IQueryable<Product> query, ProductParameters filterParams)
+        {
+            if (filterParams is null)
+            {
+                return query;
+            }
+
+            if (filterParams.MaxPrice.HasValue)
+            {
+                query = query.Where(p => p.BasePrice <= filterParams.MaxPrice);
+            }
+
+            if (filterParams.MinPrice.HasValue)
+            {
+                query = query.Where(p => p.BasePrice >= filterParams.MinPrice);
+            }
+
+            if (filterParams.CategoryIds is not null && filterParams.CategoryIds.Count > 0)
+            {
+                query = query.Where(p => filterParams.CategoryIds.Contains(p.CategoryId));
+            }
+            
+            if (filterParams.InStock.HasValue)
+            {
+                query = query.Where(p => p.QuantityInStock > 0);
+            }
+            
+            return query;
         }
     }
 }

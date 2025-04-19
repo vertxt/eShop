@@ -1,0 +1,38 @@
+@model ProductFilterViewModel
+
+<div>
+    <form method="get" id="filterForm" asp-controller="Products" asp-action="Index">
+        <div class="accordion" id="filterAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#filterOptions" aria-expanded="true" aria-controls="collapse">
+                        Type
+                    </button>
+                </h2>
+                @if (Model.Categories is not null && Model.Categories.Count > 0)
+                {
+                    <div id="filterOptions" class="accordion-collapse collapse show" data-bs-parent="filterAccordion">
+                        <div class="accordion-body">
+                            @foreach (var category in Model.Categories)
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="@category.Id" name="CategoryIds" multiple id="@category.Id"
+                                        @(Model.CurrentParams is not null && Model.CurrentParams.CategoryIds.Contains(category.Id) ? "checked" : "")>
+                                    <label class="form-check-label" for="@category.Id">
+                                        @category.Name
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-sm btn-primary">Apply filter</button>
+            <button class="btn btn-sm btn-danger">Clear</button>
+        </div>
+
+    </form>
+</div>

@@ -26,6 +26,7 @@ namespace eShop.Business.Services
                 return await _productRepo.GetAll()
                     .Search(productParams.SearchTerm)
                     .Sort(productParams.SortBy)
+                    .Filter(productParams)
                     .ToPagedList(productParams.PageNumber, productParams.PageSize);
             }
             catch (Exception ex)

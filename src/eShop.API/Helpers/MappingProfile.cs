@@ -1,5 +1,7 @@
 using AutoMapper;
+using eShop.Data.Entities.Categories;
 using eShop.Data.Entities.Products;
+using eShop.Shared.DTOs.Categories;
 using eShop.Shared.DTOs.Products;
 
 namespace eShop.API.Helpers
@@ -36,6 +38,9 @@ namespace eShop.API.Helpers
             
             CreateMap<ProductAttribute, ProductAttributeDto>();
             CreateMap<CreateProductAttributeDto, ProductAttribute>();
+            
+            // Category mappings
+            CreateMap<Category, CategoryDto>();
         }
 
     }
