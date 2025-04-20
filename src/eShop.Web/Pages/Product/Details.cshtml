@@ -1,0 +1,19 @@
+@page "{id:int}"
+@using eShop.Web.Pages
+@model DetailsModel
+@{
+    ViewData["Title"] = Model.Product?.Name ?? "Not Found";
+}
+
+<div>
+    @if (Model.Product is null)
+    {
+        <h1>Product not found</h1>
+    }
+    else
+    {
+        <h1>@Model.Product.Name</h1>
+        <h2>@Model.Product.BasePrice</h2>
+        <p>@Model.Product.Description</p>
+    }
+</div>
