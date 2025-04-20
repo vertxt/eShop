@@ -2,10 +2,8 @@
 
 <div class="container-fluid d-flex justify-content-between align-items-center gap-3 my-3">
     <!-- Search bar -->
-    <div class="d-flex align-items-center">
-        <input id="searchBar" type="text" class="form-control form-control-sm" style="width: 200px;" placeholder="Search..." />
-    </div>
-    
+    <partial name="_SearchBar" model="@Model.CurrentParams.SearchTerm"></partial>
+
     <div class="d-flex align-items-center gap-3">
         <!-- Page size selector -->
         <div class="d-flex align-items-center">

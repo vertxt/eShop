@@ -1,6 +1,11 @@
 @model ProductCatalogViewModel
 @{
     ViewData["Title"] = "All Products";
+    var currentPage = @Model.Products!.Metadata.CurrentPage;
+    var pageSize = @Model.Products!.Metadata.PageSize;
+    var total = @Model.Products!.Metadata.TotalCount;
+    var from = (currentPage - 1) * pageSize + 1;
+    var to = Math.Min(total, currentPage * pageSize);
 }
 @section Scripts {
     <script src="~/js/catalogFilters.js"></script>
@@ -8,50 +13,57 @@
 }
 
 <div class="container-fluid mt-5">
-    <div class="page-header">
+    <div class="page-header px-2">
         <h1>@ViewData["Title"]</h1>
     </div>
 
-    @if (Model.Products is not null && Model.Products.Items.Any())
-    {
-        <div class="row">
-            <div class="col-12 col-md-3">
-                <partial name="_CatalogFilterPartial" model="@(Model.CurrentParams, Model.CatalogFilterViewModel)" />
-            </div>
-            <div class="col-12 col-md-9">
-                <div class="row row-cols-1">
-                    <partial name="_CatalogControlsPartial" model="@(Model.CurrentParams, Model.CatalogControlsViewModel)" />
+    <div class="container-fluid mt-5">
+        <p>Showing @from - @to of @total products</p>
+        @if (Model.Products is not null && Model.Products.Items.Any())
+        {
+            <div class="row">
+                <div class="col-12 col-md-3 py-3">
+                    <partial name="_CatalogFilterPartial" model="@(Model.CurrentParams, Model.CatalogFilterViewModel)" />
                 </div>
-                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
-                    @foreach (var product in Model.Products.Items)
-                    {
-                        <div class="col">
-                            <div class="card h-100">
-                                <img src="https://fakeimg.pl/600x400?text=Product" class="card-img-top" alt="@product.Name">
-                                <div class="card-body">
-                                    <h5 class="card-title">@product.Name</h5>
-                                    <p class="card-text">@product.Description?.Substring(0, Math.Min(100, product.Description.Length))
-                                        @(product.Description?.Length > 100 ? "..." : "")</p>
-                                    <p class="card-text"><small class="text-muted">Price: $@product.BasePrice</small></p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" class="btn btn-primary btn-sm">
-                                            View Details
-                                        </a>
-                                        <button class="btn btn-outline-success btn-sm">Add to Cart</button>
-                                    </div>
-                                </div>
+                <div class="col-12 col-md-9">
+                    <div class="row row-cols-1">
+                        <partial name="_CatalogControlsPartial"
+                            model="@(Model.CurrentParams, Model.CatalogControlsViewModel)" />
+                    </div>
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+                        @foreach (var product in Model.Products.Items)
+                        {
+                            <div class="col">
+                                <div class="card h-100 d-flex flex-col">
+                                    <img src="https://fakeimg.pl/600x400?text=Product" class="card-img-top" alt="@product.Name">
+                                    <div class="card-body flex-grow-1">
+                                        <h5 class="card-title">@product.Name</h5>
+                                        <p class="card-text">@product.Description?.Substring(0, Math.Min(100,
+                                                                                product.Description.Length))
+                                    @(product.Description?.Length > 100 ? "..." : "")</p>
+                                <p class="card-text"><small class="text-muted">Price: $@product.BasePrice</small></p>
+                            </div>
+                            <div
+                                class="card-footer bg-white border-top-0 d-flex justify-content-end align-items-center gap-2">
+                                <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id"
+                                    class="btn btn-primary btn-sm">
+                                    View Details
+                                </a>
+                                <button class="btn btn-outline-success btn-sm">Add to Cart</button>
                             </div>
                         </div>
-                    }
+                    </div>
+                                        }
+                    </div>
+                    <pager metadata="@Model.Products.Metadata" page-action="Index" page-class="btn"
+                        page-class-normal="btn-secondary" page-class-selected="btn-success"></pager>
                 </div>
-                <pager metadata="@Model.Products.Metadata" page-action="Index" page-class="btn"
-                    page-class-normal="btn-secondary" page-class-selected="btn-success"></pager>
             </div>
-        </div>
-    }
-    else
-    {
-        <p>No products available.</p>
-    }
+        }
+        else
+        {
+            <p>No products available.</p>
+        }
 
+    </div>
 </div>

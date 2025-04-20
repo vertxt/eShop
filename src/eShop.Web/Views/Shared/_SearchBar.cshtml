@@ -1,0 +1,19 @@
+@model string
+
+<div class="search-container">
+    <div class="input-group input-group-sm">
+        <span class="input-group-text">
+            <i class="bi bi-search"></i>
+        </span>
+        <input type="text" 
+               id="searchBar" 
+               class="form-control form-control-sm"
+               style="width: 200px;" 
+               placeholder="Search..." 
+               value="@Model">
+        <span class="input-group-text bg-white" id="clearSearch" style="cursor: pointer; display: none">
+            <i class="bi bi-x text-muted"></i>
+        </span>
+    </div>
+
+</div>

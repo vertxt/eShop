@@ -6,13 +6,13 @@
             <div class="accordion-item border">
                 <h2 class="accordion-header">
                     <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#filterOptions" aria-expanded="true">
+                        data-bs-target="#categories" aria-expanded="true">
                         Type
                     </button>
                 </h2>
                 @if (Model.Filters.Categories is not null && Model.Filters.Categories.Count > 0)
                 {
-                    <div id="filterOptions" class="accordion-collapse collapse show" data-bs-parent="filterSection">
+                    <div id="categories" class="accordion-collapse collapse show" data-bs-parent="filterSection">
                         <div class="accordion-body">
                             @foreach (var category in Model.Filters.Categories)
                             {
@@ -29,10 +29,10 @@
                 }
             </div>
         </div>
+
         <div class="mt-4">
             <button type="submit" class="btn btn-sm btn-primary">Apply</button>
             <button type="button" class="btn btn-sm btn-outline-danger" id="clearFilterBtn">Clear all</button>
         </div>
-
     </form>
 </div>
