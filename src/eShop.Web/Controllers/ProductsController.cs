@@ -59,11 +59,12 @@ namespace eShop.Web.Controllers
                 var productCatalogViewModel = new ProductCatalogViewModel
                 {
                     Products = await productsTask,
-                    ProductFilterViewModel = new ProductFilterViewModel
+                    CurrentParams = productParams,
+                    CatalogFilterViewModel = new CatalogFilterViewModel
                     {
                         Categories = await categoriesTask,
-                        CurrentParams = productParams,
-                    }
+                    },
+                    CatalogControlsViewModel = new(),
                 };
 
                 return View(productCatalogViewModel);

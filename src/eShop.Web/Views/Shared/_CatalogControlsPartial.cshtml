@@ -1,0 +1,36 @@
+@model (ProductParameters CurrentParams, CatalogControlsViewModel Controls)
+
+<div class="container-fluid d-flex justify-content-between align-items-center gap-3 my-3">
+    <!-- Search bar -->
+    <div class="d-flex align-items-center">
+        <input id="searchBar" type="text" class="form-control form-control-sm" style="width: 200px;" placeholder="Search..." />
+    </div>
+    
+    <div class="d-flex align-items-center gap-3">
+        <!-- Page size selector -->
+        <div class="d-flex align-items-center">
+            <label for="pageSizeSelect" class="form-label me-2 mb-0">Products per page:</label>
+            <select id="pageSizeSelect" class="form-select form-select-sm" style="width: 100px;">
+                @foreach (var size in Model.Controls.PageSizeOptions)
+                {
+                    <option value="@size" selected=@(size == Model.CurrentParams.PageSize)>
+                        @size
+                    </option>
+                }
+            </select>
+        </div>
+        
+        <!-- Sorting option selector -->
+        <div class="d-flex align-items-center">
+            <label for="sortBySelect" class="form-label me-2 mb-0">Sort by:</label>
+            <select id="sortBySelect" class="form-select form-select-sm" style="width: 150px;">
+                @foreach (var sortOption in Model.Controls.SortOptions)
+                {
+                    <option value="@sortOption.Value" selected=@(sortOption.Value == Model.CurrentParams.SortBy)>
+                        @sortOption.Text
+                    </option>
+                }
+            </select>
+        </div>
+    </div>
+</div>

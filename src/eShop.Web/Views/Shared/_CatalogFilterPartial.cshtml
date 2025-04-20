@@ -1,20 +1,20 @@
-@model ProductFilterViewModel
+@model (ProductParameters CurrentParams, CatalogFilterViewModel Filters)
 
 <div>
     <form method="get" id="filterForm" asp-controller="Products" asp-action="Index">
-        <div class="accordion" id="filterAccordion">
-            <div class="accordion-item">
+        <div class="accordion accordion-flush" id="filterSection">
+            <div class="accordion-item border">
                 <h2 class="accordion-header">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#filterOptions" aria-expanded="true" aria-controls="collapse">
+                    <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#filterOptions" aria-expanded="true">
                         Type
                     </button>
                 </h2>
-                @if (Model.Categories is not null && Model.Categories.Count > 0)
+                @if (Model.Filters.Categories is not null && Model.Filters.Categories.Count > 0)
                 {
-                    <div id="filterOptions" class="accordion-collapse collapse show" data-bs-parent="filterAccordion">
+                    <div id="filterOptions" class="accordion-collapse collapse show" data-bs-parent="filterSection">
                         <div class="accordion-body">
-                            @foreach (var category in Model.Categories)
+                            @foreach (var category in Model.Filters.Categories)
                             {
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" value="@category.Id" name="CategoryIds" multiple id="@category.Id"
@@ -29,9 +29,9 @@
                 }
             </div>
         </div>
-        <div>
-            <button type="submit" class="btn btn-sm btn-primary">Apply filter</button>
-            <button class="btn btn-sm btn-danger">Clear</button>
+        <div class="mt-4">
+            <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+            <button type="button" class="btn btn-sm btn-outline-danger" id="clearFilterBtn">Clear all</button>
         </div>
 
     </form>
