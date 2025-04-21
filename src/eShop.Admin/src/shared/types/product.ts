@@ -1,4 +1,4 @@
-export interface Product {
+export type Product = {
     id: number;
     uuid: string;
     name: string;
@@ -17,21 +17,21 @@ export interface Product {
     attributes: ProductAttribute[];
 }
 
-export interface ProductImage {
+export type ProductImage = {
     id: number;
     url: string;
     isMain: boolean;
     displayOrder: number;
 }
 
-export interface ProductVariant {
+export type ProductVariant = {
     id: number;
     name: string;
     price: number;
     quantityInStock: number | null;
 }
 
-export interface ProductAttribute {
+export type ProductAttribute = {
     id: number;
     name: string;
     value: string;
