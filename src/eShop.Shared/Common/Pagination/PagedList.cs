@@ -7,7 +7,7 @@ namespace eShop.Shared.Common.Pagination
     {
         public IEnumerable<T> Items { get; set; } = new List<T>();
         public PaginationMetadata Metadata { get; set; }
-        
+
         public PagedList() { }
 
         public PagedList(IList<T> items, int count, int pageNumber, int pageSize)
