@@ -101,10 +101,19 @@ namespace eShop.Data.Seeds
                 return;
             }
 
-            var electronicsCategory = new Category { Name = "Electronics" };
-            var accessoriesCategory = new Category { Name = "Accessories" };
+            var categories = new List<Category>
+            {
+                new Category { Name = "Electronics", Description = "Devices and gadgets" },
+                new Category { Name = "Books", Description = "Printed and digital books" },
+                new Category { Name = "Clothing", Description = "Apparel for men, women, and children" },
+                new Category { Name = "Home & Kitchen", Description = "Appliances and utensils" },
+                new Category { Name = "Sports & Outdoors", Description = "Gear and apparel for sports and outdoor activities" },
+                new Category { Name = "Beauty & Personal Care", Description = "Cosmetics, skincare, and more" },
+                new Category { Name = "Toys & Games", Description = "For kids and adults" },
+                new Category { Name = "Automotive", Description = "Car accessories and tools" }
+            };
 
-            await context.Categories.AddRangeAsync(electronicsCategory, accessoriesCategory);
+            await context.Categories.AddRangeAsync(categories);
             var saveCategoriesResult = await context.SaveChangesAsync();
 
             if (saveCategoriesResult == 0)
@@ -122,7 +131,7 @@ namespace eShop.Data.Seeds
                     Description = "A smooth and precise wireless mouse.",
                     ShortDescription = "Wireless Mouse",
                     IsActive = true,
-                    CategoryId = accessoriesCategory.Id,
+                    CategoryId = 1,
                     HasVariants = false,
                     QuantityInStock = 100,
                     CreatedDate = DateTime.UtcNow,
@@ -135,7 +144,7 @@ namespace eShop.Data.Seeds
                     Description = "Mechanical keyboard with RGB lighting and fast response.",
                     ShortDescription = "RGB Gaming Keyboard",
                     IsActive = true,
-                    CategoryId = accessoriesCategory.Id,
+                    CategoryId = 1,
                     HasVariants = true,
                     QuantityInStock = 50,
                     CreatedDate = DateTime.UtcNow,
@@ -148,7 +157,7 @@ namespace eShop.Data.Seeds
                     Description = "Mid-range smartphone with great battery life.",
                     ShortDescription = "Smartphone",
                     IsActive = true,
-                    CategoryId = electronicsCategory.Id,
+                    CategoryId = 1,
                     HasVariants = false,
                     QuantityInStock = 200,
                     CreatedDate = DateTime.UtcNow,
@@ -161,7 +170,7 @@ namespace eShop.Data.Seeds
                     Description = "Portable speaker with high-quality sound.",
                     ShortDescription = "Bluetooth Speaker",
                     IsActive = true,
-                    CategoryId = electronicsCategory.Id,
+                    CategoryId = 1,
                     HasVariants = false,
                     QuantityInStock = 75,
                     CreatedDate = DateTime.UtcNow,
@@ -174,10 +183,106 @@ namespace eShop.Data.Seeds
                     Description = "Durable and fast-charging USB-C cable.",
                     ShortDescription = "USB-C Cable",
                     IsActive = true,
-                    CategoryId = accessoriesCategory.Id,
+                    CategoryId = 1,
                     HasVariants = false,
                     QuantityInStock = 300,
                     CreatedDate = DateTime.UtcNow,
+                },
+                new Product
+                {
+                    Uuid = Guid.NewGuid().ToString(),
+                    Name = "Wireless Earbuds",
+                    BasePrice = 59.99m,
+                    Description = "High-quality wireless earbuds with noise cancellation.",
+                    ShortDescription = "Wireless earbuds with ANC.",
+                    IsActive = true,
+                    CategoryId = 1,
+                    HasVariants = true,
+                    QuantityInStock = 120
+                },
+                new Product
+                {
+                    Uuid = Guid.NewGuid().ToString(),
+                    Name = "The Pragmatic Programmer",
+                    BasePrice = 39.99m,
+                    Description = "Classic book on software development and best practices.",
+                    ShortDescription = "A must-read for developers.",
+                    IsActive = true,
+                    CategoryId = 2,
+                    HasVariants = false,
+                    QuantityInStock = 75
+                },
+                new Product
+                {
+                    Uuid = Guid.NewGuid().ToString(),
+                    Name = "Men's Casual T-Shirt",
+                    BasePrice = 15.50m,
+                    Description = "Comfortable cotton T-shirt available in multiple sizes and colors.",
+                    ShortDescription = "Basic cotton T-shirt.",
+                    IsActive = true,
+                    CategoryId = 3,
+                    HasVariants = true,
+                    QuantityInStock = 300
+                },
+                new Product
+                {
+                    Uuid = Guid.NewGuid().ToString(),
+                    Name = "Stainless Steel Cookware Set",
+                    BasePrice = 89.99m,
+                    Description = "10-piece stainless steel cookware set suitable for all stovetops.",
+                    ShortDescription = "Premium cookware for your kitchen.",
+                    IsActive = true,
+                    CategoryId = 4,
+                    HasVariants = false,
+                    QuantityInStock = 45
+                },
+                new Product
+                {
+                    Uuid = Guid.NewGuid().ToString(),
+                    Name = "Yoga Mat with Carrying Strap",
+                    BasePrice = 25.00m,
+                    Description = "Non-slip yoga mat, ideal for all types of yoga and workouts.",
+                    ShortDescription = "Durable, thick yoga mat.",
+                    IsActive = true,
+                    CategoryId = 5,
+                    HasVariants = false,
+                    QuantityInStock = 200
+                },
+                new Product
+                {
+                    Uuid = Guid.NewGuid().ToString(),
+                    Name = "Hydrating Facial Cleanser",
+                    BasePrice = 12.75m,
+                    Description = "Gentle facial cleanser suitable for all skin types.",
+                    ShortDescription = "Daily face wash.",
+                    IsActive = true,
+                    CategoryId = 6,
+                    HasVariants = false,
+                    QuantityInStock = 180
+                },
+                new Product
+                {
+                    Uuid = Guid.NewGuid().ToString(),
+                    Name = "Remote Control Racing Car",
+                    BasePrice = 34.99m,
+                    Description = "High-speed remote control car with rechargeable battery.",
+                    ShortDescription = "Fun toy for kids aged 6+.",
+                    IsActive = true,
+                    CategoryId = 7,
+                    HasVariants = false,
+                    QuantityInStock = 95
+                },
+                new Product
+                {
+                    Uuid = Guid.NewGuid().ToString(),
+                    Name = "Car Vacuum Cleaner",
+                    BasePrice = 45.00m,
+                    Description = "Portable vacuum cleaner for cars with powerful suction and USB charging.",
+                    ShortDescription = "Keep your car clean effortlessly.",
+                    IsActive = true,
+                    CategoryId = 8,
+                    HasVariants = false,
+                    QuantityInStock = 60
                 }
             };
 

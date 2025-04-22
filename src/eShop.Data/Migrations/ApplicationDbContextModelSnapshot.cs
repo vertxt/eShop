@@ -173,7 +173,7 @@ namespace eShop.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Carts");
+                    b.ToTable("Carts", (string)null);
                 });
 
             modelBuilder.Entity("eShop.Data.Entities.Carts.CartItem", b =>
@@ -199,7 +199,7 @@ namespace eShop.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("CartItems");
+                    b.ToTable("CartItems", (string)null);
                 });
 
             modelBuilder.Entity("eShop.Data.Entities.Categories.Category", b =>
@@ -219,7 +219,7 @@ namespace eShop.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("eShop.Data.Entities.Categories.CategoryAttribute", b =>
@@ -244,7 +244,7 @@ namespace eShop.Data.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("CategoryAttributes");
+                    b.ToTable("CategoryAttributes", (string)null);
                 });
 
             modelBuilder.Entity("eShop.Data.Entities.Products.Product", b =>
@@ -296,7 +296,7 @@ namespace eShop.Data.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("eShop.Data.Entities.Products.ProductAttribute", b =>
@@ -323,7 +323,7 @@ namespace eShop.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductAttributes");
+                    b.ToTable("ProductAttributes", (string)null);
                 });
 
             modelBuilder.Entity("eShop.Data.Entities.Products.ProductImage", b =>
@@ -337,21 +337,21 @@ namespace eShop.Data.Migrations
                     b.Property<int?>("DisplayOrder")
                         .HasColumnType("int");
 
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsMain")
                         .HasColumnType("bit");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductImages");
+                    b.ToTable("ProductImages", (string)null);
                 });
 
             modelBuilder.Entity("eShop.Data.Entities.Products.ProductVariant", b =>
@@ -365,6 +365,10 @@ namespace eShop.Data.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal?>("Price")
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
@@ -375,15 +379,11 @@ namespace eShop.Data.Migrations
                     b.Property<int>("QuantityInStock")
                         .HasColumnType("int");
 
-                    b.Property<string>("VariantName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductVariants");
+                    b.ToTable("ProductVariants", (string)null);
                 });
 
             modelBuilder.Entity("eShop.Data.Entities.Users.Review", b =>
@@ -421,7 +421,7 @@ namespace eShop.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Reviews", (string)null);
                 });
 
             modelBuilder.Entity("eShop.Data.Entities.Users.User", b =>

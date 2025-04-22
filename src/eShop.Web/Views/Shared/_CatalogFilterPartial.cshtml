@@ -1,0 +1,38 @@
+@model (ProductParameters CurrentParams, CatalogFilterViewModel Filters)
+
+<div>
+    <form method="get" id="filterForm" asp-controller="Products" asp-action="Index">
+        <div class="accordion accordion-flush" id="filterSection">
+            <div class="accordion-item border">
+                <h2 class="accordion-header">
+                    <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#categories" aria-expanded="true">
+                        Type
+                    </button>
+                </h2>
+                @if (Model.Filters.Categories is not null && Model.Filters.Categories.Count > 0)
+                {
+                    <div id="categories" class="accordion-collapse collapse show" data-bs-parent="filterSection">
+                        <div class="accordion-body">
+                            @foreach (var category in Model.Filters.Categories)
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="@category.Id" name="CategoryIds" multiple id="@category.Id"
+                                        @(Model.CurrentParams is not null && Model.CurrentParams.CategoryIds.Contains(category.Id) ? "checked" : "")>
+                                    <label class="form-check-label" for="@category.Id">
+                                        @category.Name
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+            <button type="button" class="btn btn-sm btn-outline-danger" id="clearFilterBtn">Clear all</button>
+        </div>
+    </form>
+</div>

@@ -12,7 +12,7 @@ using eShop.Data;
 namespace eShop.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250414140145_InitialCreate")]
+    [Migration("20250417070157_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -340,15 +340,15 @@ namespace eShop.Data.Migrations
                     b.Property<int?>("DisplayOrder")
                         .HasColumnType("int");
 
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsMain")
                         .HasColumnType("bit");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -368,6 +368,10 @@ namespace eShop.Data.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal?>("Price")
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
@@ -377,10 +381,6 @@ namespace eShop.Data.Migrations
 
                     b.Property<int>("QuantityInStock")
                         .HasColumnType("int");
-
-                    b.Property<string>("VariantName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
