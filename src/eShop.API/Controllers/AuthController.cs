@@ -1,7 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using eShop.Data.Entities.Users;
+using eShop.Data.Entities.UserAggregate;
 using eShop.Shared.DTOs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

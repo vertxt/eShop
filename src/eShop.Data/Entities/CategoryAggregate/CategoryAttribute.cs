@@ -1,4 +1,4 @@
-namespace eShop.Data.Entities.Categories
+namespace eShop.Data.Entities.CategoryAggregate
 {
     public class CategoryAttribute
     {

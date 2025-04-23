@@ -1,7 +1,7 @@
 using AutoMapper;
 using eShop.API.Controller;
 using eShop.Business.Interfaces;
-using eShop.Data.Entities.Products;
+using eShop.Data.Entities.ProductAggregate;
 using eShop.Shared.DTOs.Products;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

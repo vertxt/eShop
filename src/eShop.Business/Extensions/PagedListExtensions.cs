@@ -1,7 +1,7 @@
 using AutoMapper;
 using eShop.Shared.Common.Pagination;
 
-namespace eShop.API.Extensions
+namespace eShop.Business.Extensions
 {
     public static class PagedListExtensions
     {

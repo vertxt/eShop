@@ -11,4 +11,23 @@ namespace eShop.Shared.DTOs.Products
         public bool HasVariants { get; set; }
         public int? QuantityInStock { get; set; }
     }
+
+    public class UpdateProductImageDto
+    {
+        public string Url { get; set; }
+        public bool IsMain { get; set; }
+        public int DisplayOrder { get; set; }
+    }
+
+    public class UpdateProductVariantDto
+    {
+        public string Name { get; set; }
+        public decimal Price { get; set; }
+        public int? QuantityInStock { get; set; }
+    }
+
+    public class UpdateProductAttributeDto
+    {
+        public string Value { get; set; }
+    }
 }

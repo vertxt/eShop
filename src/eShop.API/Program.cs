@@ -1,15 +1,7 @@
-using System.Text;
-using eShop.API.Helpers;
-using eShop.Business.Interfaces;
-using eShop.Business.Services;
+using eShop.Business;
 using eShop.Data;
-using eShop.Data.Entities.Users;
-using eShop.Data.Interfaces;
-using eShop.Data.Repositories;
 using eShop.Data.Seeds;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
@@ -30,30 +22,8 @@ builder.Services.AddCors(options =>
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Add AutoMapper to the container.
-builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
-
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
-    throw new InvalidOperationException("Connection String 'DefaultConnection' cannot be found");
-
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    options.UseSqlServer(connectionString);
-});
-
-builder.Services.AddIdentity<User, IdentityRole>(options =>
-{
-    options.Password.RequireDigit = true;
-    options.Password.RequiredLength = 6;
-    options.Password.RequireUppercase = true;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireNonAlphanumeric = true;
-})
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
 
 // var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 // var secretKey = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"] ?? "");
@@ -81,10 +51,8 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("RequireCustomerRole", policy => policy.RequireRole("Customer"));
 });
 
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddDataLayer(builder.Configuration);
+builder.Services.AddBusinessLayer();
 
 var app = builder.Build();
 
@@ -97,7 +65,13 @@ if (app.Environment.IsDevelopment())
         options.SwaggerEndpoint("/openapi/v1.json", "OpenAPI v1");
     });
     app.UseDeveloperExceptionPage();
-    await DataSeeder.SeedDataAsync(app.Services);
+
+    // Seed data
+    using (var scope = app.Services.CreateScope())
+    {
+        var seeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
+        await seeder.SeedDataAsync();
+    }
 }
 
 app.UseHttpsRedirection();

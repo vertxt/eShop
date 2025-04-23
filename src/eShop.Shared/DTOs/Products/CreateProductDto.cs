@@ -12,8 +12,6 @@ namespace eShop.Shared.DTOs.Products
         public int CategoryId { get; set; }
         public bool HasVariants { get; set; }
         public int? QuantityInStock { get; set; }
-        public List<CreateProductImageDto> Images { get; set; } = new List<CreateProductImageDto>();
-        public List<CreateProductVariantDto> Variants { get; set; } = new List<CreateProductVariantDto>();
         public List<CreateProductAttributeDto> Attributes { get; set; } = new List<CreateProductAttributeDto>();
     }
 
@@ -33,7 +31,14 @@ namespace eShop.Shared.DTOs.Products
 
     public class CreateProductAttributeDto
     {
-        public string Name { get; set; }
+        public int AttributeId { get; set; }
         public string Value { get; set; }
+    }
+
+    public class CreateProductReviewDto
+    {
+        public decimal Rating { get; set; }
+        public string Title { get; set; }
+        public string Body { get; set; }
     }
 }

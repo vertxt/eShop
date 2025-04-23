@@ -1,6 +1,6 @@
-using eShop.Data.Entities.Users;
+using eShop.Data.Entities.UserAggregate;
 
-namespace eShop.Data.Entities.Carts
+namespace eShop.Data.Entities.CartAggregate
 {
     public class Cart
     {

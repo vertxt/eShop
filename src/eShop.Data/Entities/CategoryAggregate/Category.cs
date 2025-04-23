@@ -1,6 +1,6 @@
-using eShop.Data.Entities.Products;
+using eShop.Data.Entities.ProductAggregate;
 
-namespace eShop.Data.Entities.Categories
+namespace eShop.Data.Entities.CategoryAggregate
 {
     public class Category
     {

@@ -155,7 +155,7 @@ namespace eShop.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("eShop.Data.Entities.Carts.Cart", b =>
+            modelBuilder.Entity("eShop.Data.Entities.CartAggregate.Cart", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -164,19 +164,25 @@ namespace eShop.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("SessionId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("SessionId")
+                        .IsUnique()
+                        .HasFilter("SessionId IS NOT NULL");
 
-                    b.ToTable("Carts", (string)null);
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("UserId IS NOT NULL");
+
+                    b.ToTable("Carts");
                 });
 
-            modelBuilder.Entity("eShop.Data.Entities.Carts.CartItem", b =>
+            modelBuilder.Entity("eShop.Data.Entities.CartAggregate.CartItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -190,6 +196,9 @@ namespace eShop.Data.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ProductVariantId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
@@ -199,10 +208,12 @@ namespace eShop.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("CartItems", (string)null);
+                    b.HasIndex("ProductVariantId");
+
+                    b.ToTable("CartItems");
                 });
 
-            modelBuilder.Entity("eShop.Data.Entities.Categories.Category", b =>
+            modelBuilder.Entity("eShop.Data.Entities.CategoryAggregate.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -219,10 +230,10 @@ namespace eShop.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("eShop.Data.Entities.Categories.CategoryAttribute", b =>
+            modelBuilder.Entity("eShop.Data.Entities.CategoryAggregate.CategoryAttribute", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -244,10 +255,10 @@ namespace eShop.Data.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("CategoryAttributes", (string)null);
+                    b.ToTable("CategoryAttributes");
                 });
 
-            modelBuilder.Entity("eShop.Data.Entities.Products.Product", b =>
+            modelBuilder.Entity("eShop.Data.Entities.ProductAggregate.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -290,16 +301,19 @@ namespace eShop.Data.Migrations
 
                     b.Property<string>("Uuid")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products", (string)null);
+                    b.HasIndex("Uuid")
+                        .IsUnique();
+
+                    b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("eShop.Data.Entities.Products.ProductAttribute", b =>
+            modelBuilder.Entity("eShop.Data.Entities.ProductAggregate.ProductAttribute", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -321,12 +335,13 @@ namespace eShop.Data.Migrations
 
                     b.HasIndex("AttributeId");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("ProductId", "AttributeId")
+                        .IsUnique();
 
-                    b.ToTable("ProductAttributes", (string)null);
+                    b.ToTable("ProductAttributes");
                 });
 
-            modelBuilder.Entity("eShop.Data.Entities.Products.ProductImage", b =>
+            modelBuilder.Entity("eShop.Data.Entities.ProductAggregate.ProductImage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -340,7 +355,10 @@ namespace eShop.Data.Migrations
                     b.Property<bool>("IsMain")
                         .HasColumnType("bit");
 
-                    b.Property<int>("ProductId")
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProductVariantId")
                         .HasColumnType("int");
 
                     b.Property<string>("Url")
@@ -351,10 +369,15 @@ namespace eShop.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductImages", (string)null);
+                    b.HasIndex("ProductVariantId");
+
+                    b.ToTable("ProductImages", t =>
+                        {
+                            t.HasCheckConstraint("CK_ProductImage_OneForeignKey", "(\r\n                        (ProductId IS NOT NULL AND ProductVariantId IS NULL)\r\n                        OR (ProductId IS NULL AND ProductVariantId IS NOT NULL)\r\n                    )");
+                        });
                 });
 
-            modelBuilder.Entity("eShop.Data.Entities.Products.ProductVariant", b =>
+            modelBuilder.Entity("eShop.Data.Entities.ProductAggregate.ProductVariant", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -379,14 +402,17 @@ namespace eShop.Data.Migrations
                     b.Property<int>("QuantityInStock")
                         .HasColumnType("int");
 
+                    b.Property<string>("SKU")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductVariants", (string)null);
+                    b.ToTable("ProductVariants");
                 });
 
-            modelBuilder.Entity("eShop.Data.Entities.Users.Review", b =>
+            modelBuilder.Entity("eShop.Data.Entities.UserAggregate.Review", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -404,8 +430,9 @@ namespace eShop.Data.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<double>("Rating")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Rating")
+                        .HasPrecision(2, 1)
+                        .HasColumnType("decimal(2,1)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -421,10 +448,10 @@ namespace eShop.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
-            modelBuilder.Entity("eShop.Data.Entities.Users.User", b =>
+            modelBuilder.Entity("eShop.Data.Entities.UserAggregate.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -500,7 +527,7 @@ namespace eShop.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("eShop.Data.Entities.Users.User", null)
+                    b.HasOne("eShop.Data.Entities.UserAggregate.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -509,7 +536,7 @@ namespace eShop.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("eShop.Data.Entities.Users.User", null)
+                    b.HasOne("eShop.Data.Entities.UserAggregate.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -524,7 +551,7 @@ namespace eShop.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eShop.Data.Entities.Users.User", null)
+                    b.HasOne("eShop.Data.Entities.UserAggregate.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -533,44 +560,50 @@ namespace eShop.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("eShop.Data.Entities.Users.User", null)
+                    b.HasOne("eShop.Data.Entities.UserAggregate.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("eShop.Data.Entities.Carts.Cart", b =>
+            modelBuilder.Entity("eShop.Data.Entities.CartAggregate.Cart", b =>
                 {
-                    b.HasOne("eShop.Data.Entities.Users.User", "User")
+                    b.HasOne("eShop.Data.Entities.UserAggregate.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eShop.Data.Entities.Carts.CartItem", b =>
+            modelBuilder.Entity("eShop.Data.Entities.CartAggregate.CartItem", b =>
                 {
-                    b.HasOne("eShop.Data.Entities.Carts.Cart", "Cart")
+                    b.HasOne("eShop.Data.Entities.CartAggregate.Cart", "Cart")
                         .WithMany("CartItems")
                         .HasForeignKey("CartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eShop.Data.Entities.Products.Product", "Product")
+                    b.HasOne("eShop.Data.Entities.ProductAggregate.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("eShop.Data.Entities.ProductAggregate.ProductVariant", "ProductVariant")
+                        .WithMany()
+                        .HasForeignKey("ProductVariantId");
+
                     b.Navigation("Cart");
 
                     b.Navigation("Product");
+
+                    b.Navigation("ProductVariant");
                 });
 
-            modelBuilder.Entity("eShop.Data.Entities.Categories.CategoryAttribute", b =>
+            modelBuilder.Entity("eShop.Data.Entities.CategoryAggregate.CategoryAttribute", b =>
                 {
-                    b.HasOne("eShop.Data.Entities.Categories.Category", "Category")
+                    b.HasOne("eShop.Data.Entities.CategoryAggregate.Category", "Category")
                         .WithMany("Attributes")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -579,9 +612,9 @@ namespace eShop.Data.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("eShop.Data.Entities.Products.Product", b =>
+            modelBuilder.Entity("eShop.Data.Entities.ProductAggregate.Product", b =>
                 {
-                    b.HasOne("eShop.Data.Entities.Categories.Category", "Category")
+                    b.HasOne("eShop.Data.Entities.CategoryAggregate.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -590,15 +623,15 @@ namespace eShop.Data.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("eShop.Data.Entities.Products.ProductAttribute", b =>
+            modelBuilder.Entity("eShop.Data.Entities.ProductAggregate.ProductAttribute", b =>
                 {
-                    b.HasOne("eShop.Data.Entities.Categories.CategoryAttribute", "Attribute")
+                    b.HasOne("eShop.Data.Entities.CategoryAggregate.CategoryAttribute", "Attribute")
                         .WithMany()
                         .HasForeignKey("AttributeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eShop.Data.Entities.Products.Product", "Product")
+                    b.HasOne("eShop.Data.Entities.ProductAggregate.Product", "Product")
                         .WithMany("Attributes")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -609,20 +642,24 @@ namespace eShop.Data.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("eShop.Data.Entities.Products.ProductImage", b =>
+            modelBuilder.Entity("eShop.Data.Entities.ProductAggregate.ProductImage", b =>
                 {
-                    b.HasOne("eShop.Data.Entities.Products.Product", "Product")
+                    b.HasOne("eShop.Data.Entities.ProductAggregate.Product", "Product")
                         .WithMany("Images")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProductId");
+
+                    b.HasOne("eShop.Data.Entities.ProductAggregate.ProductVariant", "ProductVariant")
+                        .WithMany("Images")
+                        .HasForeignKey("ProductVariantId");
 
                     b.Navigation("Product");
+
+                    b.Navigation("ProductVariant");
                 });
 
-            modelBuilder.Entity("eShop.Data.Entities.Products.ProductVariant", b =>
+            modelBuilder.Entity("eShop.Data.Entities.ProductAggregate.ProductVariant", b =>
                 {
-                    b.HasOne("eShop.Data.Entities.Products.Product", "Product")
+                    b.HasOne("eShop.Data.Entities.ProductAggregate.Product", "Product")
                         .WithMany("Variants")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -631,15 +668,15 @@ namespace eShop.Data.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("eShop.Data.Entities.Users.Review", b =>
+            modelBuilder.Entity("eShop.Data.Entities.UserAggregate.Review", b =>
                 {
-                    b.HasOne("eShop.Data.Entities.Products.Product", "Product")
+                    b.HasOne("eShop.Data.Entities.ProductAggregate.Product", "Product")
                         .WithMany("Reviews")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eShop.Data.Entities.Users.User", "User")
+                    b.HasOne("eShop.Data.Entities.UserAggregate.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -650,19 +687,19 @@ namespace eShop.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eShop.Data.Entities.Carts.Cart", b =>
+            modelBuilder.Entity("eShop.Data.Entities.CartAggregate.Cart", b =>
                 {
                     b.Navigation("CartItems");
                 });
 
-            modelBuilder.Entity("eShop.Data.Entities.Categories.Category", b =>
+            modelBuilder.Entity("eShop.Data.Entities.CategoryAggregate.Category", b =>
                 {
                     b.Navigation("Attributes");
 
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("eShop.Data.Entities.Products.Product", b =>
+            modelBuilder.Entity("eShop.Data.Entities.ProductAggregate.Product", b =>
                 {
                     b.Navigation("Attributes");
 
@@ -671,6 +708,11 @@ namespace eShop.Data.Migrations
                     b.Navigation("Reviews");
 
                     b.Navigation("Variants");
+                });
+
+            modelBuilder.Entity("eShop.Data.Entities.ProductAggregate.ProductVariant", b =>
+                {
+                    b.Navigation("Images");
                 });
 #pragma warning restore 612, 618
         }

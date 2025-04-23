@@ -5,8 +5,8 @@
         <img src="https://fakeimg.pl/600x400?text=Model" class="card-img-top" alt="@Model.Name">
         <div class="card-body flex-grow-1">
             <h5 class="card-title">@Model.Name</h5>
-            <p class="card-text">@Model.Description?.Substring(0, Math.Min(100, Model.Description.Length))
-                @(Model.Description?.Length > 100 ? "..." : "")</p>
+            <p class="card-text">@Model.ShortDescription?.Substring(0, Math.Min(100, Model.ShortDescription.Length))
+                @(Model.ShortDescription?.Length > 100 ? "..." : "")</p>
             <p class="card-text"><small class="text-muted">Price: $@Model.BasePrice</small></p>
         </div>
         <div class="card-footer bg-white border-top-0 d-flex justify-content-end align-items-center gap-2">

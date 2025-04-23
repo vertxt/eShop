@@ -1,13 +1,13 @@
-using eShop.Data.Entities.Categories;
-using eShop.Data.Entities.Users;
+using eShop.Data.Entities.CategoryAggregate;
+using eShop.Data.Entities.UserAggregate;
 using Microsoft.EntityFrameworkCore;
 
-namespace eShop.Data.Entities.Products
+namespace eShop.Data.Entities.ProductAggregate
 {
     public class Product
     {
         public int Id { get; set; }
-        public required string Uuid { get; set; }
+        public string Uuid { get; set; } = Guid.NewGuid().ToString();
         public required string Name { get; set; }
         [Precision(14, 2)]
         public required decimal BasePrice { get; set; }

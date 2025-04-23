@@ -1,6 +1,6 @@
-using eShop.Data.Entities.Categories;
+using eShop.Data.Entities.CategoryAggregate;
 
-namespace eShop.Data.Entities.Products
+namespace eShop.Data.Entities.ProductAggregate
 {
     public class ProductAttribute
     {

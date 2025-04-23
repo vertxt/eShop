@@ -1,4 +1,4 @@
-using eShop.Data.Entities.Products;
+using eShop.Data.Entities.ProductAggregate;
 using eShop.Shared.Parameters;
 
 namespace eShop.Business.Extensions
