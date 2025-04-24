@@ -30,23 +30,13 @@ namespace eShop.API.Controllers
             throw new Exception("Something went wrong on the server");
         }
 
-        [HttpGet("divide-by-zero")]
-        public IActionResult GetDivideByZero()
+        [HttpGet("validation")]
+        public IActionResult GetValidationError()
         {
-            var result = 1 / Convert.ToInt32("0");
-            return Ok(result);
-        }
-        
-        [HttpGet("not-found-response")]
-        public IActionResult GetNotFoundResponse()
-        {
-            return NotFound();
-        }
+            ModelState.AddModelError("Username", "Username should be at least 5 characters");
+            ModelState.AddModelError("Email", "Invalid email format");
 
-        [HttpGet("bad-request-response")]
-        public IActionResult GetBadRequestResponse()
-        {
-            return BadRequest();
+            return ValidationProblem(ModelState);
         }
     }
 }

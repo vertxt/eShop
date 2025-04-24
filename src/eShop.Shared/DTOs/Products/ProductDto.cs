@@ -14,6 +14,9 @@ namespace eShop.Shared.DTOs.Products
         public bool IsActive { get; set; }
         public string CategoryName { get; set; }
         public bool HasVariants { get; set; }
+        public int? QuantityInStock { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime? UpdatedDate { get; set; }
         public int ReviewCount { get; set; }
         public decimal AverageRating { get; set; }
     }

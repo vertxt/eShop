@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-using eShop.Data.Entities.CategoryAggregate;
 using eShop.Data.Entities.ProductAggregate;
 using eShop.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;

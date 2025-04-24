@@ -24,4 +24,3 @@ export const productsSlice = createSlice({
 
 export const { setSortBy } = productsSlice.actions;
 export const productsReducer = productsSlice.reducer;
-

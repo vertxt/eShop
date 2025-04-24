@@ -1,70 +1,70 @@
-import { 
-  Paper, 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableContainer, 
-  TableHead, 
-  TableRow,
-  Box,
-  Typography,
-  Grid,
-  TextField,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
-  Pagination,
-  Button,
-  Chip,
+import {
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Box,
+    Typography,
+    Grid,
+    TextField,
+    MenuItem,
+    Select,
+    FormControl,
+    InputLabel,
+    Pagination,
+    Button,
+    Chip,
 } from "@mui/material";
-import { useAppSelector, useAppDispatch } from "../../app/store";
 import { useFetchProductsQuery } from "./productsApi";
 import { useState } from "react";
+import { Add } from "@mui/icons-material";
+import { useAppSelector } from "../../app/store/store";
 
 export default function ProductListView() {
-    const dispatch = useAppDispatch();
     const productListParams = useAppSelector(state => state.products);
     const { data, isLoading, error } = useFetchProductsQuery(productListParams);
     const [localSearch, setLocalSearch] = useState(productListParams.searchTerm || '');
-    
+
     if (isLoading) {
         return (
             <Box sx={{ p: 3 }}>
-              <Typography variant="h6">Loading products...</Typography>
+                <Typography variant="h6">Loading products...</Typography>
             </Box>
         );
     }
-    
+
     if (error) {
         return (
             <Box sx={{ p: 3 }}>
-              <Typography variant="h6" color="error">
-                Error loading products. Please try again.
-              </Typography>
-              <pre>{JSON.stringify(error, null, 2)}</pre>
+                <Typography variant="h6" color="error">
+                    Error loading products. Please try again.
+                </Typography>
+                <pre>{JSON.stringify(error, null, 2)}</pre>
             </Box>
         );
     }
-    
+
     if (!data || data.items.length === 0) {
         return (
             <Box sx={{ p: 3 }}>
-              <Typography variant="h6">No products found.</Typography>
-              <Button variant="contained" sx={{ mt: 2 }}>
-                Reset Filters
-              </Button>
+                <Typography variant="h6">No products found.</Typography>
+                <Button variant="contained" sx={{ mt: 2 }}>
+                    Reset Filters
+                </Button>
             </Box>
         );
     }
-    
+
     return (
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', p: 2 }}>
             <Grid container spacing={3} sx={{ mb: 3 }}>
-                <Grid size={{ xs: 12, md: 6}}>
+                <Grid size={{ xs: 12, md: 6 }}>
                     <Typography variant="h5">Products</Typography>
                 </Grid>
-                <Grid size={{ xs: 12, md: 6}}>
+                <Grid size={{ xs: 12, md: 6 }}>
                     <Box component="form" sx={{ display: 'flex' }}>
                         <TextField
                             fullWidth
@@ -83,7 +83,7 @@ export default function ProductListView() {
                     </Box>
                 </Grid>
             </Grid>
-            
+
             <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography>
                     {data.metadata?.totalCount ?? 0} products found
@@ -103,6 +103,13 @@ export default function ProductListView() {
                 </FormControl>
             </Box>
             
+            <Box>
+                <Button>
+                    <Add />
+                    Create
+                </Button>
+            </Box>
+
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 700 }}>
                     <TableHead>
@@ -125,7 +132,7 @@ export default function ProductListView() {
                                 <TableCell>{item.name}</TableCell>
                                 <TableCell>${item.basePrice.toFixed(2)}</TableCell>
                                 <TableCell>
-                                    <Chip 
+                                    <Chip
                                         label={item.isActive ? "Active" : "Inactive"}
                                         color={item.isActive ? "success" : "default"}
                                         size="small"
@@ -136,7 +143,7 @@ export default function ProductListView() {
                                 <TableCell>{item.quantityInStock ?? "N/A"}</TableCell>
                                 <TableCell>{new Date(item.createdDate).toLocaleDateString()}</TableCell>
                                 <TableCell>
-                                    {item.updatedDate 
+                                    {item.updatedDate
                                         ? new Date(item.updatedDate).toLocaleDateString()
                                         : "Never"}
                                 </TableCell>
@@ -145,7 +152,7 @@ export default function ProductListView() {
                     </TableBody>
                 </Table>
             </TableContainer>
-            
+
             <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
                 <Pagination
                     count={data.metadata?.totalPages ?? 0}

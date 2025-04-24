@@ -23,7 +23,7 @@ namespace eShop.Business.Services
 
         public async Task<PagedList<ProductDto>> GetAllAsync(ProductParameters productParams)
         {
-            var pagedResult = await _productRepository.GetAll()
+            var pagedResult = await _productRepository.GetProductsWithBasicDetails()
                 .Search(productParams.SearchTerm)
                 .Sort(productParams.SortBy)
                 .Filter(productParams)
