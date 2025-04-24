@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
-namespace eShop.API.Controller
+namespace eShop.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

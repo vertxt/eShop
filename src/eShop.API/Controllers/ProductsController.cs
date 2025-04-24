@@ -4,7 +4,7 @@ using eShop.Shared.DTOs.Products;
 using eShop.Shared.Parameters;
 using Microsoft.AspNetCore.Mvc;
 
-namespace eShop.API.Controller
+namespace eShop.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -28,11 +28,6 @@ namespace eShop.API.Controller
         public async Task<ActionResult<ProductDto>> GetById(int id)
         {
             var product = await _productService.GetByIdAsync(id);
-            if (product is null)
-            {
-                return NotFound();
-            }
-
             return Ok(product);
         }
 
@@ -40,11 +35,6 @@ namespace eShop.API.Controller
         public async Task<ActionResult<ProductDto>> GetByUuid(string uuid)
         {
             var product = await _productService.GetByUuidAsync(uuid);
-            if (product is null)
-            {
-                return NotFound();
-            }
-
             return Ok(product);
         }
 
@@ -52,11 +42,6 @@ namespace eShop.API.Controller
         public async Task<ActionResult<ProductDetailDto>> GetDetailsById(int id)
         {
             var product = await _productService.GetDetailByIdAsync(id);
-            if (product is null)
-            {
-                return NotFound();
-            }
-            
             return Ok(product);
         }
 

@@ -2,66 +2,69 @@ using eShop.Business.Interfaces;
 using eShop.Shared.DTOs.Products;
 using Microsoft.AspNetCore.Mvc;
 
-[ApiController]
-[Route("api")]
-public class ProductImageController : ControllerBase
+namespace eShop.API.Controllers
 {
-    private readonly IProductService _productService;
-
-    public ProductImageController(IProductService productService)
+    [ApiController]
+    [Route("api")]
+    public class ProductImageController : ControllerBase
     {
-        _productService = productService;
-    }
+        private readonly IProductService _productService;
 
-    // Product Images
-    [HttpPost("products/{productId}/images")]
-    public async Task<ActionResult> AddProductImage(int productId, CreateProductImageDto createProductImageDto)
-    {
-        var imageId = await _productService.AddProductImageAsync(productId, createProductImageDto);
-        return CreatedAtAction(nameof(GetProductImage), new { productId, imageId }, null);
-    }
-
-    [HttpGet("products/{productId}/images/{imageId}")]
-    public async Task<ActionResult> GetProductImage(int productId, int imageId)
-    {
-        // To be implemented soon
-        return Ok();
-    }
-
-    [HttpPut("images/{imageId}")]
-    public async Task<ActionResult> UpdateImage(int imageId, UpdateProductImageDto updateProductImageDto)
-    {
-        var result = await _productService.UpdateProductImageAsync(imageId, updateProductImageDto);
-        if (result)
+        public ProductImageController(IProductService productService)
         {
-            return NoContent();
+            _productService = productService;
         }
-        return StatusCode(500, "Failed to update image");
-    }
 
-    [HttpDelete("images/{imageId}")]
-    public async Task<ActionResult> DeleteImage(int imageId)
-    {
-        var result = await _productService.DeleteProductImageAsync(imageId);
-        if (result)
+        // Product Images
+        [HttpPost("products/{productId}/images")]
+        public async Task<ActionResult> AddProductImage(int productId, CreateProductImageDto createProductImageDto)
         {
-            return NoContent();
+            var imageId = await _productService.AddProductImageAsync(productId, createProductImageDto);
+            return CreatedAtAction(nameof(GetProductImage), new { productId, imageId }, null);
         }
-        return StatusCode(500, "Failed to delete image");
-    }
 
-    // Variant Images
-    [HttpPost("variants/{variantId}/images")]
-    public async Task<ActionResult> AddVariantImage(int variantId, CreateProductImageDto createProductImageDto)
-    {
-        var imageId = await _productService.AddVariantImageAsync(variantId, createProductImageDto);
-        return CreatedAtAction(nameof(GetVariantImage), new { variantId, imageId }, null);
-    }
+        [HttpGet("products/{productId}/images/{imageId}")]
+        public async Task<ActionResult> GetProductImage(int productId, int imageId)
+        {
+            // To be implemented soon
+            return Ok();
+        }
 
-    [HttpGet("variants/{variantId}/images/{imageId}")]
-    public async Task<ActionResult> GetVariantImage(int variantId, int imageId)
-    {
-        // To be implemented soon
-        return Ok();
+        [HttpPut("images/{imageId}")]
+        public async Task<ActionResult> UpdateImage(int imageId, UpdateProductImageDto updateProductImageDto)
+        {
+            var result = await _productService.UpdateProductImageAsync(imageId, updateProductImageDto);
+            if (result)
+            {
+                return NoContent();
+            }
+            return StatusCode(500, "Failed to update image");
+        }
+
+        [HttpDelete("images/{imageId}")]
+        public async Task<ActionResult> DeleteImage(int imageId)
+        {
+            var result = await _productService.DeleteProductImageAsync(imageId);
+            if (result)
+            {
+                return NoContent();
+            }
+            return StatusCode(500, "Failed to delete image");
+        }
+
+        // Variant Images
+        [HttpPost("variants/{variantId}/images")]
+        public async Task<ActionResult> AddVariantImage(int variantId, CreateProductImageDto createProductImageDto)
+        {
+            var imageId = await _productService.AddVariantImageAsync(variantId, createProductImageDto);
+            return CreatedAtAction(nameof(GetVariantImage), new { variantId, imageId }, null);
+        }
+
+        [HttpGet("variants/{variantId}/images/{imageId}")]
+        public async Task<ActionResult> GetVariantImage(int variantId, int imageId)
+        {
+            // To be implemented soon
+            return Ok();
+        }
     }
 }
