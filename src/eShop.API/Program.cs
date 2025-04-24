@@ -1,3 +1,4 @@
+using eShop.API.Middleware;
 using eShop.Business;
 using eShop.Data;
 using eShop.Data.Seeds;
@@ -56,6 +57,8 @@ builder.Services.AddBusinessLayer();
 
 var app = builder.Build();
 
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -64,7 +67,6 @@ if (app.Environment.IsDevelopment())
     {
         options.SwaggerEndpoint("/openapi/v1.json", "OpenAPI v1");
     });
-    app.UseDeveloperExceptionPage();
 
     // Seed data
     using (var scope = app.Services.CreateScope())
