@@ -17,16 +17,47 @@ import {
     Pagination,
     Button,
     Chip,
+    SelectChangeEvent,
+    TablePagination,
+    TablePaginationActionsSlotPropsOverrides,
 } from "@mui/material";
 import { useFetchProductsQuery } from "./productsApi";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { Add } from "@mui/icons-material";
-import { useAppSelector } from "../../app/store/store";
+import { useAppDispatch, useAppSelector } from "../../app/store/store";
+import { Link } from "react-router-dom";
+import { setPageNumber, setPageSize, setSearchTerm, setSortBy } from "./productsSlice";
+
+const EmptyAction = (_props: TablePaginationActionsSlotPropsOverrides) => null;
 
 export default function ProductListView() {
     const productListParams = useAppSelector(state => state.products);
     const { data, isLoading, error } = useFetchProductsQuery(productListParams);
     const [localSearch, setLocalSearch] = useState(productListParams.searchTerm || '');
+    const dispatch = useAppDispatch();
+
+    const handleSearchSubmit = (e: FormEvent) => {
+        e.preventDefault();
+        dispatch(setSearchTerm(localSearch));
+    };
+
+    const handleSearchReset = () => {
+        setLocalSearch('');
+        dispatch(setSearchTerm(''));
+    };
+
+    const handleSortChange = (e: SelectChangeEvent) => {
+        dispatch(setSortBy(e.target.value));
+    };
+
+    const handlePageNumberChange = (_: unknown, newPage: number) => {
+        dispatch(setPageNumber(newPage));
+    };
+
+    const handlePageSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        dispatch(setPageSize(parseInt(e.target.value, 10)));
+    };
+
 
     if (isLoading) {
         return (
@@ -42,7 +73,7 @@ export default function ProductListView() {
                 <Typography variant="h6" color="error">
                     Error loading products. Please try again.
                 </Typography>
-                <pre>{JSON.stringify(error, null, 2)}</pre>
+                {error && <Typography>An unexpected error occurred</Typography>}
             </Box>
         );
     }
@@ -51,7 +82,15 @@ export default function ProductListView() {
         return (
             <Box sx={{ p: 3 }}>
                 <Typography variant="h6">No products found.</Typography>
-                <Button variant="contained" sx={{ mt: 2 }}>
+                <Button
+                    variant="contained"
+                    sx={{ mt: 2 }}
+                    onClick={() => {
+                        dispatch(setSearchTerm(''));
+                        dispatch(setSortBy('name'));
+                        dispatch(setPageNumber(1));
+                    }}
+                >
                     Reset Filters
                 </Button>
             </Box>
@@ -65,7 +104,7 @@ export default function ProductListView() {
                     <Typography variant="h5">Products</Typography>
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
-                    <Box component="form" sx={{ display: 'flex' }}>
+                    <Box component="form" sx={{ display: 'flex' }} onSubmit={handleSearchSubmit}>
                         <TextField
                             fullWidth
                             label="Search products"
@@ -77,7 +116,7 @@ export default function ProductListView() {
                         <Button type="submit" variant="contained" sx={{ ml: 1 }}>
                             Search
                         </Button>
-                        <Button variant="outlined" sx={{ ml: 1 }}>
+                        <Button variant="outlined" sx={{ ml: 1 }} onClick={handleSearchReset}>
                             Reset
                         </Button>
                     </Box>
@@ -93,24 +132,27 @@ export default function ProductListView() {
                     <Select
                         value={productListParams.sortBy}
                         label="Sort By"
+                        onChange={handleSortChange}
                     >
+                        <MenuItem value="id">Id (Ascending)</MenuItem>
+                        <MenuItem value="id-desc">Id (Descending)</MenuItem>
                         <MenuItem value="name">Name (A-Z)</MenuItem>
-                        <MenuItem value="nameDesc">Name (Z-A)</MenuItem>
-                        <MenuItem value="priceAsc">Price (Low-High)</MenuItem>
-                        <MenuItem value="priceDesc">Price (High-Low)</MenuItem>
-                        <MenuItem value="newest">Newest First</MenuItem>
+                        <MenuItem value="name-desc">Name (Z-A)</MenuItem>
+                        <MenuItem value="price">Price (Low-High)</MenuItem>
+                        <MenuItem value="price-desc">Price (High-Low)</MenuItem>
+                        <MenuItem value="created-date">Oldest First</MenuItem>
+                        <MenuItem value="created-date-desc">Newest First</MenuItem>
                     </Select>
                 </FormControl>
             </Box>
-            
+
             <Box>
-                <Button>
-                    <Add />
+                <Button component={Link} to="/products/create" variant="outlined" startIcon={<Add />}>
                     Create
                 </Button>
             </Box>
 
-            <TableContainer component={Paper}>
+            <TableContainer component={Paper} sx={{ mb: 2 }}>
                 <Table sx={{ minWidth: 700 }}>
                     <TableHead>
                         <TableRow>
@@ -119,10 +161,10 @@ export default function ProductListView() {
                             <TableCell>Base Price</TableCell>
                             <TableCell>Active</TableCell>
                             <TableCell>Category</TableCell>
-                            <TableCell>Has Variants</TableCell>
                             <TableCell>Quantity</TableCell>
                             <TableCell>Created</TableCell>
                             <TableCell>Updated</TableCell>
+                            <TableCell align="right">Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -139,7 +181,6 @@ export default function ProductListView() {
                                     />
                                 </TableCell>
                                 <TableCell>{item.categoryName}</TableCell>
-                                <TableCell>{item.hasVariants ? "Yes" : "No"}</TableCell>
                                 <TableCell>{item.quantityInStock ?? "N/A"}</TableCell>
                                 <TableCell>{new Date(item.createdDate).toLocaleDateString()}</TableCell>
                                 <TableCell>
@@ -147,19 +188,50 @@ export default function ProductListView() {
                                         ? new Date(item.updatedDate).toLocaleDateString()
                                         : "Never"}
                                 </TableCell>
+                                <TableCell align="right">
+                                    <Button
+                                        component={Link}
+                                        to={`/products/${item.id}/edit`}
+                                        size="small"
+                                        variant="outlined"
+                                        sx={{ mr: 1 }}
+                                    >
+                                        Edit
+                                    </Button>
+                                    <Button
+                                        component={Link}
+                                        to={`/products/${item.id}`}
+                                        size="small"
+                                        variant="contained"
+                                    >
+                                        View
+                                    </Button>
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
             </TableContainer>
 
-            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+            <Box sx={{ mt: 1, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+                <TablePagination
+                    component="div"
+                    count={data.metadata.totalCount || 0}
+                    page={(data.metadata.currentPage || 1) - 1}
+                    rowsPerPage={data.metadata.pageSize || 10}
+                    rowsPerPageOptions={[3, 6, 9, 12]}
+                    onPageChange={handlePageNumberChange}
+                    onRowsPerPageChange={handlePageSizeChange}
+                    ActionsComponent={EmptyAction}
+                />
                 <Pagination
                     count={data.metadata?.totalPages ?? 0}
-                    page={productListParams.pageNumber}
+                    page={productListParams.pageNumber || 1}
                     color="primary"
+                    onChange={handlePageNumberChange}
                 />
             </Box>
         </Box>
     );
 }
+

@@ -19,8 +19,22 @@ export const productsSlice = createSlice({
     setSortBy(state, action: PayloadAction<string>) {
       state.sortBy = action.payload;
     },
+    
+    setSearchTerm(state, action: PayloadAction<string>) {
+      state.searchTerm = action.payload;
+      state.pageNumber = 1;
+    },
+    
+    setPageNumber(state, action: PayloadAction<number>) {
+      state.pageNumber = action.payload;
+    },
+    
+    setPageSize(state, action: PayloadAction<number>) {
+      state.pageSize = action.payload;
+      state.pageNumber = 1;
+    }
   },
 });
 
-export const { setSortBy } = productsSlice.actions;
+export const { setSortBy, setSearchTerm, setPageNumber, setPageSize } = productsSlice.actions;
 export const productsReducer = productsSlice.reducer;

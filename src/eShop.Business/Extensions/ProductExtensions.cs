@@ -23,6 +23,10 @@ namespace eShop.Business.Extensions
                 "price-desc" => query.OrderByDescending(p => p.BasePrice),
                 "name" => query.OrderBy(p => p.Name),
                 "name-desc" => query.OrderByDescending(p => p.Name),
+                "id" => query.OrderBy(p => p.Id),
+                "id-desc" => query.OrderByDescending(p => p.Id),
+                "created-date" => query.OrderBy(p => p.CreatedDate),
+                "created-date-desc" => query.OrderByDescending(p => p.CreatedDate),
                 _ => query
             };
         }
