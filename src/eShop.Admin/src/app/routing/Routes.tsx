@@ -9,6 +9,9 @@ import ReviewListView from "../../features/reviews/ReviewListView";
 import ErrorsControl from "../../features/errors/ErrorsControl";
 import ServerError from "../../features/errors/ServerError";
 import NotFound from "../../features/errors/NotFound";
+import ProductForm from "../../features/products/ProductForm";
+import CategoryEditWrapper from "../../features/categories/CategoryEditWrapper";
+import CategoryCreateWrapper from "../../features/categories/CategoryCreateWrapper";
 
 export const router = createBrowserRouter([
     {
@@ -50,6 +53,18 @@ export const router = createBrowserRouter([
             {
                 path: 'errors/notfound',
                 element: <NotFound />
+            },
+            {
+                path: 'products/create',
+                element: <ProductForm />
+            },
+            {
+                path: 'categories/create',
+                element: <CategoryCreateWrapper />
+            },
+            {
+                path: 'categories/edit/:id',
+                element: <CategoryEditWrapper />
             },
         ]
     }

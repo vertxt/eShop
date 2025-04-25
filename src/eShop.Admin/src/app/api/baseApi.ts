@@ -1,3 +1,4 @@
+import { router } from "../routing/Routes";
 import { BaseQueryApi, FetchArgs, fetchBaseQuery, FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { toast } from "react-toastify";
 
@@ -22,11 +23,12 @@ const handleErrorResponse = (error: unknown) => {
     const { status, data } = error as FetchBaseQueryError;
     const err = data as ErrorResponse;
 
-    const navigateTo = (path: string, state?: any) => {
-        import("../routing/Routes").then(({ router }) => {
-            router.navigate(path, state);
-        });
-    };
+    // lazy import (in case needed to deal with circular dependency)
+    // const navigateTo = (path: string, state?: any) => {
+    //     import("../routing/Routes").then(({ router }) => {
+    //         router.navigate(path, state);
+    //     });
+    // };
 
     switch (status) {
         case 400:
@@ -41,10 +43,12 @@ const handleErrorResponse = (error: unknown) => {
             toast.error(err.detail ?? err.title);
             break;
         case 404:
-            navigateTo('/errors/notfound');
+            // navigateTo('/errors/notfound');
+            router.navigate('/errors/notfound');
             break;
         case 500:
-            navigateTo('/errors/server', { state: { error: err } });
+            // navigateTo('/errors/server', { state: { error: err } });
+            router.navigate('/errors/server', { state: { error: err } });
             break
     }
 };
@@ -54,7 +58,11 @@ const baseQuery = fetchBaseQuery({
     credentials: 'include',
 });
 
+const sleep = () => new Promise(resolve => setTimeout(resolve, 1000));
+
 export const customQueryWithErrorHandling = async (args: string | FetchArgs, api: BaseQueryApi, extraOptions: object) => {
+    // sleep for 1 second to observe cache update behaviour
+    await sleep();
     const result = await baseQuery(args, api, extraOptions);
 
     if (result.error) {

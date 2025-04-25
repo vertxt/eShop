@@ -33,7 +33,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
   };
 
   return (
-    <Box sx={{ display: "flex", minHeight: '100vh' }}>
+    <Box sx={{ display: "flex", minHeight: '100vh', minWidth: '100vw' }}>
       <AppBar position="fixed" open={open} drawerWidth={drawerWidth}>
         <Toolbar>
           <IconButton

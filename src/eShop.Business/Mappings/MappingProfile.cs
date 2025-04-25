@@ -81,6 +81,7 @@ namespace eShop.Business.Mappings
             // Category mappings
             CreateMap<Category, CategoryDto>();
             CreateMap<CreateCategoryDto, Category>();
+            CreateMap<UpdateCategoryDto, Category>();
             CreateMap<CreateCategoryAttributeDto, CategoryAttribute>();
             CreateMap<Category, CategoryDetailDto>();
             CreateMap<CategoryAttribute, CategoryAttributeDto>();
