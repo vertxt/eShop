@@ -1,6 +1,7 @@
 using eShop.Shared.Common.Pagination;
 using eShop.Shared.DTOs.Products;
 using eShop.Shared.Parameters;
+using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 
 namespace eShop.Business.Interfaces
 {
@@ -28,8 +29,10 @@ namespace eShop.Business.Interfaces
         Task<bool> DeleteProductImageAsync(int imageId);
         
         // Attribute methods
-        // Task<int> AddProductAttributeAsync(int productId, CreateProductAttributeDto createProductAttributeDto);
-        // Task<bool> UpdateProductAttributeAsync(int attributeId, UpdateProductAttributeDto updateProductAttributeDto);
-        // Task<bool> DeleteProductAttributeAsync(int attributeId);
+        Task<ProductAttributeDto> GetAttributeByIdAsync(int attributeId);
+        Task<int> AddAttributeAsync(int productId, CreateProductAttributeDto createProductAttributeDto);
+        Task<bool> UpdateAttributeAsync(int attributeId, UpdateProductAttributeDto updateProductAttributeDto);
+        Task<bool> DeleteAttributeAsync(int attributeId);
+        Task<IEnumerable<ProductAttributeDto>> GetAttributesByProductIdAsync(int productId);
     }
 }

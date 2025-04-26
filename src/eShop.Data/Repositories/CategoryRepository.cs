@@ -16,9 +16,33 @@ namespace eShop.Data.Repositories
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public IQueryable<CategoryAttribute> GetAllAttributes()
+        public IQueryable<CategoryAttribute> GetAttributesByCategoryIdAsync(int categoryId)
         {
-            return _context.CategoryAttributes;
+            return _context.CategoryAttributes
+                .Where(ca => ca.CategoryId == categoryId);
+        }
+
+        public async Task<CategoryAttribute?> GetAttributeByIdAsync(int id)
+        {
+            return await _context.CategoryAttributes.FindAsync(id);
+        }
+
+        public async Task<bool> AddAttributeAsync(CategoryAttribute categoryAttribute)
+        {
+            await _context.CategoryAttributes.AddAsync(categoryAttribute);
+            return await _context.SaveChangesAsync() > 0;
+        }
+        public async Task<bool> UpdateAttributeAsync(CategoryAttribute categoryAttribute)
+        {
+            _context.CategoryAttributes.Update(categoryAttribute);
+            return await _context.SaveChangesAsync() > 0;
+        }
+        public async Task<bool> DeleteAttributeAsync(int attributeId)
+        {
+            var attribute = await _context.CategoryAttributes.FindAsync(attributeId);
+            if (attribute is null) return false;
+            _context.CategoryAttributes.Remove(attribute);
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }

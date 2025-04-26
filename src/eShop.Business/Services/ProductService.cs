@@ -12,13 +12,22 @@ namespace eShop.Business.Services
 {
     public class ProductService : IProductService
     {
+        private readonly ICategoryRepository _categoryRepository;
         private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
 
-        public ProductService(IProductRepository productRepository, IMapper mapper)
+        public ProductService(IProductRepository productRepository, ICategoryRepository categoryRepository, IMapper mapper)
         {
             _productRepository = productRepository;
+            _categoryRepository = categoryRepository;
             _mapper = mapper;
+        }
+
+        private string GenerateSku(string productName, string variantName = "base")
+        {
+            string baseName = $"{productName}-{variantName}".ToUpper().Replace(" ", "-");
+            string suffix = DateTime.UtcNow.Ticks.ToString("N")[..6];
+            return $"{baseName}-{suffix}";
         }
 
         public async Task<PagedList<ProductDto>> GetAllAsync(ProductParameters productParams)
@@ -121,6 +130,11 @@ namespace eShop.Business.Services
 
             var variant = _mapper.Map<ProductVariant>(createProductVariantDto);
             variant.ProductId = productId;
+
+            if (string.IsNullOrEmpty(variant.SKU))
+            {
+                variant.SKU = GenerateSku(product.Name, variant.Name);
+            }
 
             if (!product.HasVariants)
             {
@@ -293,5 +307,76 @@ namespace eShop.Business.Services
         }
 
         // Attribute methods
+        public async Task<ProductAttributeDto> GetAttributeByIdAsync(int attributeId)
+        {
+            var attribute = await _productRepository.GetAttributeByIdAsync(attributeId);
+            if (attribute is null)
+            {
+                throw new KeyNotFoundException($"Product attribute with ID {attributeId} not found");
+            }
+
+            return _mapper.Map<ProductAttributeDto>(attribute);
+        }
+
+        public async Task<int> AddAttributeAsync(int productId, CreateProductAttributeDto createProductAttributeDto)
+        {
+            var product = await _productRepository.GetByIdAsync(productId);
+            if (product is null)
+            {
+                throw new KeyNotFoundException($"Product with ID {productId} not found");
+            }
+
+            var categoryAttribute = await _categoryRepository.GetAttributeByIdAsync(createProductAttributeDto.AttributeId);
+            if (categoryAttribute is null)
+            {
+                throw new InvalidOperationException($"Category attribute with ID {createProductAttributeDto.AttributeId} not found");
+            }
+
+            if (categoryAttribute.CategoryId != product.CategoryId)
+            {
+                throw new InvalidOperationException($"Category attribute with ID {createProductAttributeDto.AttributeId} does not belong to the product's category");
+            }
+
+            var attribute = _mapper.Map<ProductAttribute>(createProductAttributeDto);
+            attribute.ProductId = productId;
+            await _productRepository.AddAttributeAsync(attribute);
+
+            return attribute.Id;
+        }
+
+        public async Task<bool> UpdateAttributeAsync(int attributeId, UpdateProductAttributeDto updateProductAttributeDto)
+        {
+            var attribute = await _productRepository.GetAttributeByIdAsync(attributeId);
+            if (attribute is null)
+            {
+                throw new KeyNotFoundException($"Product attribute with ID {attributeId} not found");
+            }
+
+            _mapper.Map(updateProductAttributeDto, attribute);
+            return await _productRepository.UpdateAttributeAsync(attribute);
+        }
+
+        public async Task<bool> DeleteAttributeAsync(int attributeId)
+        {
+            var attribute = await _productRepository.GetAttributeByIdAsync(attributeId);
+            if (attribute is null)
+            {
+                throw new KeyNotFoundException($"Product attribute with ID {attributeId} not found");
+            }
+
+            return await _productRepository.DeleteAttributeAsync(attributeId);
+        }
+
+        public async Task<IEnumerable<ProductAttributeDto>> GetAttributesByProductIdAsync(int productId)
+        {
+            var product = await _productRepository.GetByIdAsync(productId);
+            if (product is null)
+            {
+                throw new KeyNotFoundException($"Product with ID {productId} not found");
+            }
+
+            var attributes = product.Attributes;
+            return _mapper.Map<IEnumerable<ProductAttributeDto>>(attributes);
+        }
     }
 }
