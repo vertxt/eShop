@@ -5,6 +5,7 @@ import { productsReducer } from "../../features/products/productsSlice";
 import { productsApi } from "../../features/products/productsApi";
 import { categoriesApi } from "../../features/categories/categoriesApi";
 import { errorsApi } from "../../features/errors/errorsApi";
+import { loadingMiddleware } from "../../features/loading/loadingMiddleware";
 
 export const store = configureStore({
   reducer: {
@@ -18,7 +19,8 @@ export const store = configureStore({
     getDefaultMiddleware().concat(
       productsApi.middleware,
       categoriesApi.middleware,
-      errorsApi.middleware
+      errorsApi.middleware,
+      loadingMiddleware
     ),
 });
 

@@ -12,6 +12,7 @@ import DrawerHeader from "../components/DrawerHeader";
 import { switchTheme } from "../../app/store/uiSlice";
 import { DarkMode, LightMode } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "../../app/store/store";
+import GlobalLoadingIndicator from "../../features/loading/GlobalLoadingIndicator";
 
 const drawerWidth = 240;
 
@@ -35,6 +36,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
   return (
     <Box sx={{ display: "flex", minHeight: '100vh', minWidth: '100vw' }}>
       <AppBar position="fixed" open={open} drawerWidth={drawerWidth}>
+        <GlobalLoadingIndicator />
         <Toolbar>
           <IconButton
             color="inherit"

@@ -31,6 +31,8 @@ import { ExpandMore, ExpandLess } from '@mui/icons-material';
 import { useFetchCategoriesQuery } from '../categories/categoriesApi';
 import { StockRangeFilter } from '../../shared/types/productListParams';
 
+
+
 export default function ProductFilters() {
     const dispatch = useAppDispatch();
     const filters = useAppSelector(state => state.products);
@@ -70,6 +72,7 @@ export default function ProductFilters() {
     const handleReset = () => {
         dispatch(resetFilters());
         setPriceRangeLocal([0, 1000]);
+        window.scrollTo({ behavior: 'smooth', top: 0 });
     };
 
     return (
@@ -178,7 +181,7 @@ export default function ProductFilters() {
                                 ));
                             }}
                         >
-                            <FormControlLabel value="all" control={<Radio />} label="All Products" />
+                            <FormControlLabel value="all" control={<Radio />} label="All" />
                             <FormControlLabel value="true" control={<Radio />} label="With Variants" />
                             <FormControlLabel value="false" control={<Radio />} label="Without Variants" />
                         </RadioGroup>
@@ -196,11 +199,11 @@ export default function ProductFilters() {
                                 dispatch(setStockRange(value));
                             }}
                         >
-                            <FormControlLabel value="all" control={<Radio />} label="All Products" />
-                            <FormControlLabel value="outOfStock" control={<Radio />} label="Out of Stock (0)" />
-                            <FormControlLabel value="low" control={<Radio />} label="Low Stock (1-10)" />
-                            <FormControlLabel value="medium" control={<Radio />} label="Medium Stock (11-50)" />
-                            <FormControlLabel value="high" control={<Radio />} label="High Stock (50+)" />
+                            <FormControlLabel value="all" control={<Radio />} label="All" />
+                            <FormControlLabel value="outOfStock" control={<Radio />} label="Out of Stock" />
+                            <FormControlLabel value="low" control={<Radio />} label="1-10 items" />
+                            <FormControlLabel value="medium" control={<Radio />} label="11-50 items" />
+                            <FormControlLabel value="high" control={<Radio />} label="50+ items" />
                         </RadioGroup>
                     </FormControl>
 
