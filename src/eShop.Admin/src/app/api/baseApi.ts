@@ -1,6 +1,7 @@
 import { router } from "../routing/Routes";
 import { BaseQueryApi, FetchArgs, fetchBaseQuery, FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { toast } from "react-toastify";
+import { customParamsSerializer } from "../../shared/utils/customParamsSerializer";
 
 type ErrorResponse = {
     type: string,
@@ -56,12 +57,13 @@ const handleErrorResponse = (error: unknown) => {
 const baseQuery = fetchBaseQuery({
     baseUrl: 'https://localhost:5000/api',
     credentials: 'include',
+    paramsSerializer: customParamsSerializer,
 });
 
-const sleep = () => new Promise(resolve => setTimeout(resolve, 1000));
+const sleep = () => new Promise(resolve => setTimeout(resolve, 500));
 
 export const customQueryWithErrorHandling = async (args: string | FetchArgs, api: BaseQueryApi, extraOptions: object) => {
-    // sleep for 1 second to observe cache update behaviour
+    // sleep for half a second to observe cache update behaviour
     await sleep();
     const result = await baseQuery(args, api, extraOptions);
 

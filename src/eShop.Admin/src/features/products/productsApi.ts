@@ -1,5 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { Product } from "../../shared/types/product";
+import { Product, ProductDetail } from "../../shared/types/product";
 import { PaginationMetadata } from "../../shared/types/pagination";
 import { ProductListParams } from "../../shared/types/productListParams";
 import { cleanParams } from "../../shared/utils/queryUtils";
@@ -16,6 +16,10 @@ export const productsApi = createApi({
                     params: cleanParams(params),
                 }
             }
+        }),
+
+        fetchProductDetails: builder.query<ProductDetail, number>({
+            query: (params) => `/products/${params}`
         })
     })
 })

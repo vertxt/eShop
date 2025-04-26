@@ -38,26 +38,54 @@ namespace eShop.Business.Extensions
                 return query;
             }
 
+            // By Price Range
             if (filterParams.MaxPrice.HasValue)
             {
-                query = query.Where(p => p.BasePrice <= filterParams.MaxPrice);
+                query = query.Where(p => p.BasePrice <= filterParams.MaxPrice.Value);
             }
-
             if (filterParams.MinPrice.HasValue)
             {
-                query = query.Where(p => p.BasePrice >= filterParams.MinPrice);
+                query = query.Where(p => p.BasePrice >= filterParams.MinPrice.Value);
             }
 
-            if (filterParams.CategoryIds is not null && filterParams.CategoryIds.Count > 0)
+            // By Categories
+            if (filterParams.CategoryIds is not null && filterParams.CategoryIds.Any())
             {
                 query = query.Where(p => filterParams.CategoryIds.Contains(p.CategoryId));
             }
-            
-            if (filterParams.InStock.HasValue)
+
+            // By Stock Range (All, OutOfStock, Low, Medium, High)
+            query = filterParams.StockRange switch
             {
-                query = query.Where(p => p.QuantityInStock > 0);
+                StockRange.OutOfStock => query.Where(p => p.QuantityInStock <= 0),
+                StockRange.Low => query.Where(p => 0 < p.QuantityInStock && p.QuantityInStock <= 10),
+                StockRange.Medium => query.Where(p => 10 < p.QuantityInStock && p.QuantityInStock <= 50),
+                StockRange.High => query.Where(p => 50 < p.QuantityInStock),
+                _ => query
+            };
+
+            // By Active Status
+            if (filterParams.IsActive.HasValue)
+            {
+                query = query.Where(p => p.IsActive == filterParams.IsActive.Value);
             }
-            
+
+            // Whether or not has variants
+            if (filterParams.HasVariants.HasValue)
+            {
+                query = query.Where(p => p.HasVariants == filterParams.HasVariants.Value);
+            }
+
+            if (filterParams.CreatedBefore.HasValue)
+            {
+                query = query.Where(p => DateTime.Compare(p.CreatedDate, filterParams.CreatedBefore.Value) < 0);
+            }
+
+            if (filterParams.CreatedAfter.HasValue)
+            {
+                query = query.Where(p => DateTime.Compare(p.CreatedDate, filterParams.CreatedAfter.Value) > 0);
+            }
+
             return query;
         }
     }

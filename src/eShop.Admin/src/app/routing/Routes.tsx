@@ -1,6 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
-import ProductListView from "../../features/products/ProductListView";
 import CategoryListView from "../../features/categories/CategoryListView";
 import UserListView from "../../features/users/UserListView";
 import Dashboard from "../../features/dashboard/Dashboard";
@@ -12,6 +11,7 @@ import NotFound from "../../features/errors/NotFound";
 import ProductForm from "../../features/products/ProductForm";
 import CategoryEditWrapper from "../../features/categories/CategoryEditWrapper";
 import CategoryCreateWrapper from "../../features/categories/CategoryCreateWrapper";
+import ProductPage from "../../features/products/ProductPage";
 
 export const router = createBrowserRouter([
     {
@@ -24,7 +24,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: 'products',
-                element: <ProductListView />
+                element: <ProductPage />
             },
             {
                 path: 'categories',
