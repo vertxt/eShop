@@ -4,6 +4,7 @@ import { PaginationMetadata } from "../../shared/types/pagination";
 import { ProductListParams } from "../../shared/types/productListParams";
 import { cleanParams } from "../../shared/utils/queryUtils";
 import { customQueryWithErrorHandling } from "../../app/api/baseApi";
+import { ProductSchema } from "../../shared/schemas/createProductSchema";
 
 export const productsApi = createApi({
     reducerPath: 'productsApi',
@@ -14,14 +15,41 @@ export const productsApi = createApi({
                 return {
                     url: '/products',
                     params: cleanParams(params),
-                }
+                };
             }
         }),
 
         fetchProductDetails: builder.query<ProductDetail, number>({
             query: (params) => `/products/${params}`
+        }),
+
+        createProduct: builder.mutation<Product, ProductSchema>({
+            query: (data) => {
+                return {
+                    url: '/products',
+                    method: 'POST',
+                    body: data,
+                };
+            }
+        }),
+
+        updateProduct: builder.mutation<void, { id: number, data: FormData }>({
+            query: ({ id, data }) => {
+                data.append('id', id.toString());
+
+                return {
+                    url: `/products/${id}`,
+                    method: 'PUT',
+                    body: data,
+                };
+            }
         })
     })
 })
 
-export const { useFetchProductsQuery } = productsApi;
+export const {
+    useFetchProductsQuery,
+    useFetchProductDetailsQuery,
+    useCreateProductMutation,
+    useUpdateProductMutation,
+} = productsApi;

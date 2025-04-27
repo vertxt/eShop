@@ -8,10 +8,10 @@ import ReviewListView from "../../features/reviews/ReviewListView";
 import ErrorsControl from "../../features/errors/ErrorsControl";
 import ServerError from "../../features/errors/ServerError";
 import NotFound from "../../features/errors/NotFound";
-import ProductForm from "../../features/products/ProductForm";
 import CategoryEditWrapper from "../../features/categories/CategoryEditWrapper";
 import CategoryCreateWrapper from "../../features/categories/CategoryCreateWrapper";
 import ProductPage from "../../features/products/ProductPage";
+import AddProductPage from "../../features/products/AddProductPage";
 
 export const router = createBrowserRouter([
     {
@@ -56,7 +56,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: 'products/create',
-                element: <ProductForm />
+                element: <AddProductPage />
             },
             {
                 path: 'categories/create',
