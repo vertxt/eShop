@@ -29,6 +29,20 @@ namespace eShop.API.Controllers
             return Ok(category);
         }
 
+        [HttpGet("details/{id:int}")]
+        public async Task<ActionResult<CategoryDetailDto>> GetDetailsById(int id)
+        {
+            var category = await _categoryService.GetByIdWithDetailsAsync(id);
+            return Ok(category);
+        }
+
+        [HttpGet("attributes/{categoryId:int}")]
+        public async Task<ActionResult<IEnumerable<CategoryAttributeDto>>> GetAttributesByCategoryId(int categoryId)
+        {
+            var attributes = await _categoryService.GetAttributesByCategoryIdAsync(categoryId);
+            return Ok(attributes);
+        }
+
         [HttpPost]
         public async Task<ActionResult<CategoryDto>> Create(CreateCategoryDto createCategoryDto)
         {

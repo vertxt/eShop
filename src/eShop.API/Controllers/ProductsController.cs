@@ -46,7 +46,7 @@ namespace eShop.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(CreateProductDto createProductDto)
+        public async Task<ActionResult> Create([FromForm] CreateProductDto createProductDto)
         {
             var result = await _productService.CreateAsync(createProductDto);
 
@@ -59,7 +59,7 @@ namespace eShop.API.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> Update(int id, UpdateProductDto updateProductDto)
+        public async Task<ActionResult> Update(int id, [FromForm] UpdateProductDto updateProductDto)
         {
             _ = await _productService.UpdateAsync(id, updateProductDto);
             return NoContent();

@@ -4,7 +4,6 @@ import { PaginationMetadata } from "../../shared/types/pagination";
 import { ProductListParams } from "../../shared/types/productListParams";
 import { cleanParams } from "../../shared/utils/queryUtils";
 import { customQueryWithErrorHandling } from "../../app/api/baseApi";
-import { ProductSchema } from "../../shared/schemas/createProductSchema";
 
 export const productsApi = createApi({
     reducerPath: 'productsApi',
@@ -20,10 +19,10 @@ export const productsApi = createApi({
         }),
 
         fetchProductDetails: builder.query<ProductDetail, number>({
-            query: (params) => `/products/${params}`
+            query: (params) => `/products/details/${params}`
         }),
 
-        createProduct: builder.mutation<Product, ProductSchema>({
+        createProduct: builder.mutation<Product, FormData>({
             query: (data) => {
                 return {
                     url: '/products',

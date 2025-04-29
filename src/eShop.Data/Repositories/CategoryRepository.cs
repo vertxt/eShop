@@ -7,8 +7,7 @@ namespace eShop.Data.Repositories
     public class CategoryRepository : Repository<Category>, ICategoryRepository
     {
         public CategoryRepository(ApplicationDbContext context) : base(context) { }
-
-        public async Task<Category?> GetCategoryWithDetailsByIdAsync(int id)
+        public async Task<Category?> GetByIdWithDetailsAsync(int id)
         {
             return await _entities
                 .Include(c => c.Products)
@@ -16,7 +15,7 @@ namespace eShop.Data.Repositories
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public IQueryable<CategoryAttribute> GetAttributesByCategoryIdAsync(int categoryId)
+        public IQueryable<CategoryAttribute> GetAttributesByCategoryId(int categoryId)
         {
             return _context.CategoryAttributes
                 .Where(ca => ca.CategoryId == categoryId);

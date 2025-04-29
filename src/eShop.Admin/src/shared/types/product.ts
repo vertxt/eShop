@@ -49,12 +49,13 @@ export interface ProductVariant {
     name: string;
     price: number;
     quantityInStock: number | null;
-    sKU: string;
-    images: ProductImage[];
+    sku: string;
+    isActive: boolean;
 }
 
 export interface ProductAttribute {
     id: number;
+    attributeId: number;
     name: string;
     displayName: string;
     value: string;

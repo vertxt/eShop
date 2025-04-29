@@ -35,15 +35,21 @@ namespace eShop.Business.Services
             return _mapper.Map<CategoryDto>(category);
         }
 
-        public async Task<CategoryDetailDto> GetDetailByIdAsync(int id)
+        public async Task<CategoryDetailDto> GetByIdWithDetailsAsync(int id)
         {
-            var category = await _categoryRepository.GetCategoryWithDetailsByIdAsync(id);
+            var category = await _categoryRepository.GetByIdWithDetailsAsync(id);
             if (category is null)
             {
                 throw new KeyNotFoundException($"Category with ID ${id} not found");
             }
 
             return _mapper.Map<CategoryDetailDto>(category);
+        }
+
+        public async Task<IEnumerable<CategoryAttributeDto>> GetAttributesByCategoryIdAsync(int categoryId)
+        {
+            var attributes = await _categoryRepository.GetAttributesByCategoryId(categoryId).ToListAsync();
+            return _mapper.Map<List<CategoryAttributeDto>>(attributes);
         }
 
         public async Task<CategoryDto> CreateAsync(CreateCategoryDto createCategoryDto)
@@ -56,13 +62,14 @@ namespace eShop.Business.Services
 
         public async Task<CategoryDto> UpdateAsync(int id, UpdateCategoryDto updateCategoryDto)
         {
-            var existingCategory = await _categoryRepository.GetByIdAsync(id);
+            var existingCategory = await _categoryRepository.GetByIdWithDetailsAsync(id);
 
             if (existingCategory is null)
             {
                 throw new KeyNotFoundException($"Category with ID {id} not found");
             }
 
+            existingCategory.Attributes.Clear();
             _mapper.Map(updateCategoryDto, existingCategory);
             await _categoryRepository.UpdateAsync(existingCategory);
 
@@ -80,42 +87,44 @@ namespace eShop.Business.Services
             await _categoryRepository.DeleteAsync(id);
         }
 
-        public async Task<int> AddAttributeAsync(int categoryId, CreateCategoryAttributeDto createCategoryAttributeDto)
-        {
-            var category = await _categoryRepository.GetByIdAsync(categoryId);
-            if (category is null)
-            {
-                throw new KeyNotFoundException($"Category with ID {categoryId} not found");
-            }
 
-            var attribute = _mapper.Map<CategoryAttribute>(createCategoryAttributeDto);
-            attribute.CategoryId = categoryId;
+        /* UNUSED METHODS (commented out) */
+        // public async Task<int> AddAttributeAsync(int categoryId, CreateCategoryAttributeDto createCategoryAttributeDto)
+        // {
+        //     var category = await _categoryRepository.GetByIdAsync(categoryId);
+        //     if (category is null)
+        //     {
+        //         throw new KeyNotFoundException($"Category with ID {categoryId} not found");
+        //     }
 
-            await _categoryRepository.AddAttributeAsync(attribute);
-            return attribute.Id;
-        }
+        //     var attribute = _mapper.Map<CategoryAttribute>(createCategoryAttributeDto);
+        //     attribute.CategoryId = categoryId;
 
-        public async Task<bool> UpdateAttributeAsync(int attributeId, UpdateCategoryAttributeDto updateCategoryAttributeDto)
-        {
-            var attribute = await _categoryRepository.GetAttributeByIdAsync(attributeId);
-            if (attribute is null)
-            {
-                throw new KeyNotFoundException($"Category attribute with ID {attributeId} not found");
-            }
+        //     await _categoryRepository.AddAttributeAsync(attribute);
+        //     return attribute.Id;
+        // }
 
-            _mapper.Map(updateCategoryAttributeDto, attribute);
+        // public async Task<bool> UpdateAttributeAsync(int attributeId, UpdateCategoryAttributeDto updateCategoryAttributeDto)
+        // {
+        //     var attribute = await _categoryRepository.GetAttributeByIdAsync(attributeId);
+        //     if (attribute is null)
+        //     {
+        //         throw new KeyNotFoundException($"Category attribute with ID {attributeId} not found");
+        //     }
 
-            return await _categoryRepository.UpdateAttributeAsync(attribute);
-        }
+        //     _mapper.Map(updateCategoryAttributeDto, attribute);
 
-        public async Task<bool> DeleteAttributeAsync(int attributeId)
-        {
-            var attribute = _categoryRepository.GetAttributeByIdAsync(attributeId);
-            if (attribute is null)
-            {
-                throw new KeyNotFoundException($"Category Attribute with ID {attributeId} not found");
-            }
-            return await _categoryRepository.DeleteAttributeAsync(attributeId);
-        }
+        //     return await _categoryRepository.UpdateAttributeAsync(attribute);
+        // }
+
+        // public async Task<bool> DeleteAttributeAsync(int attributeId)
+        // {
+        //     var attribute = _categoryRepository.GetAttributeByIdAsync(attributeId);
+        //     if (attribute is null)
+        //     {
+        //         throw new KeyNotFoundException($"Category Attribute with ID {attributeId} not found");
+        //     }
+        //     return await _categoryRepository.DeleteAttributeAsync(attributeId);
+        // }
     }
 }

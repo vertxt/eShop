@@ -58,24 +58,26 @@ namespace eShop.Business.Mappings
 
             // CreateProductDto -> Product
             CreateMap<CreateProductDto, Product>()
+                .ForMember(dest => dest.Images, opt => opt.Ignore()) // handle manually
+                .ForMember(dest => dest.Variants, opt => opt.Ignore()) // handle manually
+                .ForMember(dest => dest.Attributes, opt => opt.Ignore()) // handle manually
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(_ => DateTime.UtcNow))
                 .ForMember(dest => dest.UpdatedDate, opt => opt.Ignore());
 
             // CreateProductAttributeDto -> ProductAttribute
             CreateMap<CreateProductAttributeDto, ProductAttribute>();
 
-            // CreateProductImageDto -> ProductImage
-            CreateMap<CreateProductImageDto, ProductImage>();
-
             // CreateProductVariantDto -> ProductVariant
             CreateMap<CreateProductVariantDto, ProductVariant>();
 
-            // CreateProductReviewDto -> Review
-            CreateMap<CreateProductReviewDto, Review>()
-                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(_ => DateTime.UtcNow));
+            // UpdateProductVariantDto -> ProductVariant
+            CreateMap<UpdateProductVariantDto, ProductVariant>();
 
             // UpdateProductDto -> Product
             CreateMap<UpdateProductDto, Product>()
+                .ForMember(dest => dest.Images, opt => opt.Ignore()) // handle manually
+                .ForMember(dest => dest.Variants, opt => opt.Ignore()) // handle manually
+                .ForMember(dest => dest.Attributes, opt => opt.Ignore()) // handle manually
                 .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
 
             // Category mappings

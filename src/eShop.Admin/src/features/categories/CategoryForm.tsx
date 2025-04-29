@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Box, Button, Grid, Paper, TextField, Typography } from "@mui/material";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { Box, Button, Card, CardContent, Divider, Grid, IconButton, Paper, TextField, Typography } from "@mui/material";
+import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Category } from "../../shared/types/category";
 import { createCategorySchema, CreateCategorySchema } from "../../shared/schemas/createCategorySchema";
 import { useCreateCategoryMutation, useUpdateCategoryMutation } from "./categoriesApi";
+import { Add, Delete, DeleteOutline } from "@mui/icons-material";
 
 type Props = {
     isEditMode?: boolean;
@@ -16,23 +17,33 @@ export default function CategoryForm({ isEditMode = false, existingCategory = nu
     const [createCategory, { isLoading: isCreating }] = useCreateCategoryMutation();
     const [updateCategory, { isLoading: isUpdating }] = useUpdateCategoryMutation();
     const [error, setError] = useState<string | null>(null);
-
     const isLoading = isCreating || isUpdating;
 
     const defaultValues: CreateCategorySchema = {
         name: isEditMode && existingCategory?.name ? existingCategory.name : "",
         description: isEditMode && existingCategory?.description ? existingCategory.description : "",
+        attributes: isEditMode && existingCategory?.attributes ?
+            existingCategory.attributes.map(attr => ({
+                displayName: attr.name,
+                name: attr.displayName,
+            })) : [],
     };
 
     const {
         register,
         handleSubmit,
+        control,
         formState: { errors },
     } = useForm<CreateCategorySchema>({
         resolver: zodResolver(createCategorySchema),
         defaultValues,
         mode: 'onBlur'
     });
+
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "attributes",
+    })
 
     const onSubmit: SubmitHandler<CreateCategorySchema> = async (data) => {
         try {
@@ -48,6 +59,13 @@ export default function CategoryForm({ isEditMode = false, existingCategory = nu
             setError("Failed to save category. Please try again.");
         }
     };
+
+    const addNewAttribute = () => {
+        append({
+            name: "",
+            displayName: "",
+        })
+    }
 
     return (
         <Paper sx={{ p: 3 }}>
@@ -94,6 +112,68 @@ export default function CategoryForm({ isEditMode = false, existingCategory = nu
                         >
                             {isEditMode ? "Update" : "Create"}
                         </Button>
+                    </Grid>
+                    <Grid size={12}>
+                        <Divider sx={{ my: 2 }} />
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                            <Typography variant="h6">Category Attributes</Typography>
+                            <Button
+                                variant="outlined"
+                                startIcon={<Add />}
+                                onClick={addNewAttribute}
+                                disabled={isLoading}
+                            >
+                                Add Attribute
+                            </Button>
+                        </Box>
+                        {fields.map((field, index) => (
+                            <Grid key={field.id} container spacing={2} alignItems='center' sx={{ my: '0.5rem' }}>
+                                <Grid size={{ xs: 12, md: 5 }}>
+                                    <TextField
+                                        fullWidth
+                                        label="Name"
+                                        required
+                                        size="small"
+                                        disabled={isLoading}
+                                        error={!!errors.attributes?.[index]?.displayName}
+                                        helperText={errors.attributes?.[index]?.displayName?.message}
+                                        {...register(`attributes.${index}.name`)}
+                                        placeholder="Color"
+                                    />
+                                </Grid>
+
+                                <Grid size={{ xs: 12, md: 5 }}>
+                                    <TextField
+                                        fullWidth
+                                        label="Display Name"
+                                        required
+                                        size="small"
+                                        disabled={isLoading}
+                                        error={!!errors.attributes?.[index]?.displayName}
+                                        helperText={errors.attributes?.[index]?.displayName?.message}
+                                        {...register(`attributes.${index}.displayName`)}
+                                        placeholder="Color"
+                                    />
+                                </Grid>
+
+                                <Grid size={{ xs: 12, md: 2 }}>
+                                    <IconButton
+                                        color="error"
+                                        onClick={() => remove(index)}
+                                        disabled={isLoading}
+                                        aria-label="Remove attribute"
+                                    >
+                                        <DeleteOutline />
+                                    </IconButton>
+                                </Grid>
+                            </Grid>
+                        ))}
+
+                        {fields.length === 0 && (
+                            <Typography color="text.secondary" sx={{ mt: 2, mb: 2, fontStyle: 'italic' }}>
+                                No attributes defined. Click "Add Attribute" to define attributes for this category.
+                            </Typography>
+                        )}
                     </Grid>
                 </Grid>
             </Box>

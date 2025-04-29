@@ -1,5 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { Category } from "../../shared/types/category";
+import { Category, CategoryAttribute } from "../../shared/types/category";
 import { customQueryWithErrorHandling } from "../../app/api/baseApi";
 import { CreateCategorySchema } from "../../shared/schemas/createCategorySchema";
 
@@ -15,6 +15,10 @@ export const categoriesApi = createApi({
 
         fetchCategoryById: builder.query<Category, number>({
             query: (id) => `/categories/${id}`
+        }),
+
+        fetchAttributesByCategoryId: builder.query<CategoryAttribute[], number>({
+            query: (id) => `/categories/attributes/${id}`
         }),
 
         createCategory: builder.mutation<Category, CreateCategorySchema>({
@@ -50,5 +54,6 @@ export const {
     useCreateCategoryMutation,
     useUpdateCategoryMutation,
     useDeleteCategoryMutation,
-    useFetchCategoryByIdQuery
+    useFetchCategoryByIdQuery,
+    useFetchAttributesByCategoryIdQuery
 } = categoriesApi;

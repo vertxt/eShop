@@ -47,7 +47,7 @@ export const SIDEBAR_ITEMS: NavigationItem[] = [
   },
   {
     id: 'errors',
-    title: 'errors',
+    title: 'Errors',
     icon: <Error />,
     path: '/errors',
   }

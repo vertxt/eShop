@@ -3,11 +3,11 @@ import { JSX, ReactNode } from "react";
 
 type Props = {
     children?: ReactNode,
-    value: number,
     index: number,
+    value: number,
 }
 
-export default function TabPanel({ children, value, index, ...other }: Props): JSX.Element {
+export default function TabPanel({ children, index, value, ...other }: Props): JSX.Element {
   return (
     <div
       role="tabpanel"

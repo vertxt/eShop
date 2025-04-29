@@ -12,6 +12,7 @@ import CategoryEditWrapper from "../../features/categories/CategoryEditWrapper";
 import CategoryCreateWrapper from "../../features/categories/CategoryCreateWrapper";
 import ProductPage from "../../features/products/ProductPage";
 import AddProductPage from "../../features/products/AddProductPage";
+import EditProductPage from "../../features/products/EditProductPage";
 
 export const router = createBrowserRouter([
     {
@@ -57,6 +58,10 @@ export const router = createBrowserRouter([
             {
                 path: 'products/create',
                 element: <AddProductPage />
+            },
+            {
+                path: 'products/edit/:id',
+                element: <EditProductPage />
             },
             {
                 path: 'categories/create',
