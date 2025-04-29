@@ -109,7 +109,6 @@ export default function ProductListView() {
                             fullWidth
                             label="Search products"
                             variant="outlined"
-                            size="small"
                             value={localSearch}
                             onChange={(e) => setLocalSearch(e.target.value)}
                         />
@@ -127,7 +126,7 @@ export default function ProductListView() {
                 <Typography>
                     {data.metadata?.totalCount ?? 0} products found
                 </Typography>
-                <FormControl sx={{ minWidth: 200 }} size="small">
+                <FormControl sx={{ minWidth: 200 }}>
                     <InputLabel>Sort By</InputLabel>
                     <Select
                         value={productListParams.sortBy}
@@ -177,7 +176,6 @@ export default function ProductListView() {
                                     <Chip
                                         label={item.isActive ? "Active" : "Inactive"}
                                         color={item.isActive ? "success" : "default"}
-                                        size="small"
                                     />
                                 </TableCell>
                                 <TableCell>{item.categoryName}</TableCell>
@@ -191,8 +189,7 @@ export default function ProductListView() {
                                 <TableCell align="right">
                                     <Button
                                         component={Link}
-                                        to={`/products/${item.id}/edit`}
-                                        size="small"
+                                        to={`/products/edit/${item.id}`}
                                         variant="outlined"
                                         sx={{ mr: 1 }}
                                     >
@@ -201,7 +198,6 @@ export default function ProductListView() {
                                     <Button
                                         component={Link}
                                         to={`/products/${item.id}`}
-                                        size="small"
                                         variant="contained"
                                     >
                                         View
