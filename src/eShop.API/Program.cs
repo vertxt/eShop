@@ -53,7 +53,7 @@ builder.Services.AddAuthorization(options =>
 });
 
 builder.Services.AddDataLayer(builder.Configuration);
-builder.Services.AddBusinessLayer();
+builder.Services.AddBusinessLayer(builder.Configuration);
 
 var app = builder.Build();
 

@@ -8,6 +8,7 @@ namespace eShop.Data.Entities.ProductAggregate
         public int? ProductVariantId { get; set; }
         public ProductVariant? ProductVariant { get; set; }
         public required string Url { get; set; }
+        public string? PublicId { get; set; }
         public bool IsMain { get; set; }
         public int? DisplayOrder { get; set; }
     }
