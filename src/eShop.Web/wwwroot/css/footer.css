@@ -1,0 +1,28 @@
+.footer {
+  background-color: #f8f9fa;
+}
+
+.footer h5 {
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.footer h5::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 50px;
+  background-color: var(--accent-color, #ff006e);
+}
+
+.footer .btn-outline-secondary {
+  border-color: #ced4da;
+}
+
+.footer .btn-outline-secondary:hover {
+  background-color: var(--primary-color, #3a86ff);
+  border-color: var(--primary-color, #3a86ff);
+  color: white;
+}

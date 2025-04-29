@@ -5,6 +5,7 @@ import { getDarkPalette, getLightPalette } from '../shared/config/themes/palette
 import { ToastContainer } from 'react-toastify';
 import { useAppSelector } from './store/store';
 import { getComponents } from '../shared/config/themes/components';
+import { getTypography } from '../shared/config/themes/typography';
 
 function App() {
   const mode = useAppSelector(state => state.ui.theme);
@@ -13,6 +14,7 @@ function App() {
       ...(mode === 'dark' ? getDarkPalette() : getLightPalette())
     },
     components: getComponents(),
+    typography: getTypography(),
   })
 
   return (

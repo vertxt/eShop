@@ -153,7 +153,7 @@ namespace eShop.Business.Services
                 product.Attributes = attributes;
             }
 
-            await _productRepository.CreateProductWithRelationsAsync(product);
+            await _productRepository.AddAsync(product);
 
             var saved = await _productRepository.GetByIdWithDetailsAsync(product.Id);
             return _mapper.Map<ProductDto>(saved);
@@ -217,7 +217,7 @@ namespace eShop.Business.Services
                         throw new InvalidOperationException("Failed to remove image from cloud storage.");
                     }
                 }
-                product.Images.Remove(image);
+                _productRepository.RemoveImageAsync(image);
             }
 
             for (int i = 0; i < dto.ExistingImageIds.Count; i++)

@@ -37,12 +37,11 @@ namespace eShop.Data.Repositories
         }
 
         // CRUD operations
-        public async Task<bool> CreateProductWithRelationsAsync(Product product)
+        public void RemoveImageAsync(ProductImage image)
         {
-            await _context.Products.AddAsync(product);
-            await _context.SaveChangesAsync();
-            return true;
+            _context.ProductImages.Remove(image);
         }
+
 
         /* UNUSED METHODS (commented out) */
         // Variant-related methods

@@ -1,5 +1,5 @@
 import { SyntheticEvent, useEffect, useState } from "react";
-import { useFetchAttributesByCategoryIdQuery, useFetchCategoriesQuery } from "../categories/categoriesApi";
+import { useFetchCategoriesQuery, useFetchCategoryAttributesQuery } from "../categories/categoriesApi";
 import { useCreateProductMutation, useFetchProductDetailsQuery, useUpdateProductMutation } from "./productsApi";
 import { FieldErrors, useForm } from "react-hook-form";
 import { productSchema, ProductSchema } from "../../shared/schemas/createProductSchema";
@@ -58,7 +58,7 @@ export default function ProductForm({ productId, onSuccess }: Props) {
         productId!,
         { skip: !isEditMode }
     );
-    const { data: attributes, isLoading: isLoadingAttributes } = useFetchAttributesByCategoryIdQuery(categoryId!, { skip: !categoryId });
+    const { data: attributes, isLoading: isLoadingAttributes } = useFetchCategoryAttributesQuery(categoryId!, { skip: !categoryId });
 
     const [createProduct, { isLoading: isAddingProduct }] = useCreateProductMutation();
     const [updateProduct, { isLoading: isUpdatingProduct }] = useUpdateProductMutation();

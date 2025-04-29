@@ -10,7 +10,7 @@ namespace eShop.Data.Interfaces
         Task<Product?> GetByIdWithDetailsAsync(int id);
 
         // CRUD operations
-        Task<bool> CreateProductWithRelationsAsync(Product product);
+        void RemoveImageAsync(ProductImage image);
 
         /* UNUSED METHODS (commented out) */
         // Variant-related methods
