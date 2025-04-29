@@ -1,15 +1,15 @@
-import { useState } from "react";
-import { Box, Button, Card, CardContent, Divider, Grid, IconButton, Paper, TextField, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { Box, Button, Divider, Grid, IconButton, Paper, TextField, Typography } from "@mui/material";
 import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Category } from "../../shared/types/category";
+import { CategoryDetail } from "../../shared/types/category";
 import { createCategorySchema, CreateCategorySchema } from "../../shared/schemas/createCategorySchema";
 import { useCreateCategoryMutation, useUpdateCategoryMutation } from "./categoriesApi";
-import { Add, Delete, DeleteOutline } from "@mui/icons-material";
+import { Add, DeleteOutline } from "@mui/icons-material";
 
 type Props = {
     isEditMode?: boolean;
-    existingCategory?: Category | null;
+    existingCategory?: CategoryDetail | null;
     onSuccess?: () => void;
 };
 
@@ -24,8 +24,8 @@ export default function CategoryForm({ isEditMode = false, existingCategory = nu
         description: isEditMode && existingCategory?.description ? existingCategory.description : "",
         attributes: isEditMode && existingCategory?.attributes ?
             existingCategory.attributes.map(attr => ({
-                displayName: attr.name,
-                name: attr.displayName,
+                displayName: attr.displayName,
+                name: attr.name,
             })) : [],
     };
 

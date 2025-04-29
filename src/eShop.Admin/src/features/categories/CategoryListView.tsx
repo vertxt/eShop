@@ -36,7 +36,7 @@ export default function CategoryListView() {
   const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
   
   const handleEditClick = (category: Category) => {
-    navigate(`/categories/edit/${category.id}`, { state: { category } });
+    navigate(`/categories/edit/${category.id}`);
   };
 
   const handleDeleteClick = (category: Category) => {

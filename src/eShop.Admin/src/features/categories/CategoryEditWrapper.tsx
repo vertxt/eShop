@@ -1,24 +1,17 @@
-import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { useFetchCategoryByIdQuery } from "./categoriesApi";
+import { useNavigate, useParams } from "react-router-dom";
 import CategoryForm from "./CategoryForm";
 import { Box, CircularProgress, Typography, Button } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
+import { useFetchCategoryDetailsQuery } from "./categoriesApi";
 
 export default function CategoryEditWrapper() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const location = useLocation();
 
-    // Try to get the category from location state first (passed from list)
-    const categoryFromState = location.state?.category;
-
-    // If not available in state, fetch it from API
-    const { data: categoryFromApi, isLoading, error } = useFetchCategoryByIdQuery(
+    const { data: category, isLoading, error } = useFetchCategoryDetailsQuery(
         Number(id)!,
-        { skip: !!categoryFromState }
+        { skip: !id }
     );
-
-    const category = categoryFromState || categoryFromApi;
 
     const handleSuccess = () => {
         navigate("/categories");
