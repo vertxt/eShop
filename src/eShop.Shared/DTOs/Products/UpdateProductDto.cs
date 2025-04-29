@@ -1,33 +1,16 @@
+using System.Collections.Generic;
+
 namespace eShop.Shared.DTOs.Products
 {
-    public class UpdateProductDto
+    public class UpdateProductDto : CreateProductDto
     {
-        public string Name { get; set; }
-        public decimal BasePrice { get; set; }
-        public string Description { get; set; }
-        public string ShortDescription { get; set; }
-        public bool IsActive { get; set; }
-        public int CategoryId { get; set; }
-        public bool HasVariants { get; set; }
-        public int? QuantityInStock { get; set; }
+        public new List<UpdateProductVariantDto> Variants { get; set; } = new List<UpdateProductVariantDto>();
+        public List<int> ExistingImageIds { get; set; } = new List<int>();
+        public List<ImageMetadataDto> ExistingImageMetadata { get; set; } = new List<ImageMetadataDto>();
     }
 
-    public class UpdateProductImageDto
+    public class UpdateProductVariantDto : CreateProductVariantDto
     {
-        public string Url { get; set; }
-        public bool IsMain { get; set; }
-        public int DisplayOrder { get; set; }
-    }
-
-    public class UpdateProductVariantDto
-    {
-        public string Name { get; set; }
-        public decimal Price { get; set; }
-        public int? QuantityInStock { get; set; }
-    }
-
-    public class UpdateProductAttributeDto
-    {
-        public string Value { get; set; }
+        public int? Id { get; set; }
     }
 }

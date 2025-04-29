@@ -57,14 +57,16 @@ namespace eShop.Shared.DTOs.Products
         public int Id { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }
-        public int? QuantityInStock { get; set; }
+        public int QuantityInStock { get; set; }
         public string SKU { get; set; }
+        public bool isActive { get; set; }
         public ICollection<ProductImageDto> Images { get; set; } = new List<ProductImageDto>();
     }
 
     public class ProductAttributeDto
     {
         public int Id { get; set; }
+        public int AttributeId { get; set; }
         public string Name { get; set; }
         public string DisplayName { get; set; }
         public string Value { get; set; }
