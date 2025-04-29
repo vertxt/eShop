@@ -1,4 +1,3 @@
-using AutoMapper;
 using eShop.Business.Interfaces;
 using eShop.Shared.DTOs.Categories;
 using Microsoft.AspNetCore.Mvc;
@@ -10,22 +9,59 @@ namespace eShop.API.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
-        private readonly IMapper _mapper;
-        private readonly ILogger<CategoriesController> _logger;
 
-        public CategoriesController(ICategoryService categoryService, IMapper mapper, ILogger<CategoriesController> logger)
+        public CategoriesController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
-            _mapper = mapper;
-            _logger = logger;
         }
 
         [HttpGet]
-        public async Task<IEnumerable<CategoryDto>> GetCategoriesAsync()
+        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAll()
         {
-            var categories = await _categoryService.GetCategoriesAsync();
-            
-            return _mapper.Map<IEnumerable<CategoryDto>>(categories);
+            var categories = await _categoryService.GetAllAsync();
+            return Ok(categories);
+        }
+
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<CategoryDto>> GetById(int id)
+        {
+            var category = await _categoryService.GetByIdAsync(id);
+            return Ok(category);
+        }
+
+        [HttpGet("details/{id:int}")]
+        public async Task<ActionResult<CategoryDetailDto>> GetDetailsById(int id)
+        {
+            var category = await _categoryService.GetByIdWithDetailsAsync(id);
+            return Ok(category);
+        }
+
+        [HttpGet("attributes/{categoryId:int}")]
+        public async Task<ActionResult<IEnumerable<CategoryAttributeDto>>> GetAttributesByCategoryId(int categoryId)
+        {
+            var attributes = await _categoryService.GetAttributesByCategoryIdAsync(categoryId);
+            return Ok(attributes);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<CategoryDto>> Create(CreateCategoryDto createCategoryDto)
+        {
+            var addedCategory = await _categoryService.CreateAsync(createCategoryDto);
+            return CreatedAtAction(nameof(GetById), new { id = addedCategory.Id }, addedCategory);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Update(int id, UpdateCategoryDto updateCategoryDto)
+        {
+            _ = await _categoryService.UpdateAsync(id, updateCategoryDto);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            await _categoryService.DeleteAsync(id);
+            return NoContent();
         }
     }
 }

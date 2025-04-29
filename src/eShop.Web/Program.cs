@@ -1,3 +1,4 @@
+using eShop.Web.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -39,6 +40,8 @@ builder.Services.AddHttpClient("API", options =>
 {
     options.BaseAddress = new Uri("https://localhost:5000/api/");
 });
+
+builder.Services.AddScoped<IProductService, ProductService>();
 
 var app = builder.Build();
 

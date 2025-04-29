@@ -24,26 +24,24 @@ namespace eShop.Data.Repositories
             return await _entities.FindAsync(id);
         }
 
-        public async Task AddAsync(TEntity entity)
+        public async Task<bool> AddAsync(TEntity entity)
         {
             await _entities.AddAsync(entity);
-            await _context.SaveChangesAsync();
+            return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task UpdateAsync(TEntity entity)
+        public async Task<bool> UpdateAsync(TEntity entity)
         {
-            _entities.Entry(entity).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            _entities.Update(entity);
+            return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
             var entity = await GetByIdAsync(id);
-            if (entity is not null)
-            {
-                _entities.Remove(entity);
-                await _context.SaveChangesAsync();
-            }
+            if (entity is null) return false;
+            _entities.Remove(entity);
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }

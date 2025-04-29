@@ -1,135 +1,75 @@
-using AutoMapper;
-using eShop.API.Extensions;
 using eShop.Business.Interfaces;
-using eShop.Data.Entities.Products;
 using eShop.Shared.Common.Pagination;
 using eShop.Shared.DTOs.Products;
 using eShop.Shared.Parameters;
 using Microsoft.AspNetCore.Mvc;
 
-namespace eShop.API.Controller
+namespace eShop.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
-        private readonly IMapper _mapper;
-        private readonly ILogger<ProductsController> _logger;
 
-        public ProductsController(IProductService productService, IMapper mapper, ILogger<ProductsController> logger)
+        public ProductsController(IProductService productService)
         {
             _productService = productService;
-            _mapper = mapper;
-            _logger = logger;
         }
 
         [HttpGet]
-        public async Task<ActionResult<PagedList<ProductDto>>> GetProductsAsync([FromQuery]ProductParameters productParams)
+        public async Task<ActionResult<PagedList<ProductDto>>> GetAll([FromQuery] ProductParameters productParameters)
         {
-            var pagedProducts = await _productService.GetProductsAsync(productParams);
-
-            return Ok(pagedProducts.MapItems<Product, ProductDto>(_mapper));
+            var products = await _productService.GetAllAsync(productParameters);
+            return Ok(products);
         }
 
-        [HttpGet("{id}")]
-        [ActionName(nameof(GetProductByIdAsync))]
-        public async Task<ActionResult<ProductDto>> GetProductByIdAsync(int id)
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<ProductDto>> GetById(int id)
         {
-            var product = await _productService.GetProductByIdAsync(id);
-            if (product is null)
-            {
-                return NotFound();
-            }
-
-            ProductDto productDto = _mapper.Map<Product, ProductDto>(product);
-            return Ok(productDto);
+            var product = await _productService.GetByIdAsync(id);
+            return Ok(product);
         }
 
-        [HttpGet("uuid/{uuid}")]
-        public async Task<ActionResult<ProductDto>> GetProductByUuidAsync(string uuid)
+        [HttpGet("{uuid:guid}")]
+        public async Task<ActionResult<ProductDto>> GetByUuid(string uuid)
         {
-            var product = await _productService.GetProductByUuidAsync(uuid);
-            if (product is null)
-            {
-                return NotFound();
-            }
+            var product = await _productService.GetByUuidAsync(uuid);
+            return Ok(product);
+        }
 
-            ProductDto productDto = _mapper.Map<Product, ProductDto>(product);
-            return Ok(productDto);
+        [HttpGet("details/{id:int}")]
+        public async Task<ActionResult<ProductDetailDto>> GetDetailsById(int id)
+        {
+            var product = await _productService.GetDetailByIdAsync(id);
+            return Ok(product);
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateProductAsync(CreateProductDto createProductDto)
+        public async Task<ActionResult> Create([FromForm] CreateProductDto createProductDto)
         {
-            try
-            {
-                var product = _mapper.Map<Product>(createProductDto);
+            var result = await _productService.CreateAsync(createProductDto);
 
-                await _productService.CreateProductAsync(product);
-
-                var addedProduct = await _productService.GetProductByIdAsync(product.Id);
-                var addedProductDto = _mapper.Map<ProductDto>(addedProduct);
-
-                return CreatedAtAction(nameof(GetProductByIdAsync), new { id = addedProductDto.Id }, addedProductDto);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while creating product");
-                return StatusCode(500, "An error occured while processing your request");
-            }
+            return CreatedAtAction
+            (
+                actionName: "GetById",
+                routeValues: new { id = result.Id },
+                value: result
+            );
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateProduct(int id, UpdateProductDto updateProductDto)
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> Update(int id, [FromForm] UpdateProductDto updateProductDto)
         {
-            try
-            {
-                var existingProduct = await _productService.GetProductByIdAsync(id);
-
-                if (existingProduct is null)
-                {
-                    return NotFound();
-                }
-
-                _mapper.Map(updateProductDto, existingProduct);
-
-                await _productService.UpdateProductAsync(existingProduct);
-
-                return NoContent();
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while updating product");
-                return StatusCode(500, "An error occurred while processing your request");
-            }
+            _ = await _productService.UpdateAsync(id, updateProductDto);
+            return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteProduct(int id)
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> Delete(int id)
         {
-            try
-            {
-                await _productService.DeleteProductAsync(id);
-                return NoContent();
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"An error occurred while deleting product");
-                return StatusCode(500, "An error occurred while processing your request");
-            }
+            await _productService.DeleteAsync(id);
+            return NoContent();
         }
     }
 }

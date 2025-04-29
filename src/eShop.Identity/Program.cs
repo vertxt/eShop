@@ -1,5 +1,5 @@
 using eShop.Data;
-using eShop.Data.Entities.Users;
+using eShop.Data.Entities.UserAggregate;
 using eShop.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

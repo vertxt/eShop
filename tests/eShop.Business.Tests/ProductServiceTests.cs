@@ -1,5 +1,5 @@
 using eShop.Business.Services;
-using eShop.Data.Entities.Products;
+using eShop.Data.Entities.ProductAggregate;
 using eShop.Data.Interfaces;
 using Microsoft.Extensions.Logging;
 using MockQueryable;
@@ -38,7 +38,7 @@ namespace eShop.Business.Tests
             var productService = new ProductService(_mockRepository.Object, _mockLogger.Object);
 
             // Act
-            var result = await productService.GetAllProductsAsync();
+            var result = await productService.GetProductsAsync();
 
             // Assert
             Assert.NotNull(result);

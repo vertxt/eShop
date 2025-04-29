@@ -1,4 +1,4 @@
-import { Apps, Category, Dashboard, Inventory, People } from "@mui/icons-material";
+import { Apps, AttachMoney, Bookmark, Category, Comment, Dashboard, Error, People } from "@mui/icons-material";
 import { NavigationItem } from "../types/navigation";
 
 export const SIDEBAR_ITEMS: NavigationItem[] = [
@@ -10,9 +10,15 @@ export const SIDEBAR_ITEMS: NavigationItem[] = [
   },
   {
     id: 'users',
-    title: 'User',
+    title: 'Users',
     icon: <People />,
     path: '/users',
+  },
+  {
+    id: 'orders',
+    title: 'Orders',
+    icon: <AttachMoney />,
+    path: '/orders',
   },
   {
     id: 'catalog',
@@ -22,15 +28,27 @@ export const SIDEBAR_ITEMS: NavigationItem[] = [
       {
         id: 'products',
         title: 'Products',
-        icon: <Inventory />,
+        icon: <Category />,
         path: '/products',
       },
       {
         id: 'categories',
         title: 'Categories',
-        icon: <Category />,
+        icon: <Bookmark />,
         path: '/categories',
       }
     ]
+  },
+  {
+    id: 'reviews',
+    title: 'Reviews',
+    icon: <Comment />,
+    path: '/reviews',
+  },
+  {
+    id: 'errors',
+    title: 'Errors',
+    icon: <Error />,
+    path: '/errors',
   }
 ]

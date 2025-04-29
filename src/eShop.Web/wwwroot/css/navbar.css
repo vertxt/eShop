@@ -1,0 +1,67 @@
+/* Override Bootstrap's default variables */
+.navbar-custom {
+  --bs-navbar-padding-y: 0;
+  --bs-navbar-color: rgba(255, 255, 255, 0.8);
+  --bs-navbar-hover-color: #fff;
+  --bs-navbar-active-color: #fff;
+}
+
+/* Core styles only - using Bootstrap utilities for everything else */
+.utility-bar {
+  background-color: var(--dark-bg);
+}
+
+.main-bar {
+  background: linear-gradient(to right, var(--dark-bg), var(--medium-bg));
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.navigation-menu {
+  background-color: var(--medium-bg);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Custom button styles that can't be done with utilities */
+.action-btn {
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+  background-color: var(--primary-color);
+  transform: translateY(-2px);
+}
+
+/* Custom search input style */
+.search-input {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.search-input:focus {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.25rem rgba(58, 134, 255, 0.25);
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+  opacity: 1;
+}
+
+/* Dropdown styling */
+.custom-dropdown {
+  background-color: var(--dark-bg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.custom-dropdown .dropdown-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: white;
+}
+
+/* Mobile offcanvas */
+.offcanvas-custom {
+  background-color: var(--dark-bg);
+}

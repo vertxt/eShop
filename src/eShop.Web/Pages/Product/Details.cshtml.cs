@@ -7,7 +7,7 @@ namespace eShop.Web.Pages
     public class DetailsModel : PageModel
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        public ProductDto? Product { get; private set; }
+        public ProductDetailDto? Product { get; private set; }
 
         public DetailsModel(IHttpClientFactory httpClientFactory)
         {
@@ -17,7 +17,7 @@ namespace eShop.Web.Pages
         public async Task<IActionResult> OnGetAsync(int id)
         {
             var httpClient = _httpClientFactory.CreateClient("API");
-            Product = await httpClient.GetFromJsonAsync<ProductDto>($"products/{id}");
+            Product = await httpClient.GetFromJsonAsync<ProductDetailDto>($"products/details/{id}");
             if (Product is null)
             {
                 return NotFound();

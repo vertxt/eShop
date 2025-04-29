@@ -45,13 +45,13 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   boxSizing: 'border-box',
   ...(open
     ? {
-        ...openedMixin(theme, drawerWidth),
-        '& .MuiDrawer-paper': openedMixin(theme, drawerWidth),
-      }
+      ...openedMixin(theme, drawerWidth),
+      '& .MuiDrawer-paper': openedMixin(theme, drawerWidth),
+    }
     : {
-        ...closedMixin(theme),
-        '& .MuiDrawer-paper': closedMixin(theme),
-      }),
+      ...closedMixin(theme),
+      '& .MuiDrawer-paper': closedMixin(theme),
+    }),
 }));
 
 export default function Sidebar({
@@ -61,22 +61,22 @@ export default function Sidebar({
 }: SidebarProps) {
   const theme = useTheme();
   const [openItems, setOpenItems] = React.useState<{ [key: string]: boolean }>({});
-  
+
   // Initialize open state for items that have child routes
   useEffect(() => {
     const initialOpenState: { [key: string]: boolean } = {};
     SIDEBAR_ITEMS.forEach((item: NavigationItem) => {
       if (item.items && item.items.length > 0) {
-        initialOpenState[item.id] = true;
+        initialOpenState[item.id] = false;
       }
     });
     setOpenItems(initialOpenState);
   }, []);
-  
+
   const toggle = (id: string) => {
     setOpenItems((prev) => ({ ...prev, [id]: !prev[id] }));
   };
-  
+
   return (
     <Drawer variant="permanent" open={open} drawerWidth={drawerWidth}>
       <DrawerHeader>

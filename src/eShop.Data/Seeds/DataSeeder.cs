@@ -1,34 +1,43 @@
-using eShop.Data.Entities.Categories;
-using eShop.Data.Entities.Products;
-using eShop.Data.Entities.Users;
+using eShop.Data.Entities.CategoryAggregate;
+using eShop.Data.Entities.ProductAggregate;
+using eShop.Data.Entities.UserAggregate;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using OpenIddict.Abstractions;
 
 namespace eShop.Data.Seeds
 {
-    public static class DataSeeder
+    public class DataSeeder
     {
-        public static async Task SeedDataAsync(IServiceProvider serviceProvider)
-        {
-            using var scope = serviceProvider.CreateScope();
-            var service = scope.ServiceProvider;
+        private readonly ApplicationDbContext _context;
+        // private readonly UserManager<User> _userManager;
+        // private readonly RoleManager<IdentityRole> _roleManager;
+        // private readonly IOpenIddictApplicationManager _applicationManager;
 
+        public DataSeeder
+        (
+            ApplicationDbContext context
+            // UserManager<User> userManager,
+            // RoleManager<IdentityRole> roleManager,
+            // IOpenIddictApplicationManager applicationManager
+        )
+        {
+            _context = context;
+            // _userManager = userManager;
+            // _roleManager = roleManager;
+            // _applicationManager = applicationManager;
+        }
+
+        public async Task SeedDataAsync()
+        {
             try
             {
-                // Seed data here
-                var context = service.GetRequiredService<ApplicationDbContext>();
-                // var userManager = service.GetRequiredService<UserManager<User>>();
-                // var roleManager = service.GetRequiredService<RoleManager<IdentityRole>>();
-                // var applicationManager = service.GetRequiredService<IOpenIddictApplicationManager>();
+                await _context.Database.EnsureCreatedAsync();
 
-                await context.Database.EnsureCreatedAsync();
-
-                // await SeedRolesAsync(roleManager);
-                // await SeedUsersAsync(userManager);
-                // await SeedClientsAsync(applicationManager);
-                await SeedProductsAsync(context);
+                await SeedProductsAsync();
+                // await SeedRolesAsync();
+                // await SeedUsersAsync();
+                // await SeedClientsAsync();
             }
             catch (Exception ex)
             {
@@ -36,67 +45,67 @@ namespace eShop.Data.Seeds
             }
         }
 
-        private static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
+        // private async Task SeedRolesAsync()
+        // {
+        //     string[] roles = { "Admin", "Customer" };
+        //     foreach (var role in roles)
+        //     {
+        //         if (!await _roleManager.RoleExistsAsync(role))
+        //         {
+        //             await _roleManager.CreateAsync(new IdentityRole(role));
+        //         }
+        //     }
+        // }
+
+        // private async Task SeedUsersAsync()
+        // {
+        //     var adminUser = new User
+        //     {
+        //         UserName = "admin@example.com",
+        //         Email = "admin@example.com",
+        //     };
+
+        //     if (await _userManager.FindByEmailAsync(adminUser.Email) == null)
+        //     {
+        //         var result = await _userManager.CreateAsync(adminUser, "Admin@123");
+        //         if (result.Succeeded)
+        //         {
+        //             await _userManager.AddToRoleAsync(adminUser, "Admin");
+        //         }
+        //         else
+        //         {
+        //             throw new InvalidOperationException($"Failed to create admin user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+        //         }
+        //     }
+
+        //     var customerUser = new User
+        //     {
+        //         UserName = "customer@example.com",
+        //         Email = "customer@example.com",
+        //     };
+
+        //     if (await _userManager.FindByEmailAsync(customerUser.Email) == null)
+        //     {
+        //         var result = await _userManager.CreateAsync(customerUser);
+        //         if (result.Succeeded)
+        //         {
+        //             await _userManager.AddToRoleAsync(customerUser, "Customer@123");
+        //         }
+        //         else
+        //         {
+        //             throw new InvalidOperationException($"Failed to create customer user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+        //         }
+        //     }
+        // }
+
+        // private async Task SeedClientsAsync()
+        // {
+        //     throw new NotImplementedException("To be implemented");
+        // }
+
+        private async Task SeedProductsAsync()
         {
-            string[] roles = { "Admin", "Customer" };
-            foreach (var role in roles)
-            {
-                if (!await roleManager.RoleExistsAsync(role))
-                {
-                    await roleManager.CreateAsync(new IdentityRole(role));
-                }
-            }
-        }
-
-        private static async Task SeedUsersAsync(UserManager<User> userManager)
-        {
-            var adminUser = new User
-            {
-                UserName = "admin@example.com",
-                Email = "admin@example.com",
-            };
-
-            if (await userManager.FindByEmailAsync(adminUser.Email) == null)
-            {
-                var result = await userManager.CreateAsync(adminUser, "Admin@123");
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(adminUser, "Admin");
-                }
-                else
-                {
-                    throw new InvalidOperationException($"Failed to create admin user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
-                }
-            }
-
-            var customerUser = new User
-            {
-                UserName = "customer@example.com",
-                Email = "customer@example.com",
-            };
-
-            if (await userManager.FindByEmailAsync(customerUser.Email) == null)
-            {
-                var result = await userManager.CreateAsync(customerUser);
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(customerUser, "Customer@123");
-                }
-                else
-                {
-                    throw new InvalidOperationException($"Failed to create customer user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
-                }
-            }
-        }
-
-        private static async Task SeedClientsAsync(IOpenIddictApplicationManager applicationManager)
-        {
-            throw new NotImplementedException("To be implemented");
-        }
-
-        private static async Task SeedProductsAsync(ApplicationDbContext context)
-        {
-            if (await context.Products.AnyAsync())
+            if (await _context.Products.AnyAsync())
             {
                 return;
             }
@@ -113,8 +122,8 @@ namespace eShop.Data.Seeds
                 new Category { Name = "Automotive", Description = "Car accessories and tools" }
             };
 
-            await context.Categories.AddRangeAsync(categories);
-            var saveCategoriesResult = await context.SaveChangesAsync();
+            await _context.Categories.AddRangeAsync(categories);
+            var saveCategoriesResult = await _context.SaveChangesAsync();
 
             if (saveCategoriesResult == 0)
             {
@@ -286,8 +295,8 @@ namespace eShop.Data.Seeds
                 }
             };
 
-            await context.Products.AddRangeAsync(products);
-            var saveProductsResult = await context.SaveChangesAsync();
+            await _context.Products.AddRangeAsync(products);
+            var saveProductsResult = await _context.SaveChangesAsync();
 
             if (saveProductsResult == 0)
             {
