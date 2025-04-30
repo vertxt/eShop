@@ -2,9 +2,6 @@ using eShop.API.Middleware;
 using eShop.Business;
 using eShop.Data;
 using eShop.Data.Seeds;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using static OpenIddict.Abstractions.OpenIddictConstants;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,31 +23,6 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-// var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-// var secretKey = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"] ?? "");
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.Authority = "https://localhost:5003";
-    options.Audience = "eShop.API";
-    options.RequireHttpsMetadata = builder.Environment.IsProduction();
-    options.SaveToken = true;
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        NameClaimType = Claims.Name,
-        RoleClaimType = Claims.Role,
-    };
-});
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
-    options.AddPolicy("RequireCustomerRole", policy => policy.RequireRole("Customer"));
-});
 
 builder.Services.AddDataLayer(builder.Configuration);
 builder.Services.AddBusinessLayer(builder.Configuration);

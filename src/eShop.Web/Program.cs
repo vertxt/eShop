@@ -18,10 +18,11 @@ builder.Services.AddAuthentication(options =>
 .AddCookie()
 .AddOpenIdConnect(options =>
 {
-    options.Authority = "https://localhost:5003";
-    options.ClientId = "eShop.Web";
-    options.ClientSecret = "web-client-secret";
+    options.Authority = "https://localhost:5005";
+    options.ClientId = "customer_site";
+    options.ClientSecret = "customer_secret";
     options.ResponseType = OpenIdConnectResponseType.Code;
+    options.RequireHttpsMetadata = true;
     options.SaveTokens = true;
 
     options.Scope.Clear();
@@ -29,11 +30,11 @@ builder.Services.AddAuthentication(options =>
     options.Scope.Add("profile");
     options.Scope.Add("email");
     options.Scope.Add("roles");
-    options.Scope.Add("api");
 
     options.GetClaimsFromUserInfoEndpoint = true;
     options.TokenValidationParameters.NameClaimType = "name";
     options.TokenValidationParameters.RoleClaimType = "role";
+    options.CallbackPath = "/signin-oidc";
 });
 
 builder.Services.AddHttpClient("API", options => 
@@ -59,7 +60,6 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 
 app.UseAuthentication();

@@ -10,21 +10,21 @@ namespace eShop.Data.Seeds
     public class DataSeeder
     {
         private readonly ApplicationDbContext _context;
-        // private readonly UserManager<User> _userManager;
-        // private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<User> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         // private readonly IOpenIddictApplicationManager _applicationManager;
 
         public DataSeeder
         (
-            ApplicationDbContext context
-            // UserManager<User> userManager,
-            // RoleManager<IdentityRole> roleManager,
+            ApplicationDbContext context,
+            UserManager<User> userManager,
+            RoleManager<IdentityRole> roleManager
             // IOpenIddictApplicationManager applicationManager
         )
         {
             _context = context;
-            // _userManager = userManager;
-            // _roleManager = roleManager;
+            _userManager = userManager;
+            _roleManager = roleManager;
             // _applicationManager = applicationManager;
         }
 
@@ -35,8 +35,8 @@ namespace eShop.Data.Seeds
                 await _context.Database.EnsureCreatedAsync();
 
                 await SeedProductsAsync();
-                // await SeedRolesAsync();
-                // await SeedUsersAsync();
+                await SeedRolesAsync();
+                await SeedUsersAsync();
                 // await SeedClientsAsync();
             }
             catch (Exception ex)
@@ -45,62 +45,103 @@ namespace eShop.Data.Seeds
             }
         }
 
-        // private async Task SeedRolesAsync()
-        // {
-        //     string[] roles = { "Admin", "Customer" };
-        //     foreach (var role in roles)
-        //     {
-        //         if (!await _roleManager.RoleExistsAsync(role))
-        //         {
-        //             await _roleManager.CreateAsync(new IdentityRole(role));
-        //         }
-        //     }
-        // }
+        private async Task SeedRolesAsync()
+        {
+            string[] roles = { "Admin", "Customer" };
+            foreach (var role in roles)
+            {
+                if (!await _roleManager.RoleExistsAsync(role))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(role));
+                }
+            }
+        }
 
-        // private async Task SeedUsersAsync()
-        // {
-        //     var adminUser = new User
-        //     {
-        //         UserName = "admin@example.com",
-        //         Email = "admin@example.com",
-        //     };
+        private async Task SeedUsersAsync()
+        {
+            var adminUser = new User
+            {
+                UserName = "admin@example.com",
+                Email = "admin@example.com",
+            };
 
-        //     if (await _userManager.FindByEmailAsync(adminUser.Email) == null)
-        //     {
-        //         var result = await _userManager.CreateAsync(adminUser, "Admin@123");
-        //         if (result.Succeeded)
-        //         {
-        //             await _userManager.AddToRoleAsync(adminUser, "Admin");
-        //         }
-        //         else
-        //         {
-        //             throw new InvalidOperationException($"Failed to create admin user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
-        //         }
-        //     }
+            if (await _userManager.FindByEmailAsync(adminUser.Email) == null)
+            {
+                var result = await _userManager.CreateAsync(adminUser, "Admin@123");
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(adminUser, "Admin");
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Failed to create admin user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                }
+            }
 
-        //     var customerUser = new User
-        //     {
-        //         UserName = "customer@example.com",
-        //         Email = "customer@example.com",
-        //     };
+            var customerUser = new User
+            {
+                UserName = "customer@example.com",
+                Email = "customer@example.com",
+            };
 
-        //     if (await _userManager.FindByEmailAsync(customerUser.Email) == null)
-        //     {
-        //         var result = await _userManager.CreateAsync(customerUser);
-        //         if (result.Succeeded)
-        //         {
-        //             await _userManager.AddToRoleAsync(customerUser, "Customer@123");
-        //         }
-        //         else
-        //         {
-        //             throw new InvalidOperationException($"Failed to create customer user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
-        //         }
-        //     }
-        // }
+            if (await _userManager.FindByEmailAsync(customerUser.Email) == null)
+            {
+                var result = await _userManager.CreateAsync(customerUser);
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(customerUser, "Customer@123");
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Failed to create customer user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                }
+            }
+        }
 
         // private async Task SeedClientsAsync()
         // {
-        //     throw new NotImplementedException("To be implemented");
+        //     // Customer Site (Web)
+        //     if (await _applicationManager.FindByClientIdAsync("customer_site") == null)
+        //     {
+        //         await _applicationManager.CreateAsync(new OpenIddictApplicationDescriptor
+        //         {
+        //             ClientId = "customer_site",
+        //             ClientSecret = "customer_secret",
+        //             DisplayName = "Customer Site",
+        //             RedirectUris = { new Uri("https://localhost:5001/signin-oidc") },
+        //             Permissions =
+        //         {
+        //             OpenIddictConstants.Permissions.Endpoints.Authorization,
+        //             OpenIddictConstants.Permissions.Endpoints.Token,
+        //             OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
+        //             OpenIddictConstants.Permissions.GrantTypes.RefreshToken,
+        //             OpenIddictConstants.Permissions.Scopes.Profile,
+        //             OpenIddictConstants.Permissions.Scopes.Email,
+        //             OpenIddictConstants.Permissions.Scopes.Roles,
+        //         }
+        //         });
+        //     }
+
+        //     // Admin Site (React)
+        //     if (await _applicationManager.FindByClientIdAsync("admin_site") == null)
+        //     {
+        //         await _applicationManager.CreateAsync(new OpenIddictApplicationDescriptor
+        //         {
+        //             ClientId = "admin_site",
+        //             ClientSecret = "admin-secret",
+        //             DisplayName = "Admin Site",
+        //             RedirectUris = { new Uri("https://localhost:5002/callback") }, // React callback
+        //             Permissions =
+        //         {
+        //             OpenIddictConstants.Permissions.Endpoints.Authorization,
+        //             OpenIddictConstants.Permissions.Endpoints.Token,
+        //             OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
+        //             OpenIddictConstants.Permissions.Scopes.Profile,
+        //             OpenIddictConstants.Permissions.Scopes.Email,
+        //             OpenIddictConstants.Permissions.Scopes.Roles,
+        //         }
+        //         });
+        //     }
         // }
 
         private async Task SeedProductsAsync()

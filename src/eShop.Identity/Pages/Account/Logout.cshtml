@@ -1,0 +1,24 @@
+@page
+@model LogoutModel
+@{
+    ViewData["Title"] = "Sign Out";
+}
+
+<div class="container">
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-6 col-lg-5">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h2 class="mb-0">Sign Out</h2>
+                </div>
+                <div class="card-body p-4 text-center">
+                    <p>Are you sure you want to sign out?</p>
+                    <form method="post">
+                        <button type="submit" class="btn btn-primary">Yes, sign me out</button>
+                        <a href="@Model.ReturnUrl" class="btn btn-outline-secondary ms-2">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,6 +1,6 @@
 using eShop.Data;
 using eShop.Data.Entities.UserAggregate;
-using eShop.Identity;
+using eShop.Identity.Seeds;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using static OpenIddict.Abstractions.OpenIddictConstants;
@@ -28,8 +28,7 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     options.SignIn.RequireConfirmedAccount = false;
 })
     .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders()
-    .AddDefaultUI();
+    .AddDefaultTokenProviders();
 
 // Configure OpenIddict
 builder.Services.AddOpenIddict()
@@ -45,7 +44,6 @@ builder.Services.AddOpenIddict()
     {
         // Enable the authorization, logout, token and userinfo endpoints
         options.SetAuthorizationEndpointUris("/connect/authorize")
-               .SetEndSessionEndpointUris("/connect/logout")
                .SetTokenEndpointUris("/connect/token")
                .SetUserInfoEndpointUris("/connect/userinfo");
 
@@ -54,7 +52,7 @@ builder.Services.AddOpenIddict()
                .AllowRefreshTokenFlow();
 
         // Register scopes (permissions)
-        options.RegisterScopes(Scopes.OpenId, Scopes.Email, Scopes.Profile, Scopes.Roles, "api");
+        options.RegisterScopes(Scopes.Email, Scopes.Profile, Scopes.Roles);
 
         // Register the signing and encryption credentials
         options.AddDevelopmentEncryptionCertificate()
@@ -63,10 +61,8 @@ builder.Services.AddOpenIddict()
         // Register the ASP.NET Core host and configure the ASP.NET Core-specific options
         options.UseAspNetCore()
                .EnableAuthorizationEndpointPassthrough()
-               .EnableEndSessionEndpointPassthrough()
                .EnableTokenEndpointPassthrough()
-               .EnableUserInfoEndpointPassthrough()
-               .EnableStatusCodePagesIntegration();
+               .EnableUserInfoEndpointPassthrough();
     })
     // Register the OpenIddict validation components
     .AddValidation(options =>
