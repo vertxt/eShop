@@ -61,8 +61,7 @@ builder.Services.AddOpenIddict()
         // Register the ASP.NET Core host and configure the ASP.NET Core-specific options
         options.UseAspNetCore()
                .EnableAuthorizationEndpointPassthrough()
-               .EnableTokenEndpointPassthrough()
-               .EnableUserInfoEndpointPassthrough();
+               .EnableTokenEndpointPassthrough();
     })
     // Register the OpenIddict validation components
     .AddValidation(options =>
@@ -106,7 +105,6 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 app.UseCors("AllowClients");
 
