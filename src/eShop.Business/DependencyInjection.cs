@@ -2,8 +2,6 @@ using eShop.Business.Interfaces;
 using eShop.Business.Services;
 using eShop.Business.Services.External;
 using eShop.Business.Settings;
-using eShop.Data.Interfaces;
-using eShop.Data.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,13 +13,10 @@ namespace eShop.Business
         {
             services.AddAutoMapper(typeof(DependencyInjection).Assembly);
 
-            // Repositories
-            services.AddScoped<IProductRepository, ProductRepository>();
-            services.AddScoped<ICategoryRepository, CategoryRepository>();
-
             // Services
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<ICartService, CartService>();
 
             // External services
             // Cloudinary

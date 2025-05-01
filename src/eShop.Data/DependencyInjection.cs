@@ -36,6 +36,7 @@ namespace eShop.Data
             // Repositories
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<ICartRepository, CartRepository>();
 
             // Optional: Register data seeder
             services.AddTransient<DataSeeder>();

@@ -2,6 +2,7 @@ using eShop.Shared.Common.Pagination;
 using eShop.Shared.DTOs.Categories;
 using eShop.Shared.DTOs.Products;
 using eShop.Shared.Parameters;
+using eShop.Web.Interfaces;
 using Microsoft.AspNetCore.Http.Extensions;
 
 namespace eShop.Web.Services

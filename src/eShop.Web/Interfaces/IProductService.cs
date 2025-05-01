@@ -3,7 +3,7 @@ using eShop.Shared.DTOs.Categories;
 using eShop.Shared.DTOs.Products;
 using eShop.Shared.Parameters;
 
-namespace eShop.Web.Services
+namespace eShop.Web.Interfaces
 {
     public interface IProductService
     {

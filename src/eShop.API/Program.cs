@@ -2,6 +2,7 @@ using eShop.API.Middleware;
 using eShop.Business;
 using eShop.Data;
 using eShop.Data.Seeds;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,14 @@ builder.Services.AddCors(options =>
                   .AllowCredentials();
         });
 });
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.Authority = "https://localhost:5005";
+        options.Audience = "eShop.API";
+        options.RequireHttpsMetadata = true;
+    });
 
 // Add services to the container.
 builder.Services.AddControllers();

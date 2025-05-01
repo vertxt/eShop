@@ -1,3 +1,4 @@
+using eShop.Web.Interfaces;
 using eShop.Web.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -41,6 +42,7 @@ builder.Services.AddHttpClient("API", options =>
 });
 
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICartService, CartService>();
 
 var app = builder.Build();
 
