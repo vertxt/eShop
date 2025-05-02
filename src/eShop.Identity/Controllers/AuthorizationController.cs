@@ -111,6 +111,39 @@ namespace eShop.Identity.Controllers
             });
         }
 
+        [HttpGet("~/connect/logout")]
+        public async Task<IActionResult> Logout()
+        {
+            // Extract the OpenIddict request
+            var request = HttpContext.GetOpenIddictServerRequest();
+            
+            // Sign out the user from Identity
+            await _signInManager.SignOutAsync();
+            
+            // Sign out from the authentication cookie
+            await HttpContext.SignOutAsync();
+            
+            // Create properties for redirect
+            var properties = new AuthenticationProperties();
+            
+            // If redirect URI was provided, use it
+            if (!string.IsNullOrEmpty(request?.PostLogoutRedirectUri))
+            {
+                properties.RedirectUri = request.PostLogoutRedirectUri;
+                
+                // Forward state parameter if provided
+                if (!string.IsNullOrEmpty(request.State))
+                {
+                    properties.Items["state"] = request.State;
+                }
+            }
+            
+            // Sign out from OpenIddict
+            return SignOut(
+                authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
+                properties: properties);
+        }
+
         // Helper to decide which claim goes into access_token vs id_token
         static IEnumerable<string> GetDestinations(Claim claim, ClaimsPrincipal principal)
         {
