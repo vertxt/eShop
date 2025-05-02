@@ -3,6 +3,7 @@ using eShop.Data.Entities.UserAggregate;
 using eShop.Identity.Seeds;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,14 +46,18 @@ builder.Services.AddOpenIddict()
         // Enable the authorization, logout, token and userinfo endpoints
         options.SetAuthorizationEndpointUris("/connect/authorize")
                .SetTokenEndpointUris("/connect/token")
-               .SetUserInfoEndpointUris("/connect/userinfo");
+               .SetUserInfoEndpointUris("/connect/userinfo")
+               .SetEndSessionEndpointUris("/connect/logout");
 
         // Enable the required flows for your applications
         options.AllowAuthorizationCodeFlow()
                .AllowRefreshTokenFlow();
 
         // Register scopes (permissions)
-        options.RegisterScopes(Scopes.Email, Scopes.Profile, Scopes.Roles);
+        options.RegisterScopes(Scopes.Email, Scopes.Profile, Scopes.Roles, "api");
+
+        options.AddEncryptionKey(new SymmetricSecurityKey(
+            Convert.FromBase64String("DRjd/GnduI3Efzen9V9BvbNUfc/VKgXltV7Kbk9sMkY=")));
 
         // Register the signing and encryption credentials
         options.AddDevelopmentEncryptionCertificate()
@@ -61,7 +66,8 @@ builder.Services.AddOpenIddict()
         // Register the ASP.NET Core host and configure the ASP.NET Core-specific options
         options.UseAspNetCore()
                .EnableAuthorizationEndpointPassthrough()
-               .EnableTokenEndpointPassthrough();
+               .EnableTokenEndpointPassthrough()
+               .EnableEndSessionEndpointPassthrough();
     })
     // Register the OpenIddict validation components
     .AddValidation(options =>

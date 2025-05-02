@@ -3,6 +3,8 @@ using eShop.Business;
 using eShop.Data;
 using eShop.Data.Seeds;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using OpenIddict.Validation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,20 +20,32 @@ builder.Services.AddCors(options =>
         });
 });
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+builder.Services.AddOpenIddict()
+    .AddValidation(options =>
     {
-        options.Authority = "https://localhost:5005";
-        options.Audience = "eShop.API";
-        options.RequireHttpsMetadata = true;
+        // Note: the validation handler uses OpenID Connect discovery
+        // to retrieve the issuer signing keys used to validate tokens.
+        options.SetIssuer("https://localhost:5005/");
+
+        // Register the encryption credentials. This sample uses a symmetric
+        // encryption key that is shared between the server and the API project.
+        options.AddEncryptionKey(new SymmetricSecurityKey(
+            Convert.FromBase64String("DRjd/GnduI3Efzen9V9BvbNUfc/VKgXltV7Kbk9sMkY=")));
+
+        options.UseSystemNetHttp();
+        options.UseAspNetCore();
     });
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
+});
 
 // Add services to the container.
 builder.Services.AddControllers();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-
 
 builder.Services.AddDataLayer(builder.Configuration);
 builder.Services.AddBusinessLayer(builder.Configuration);

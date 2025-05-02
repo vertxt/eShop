@@ -1,12 +1,16 @@
 using eShop.Business.Interfaces;
 using eShop.Shared.DTOs.Carts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OpenIddict.Validation.AspNetCore;
 using System.Security.Claims;
 
 namespace eShop.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    [AllowAnonymous]
     public class CartController : ControllerBase
     {
         private readonly ICartService _cartService;
@@ -18,6 +22,7 @@ namespace eShop.API.Controllers
 
         private string GetUserId()
         {
+            Console.WriteLine("*****I'm logging here: " + User.FindFirstValue(ClaimTypes.NameIdentifier));
             return User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
         }
 

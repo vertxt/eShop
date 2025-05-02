@@ -15,6 +15,7 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+    options.DefaultSignOutScheme = OpenIdConnectDefaults.AuthenticationScheme;
 })
 .AddCookie()
 .AddOpenIdConnect(options =>
@@ -29,17 +30,21 @@ builder.Services.AddAuthentication(options =>
     options.Scope.Add("email");
     options.Scope.Add("profile");
     options.Scope.Add("roles");
+    options.Scope.Add("api");
 
     options.GetClaimsFromUserInfoEndpoint = true;
     options.TokenValidationParameters.NameClaimType = "name";
     options.TokenValidationParameters.RoleClaimType = "role";
     options.CallbackPath = "/signin-oidc";
+    options.SignedOutCallbackPath = "/signout-callback-oidc";
+    options.SignedOutRedirectUri = "/";
 });
 
 builder.Services.AddHttpClient("API", options => 
 {
     options.BaseAddress = new Uri("https://localhost:5000/api/");
 });
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartService, CartService>();

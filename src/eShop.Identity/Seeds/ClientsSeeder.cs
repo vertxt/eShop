@@ -32,10 +32,12 @@ namespace eShop.Identity.Seeds
                         Permissions.Scopes.Email,
                         Permissions.Scopes.Profile,
                         Permissions.Scopes.Roles,
+                        Permissions.Prefixes.Scope + "api",
 
                         // Endpoints
                         Permissions.Endpoints.Authorization,
                         Permissions.Endpoints.Token,
+                        Permissions.Endpoints.EndSession,
                     },
 
                     RedirectUris = { new Uri("https://localhost:5001/signin-oidc") },
@@ -55,9 +57,8 @@ namespace eShop.Identity.Seeds
 
                     Permissions =
                     {
-                        // Endpoint permissions
-                        Permissions.Endpoints.Authorization,
-                        Permissions.Endpoints.Token,
+                        // Response type permissions
+                        Permissions.ResponseTypes.Code,
 
                         // Grant type permissions
                         Permissions.GrantTypes.AuthorizationCode,
@@ -66,9 +67,12 @@ namespace eShop.Identity.Seeds
                         Permissions.Scopes.Email,
                         Permissions.Scopes.Profile,
                         Permissions.Scopes.Roles,
+                        Permissions.Prefixes.Scope + "api",
 
-                        // Response type permissions
-                        Permissions.ResponseTypes.Code
+                        // Endpoint permissions
+                        Permissions.Endpoints.Authorization,
+                        Permissions.Endpoints.Token,
+                        Permissions.Endpoints.EndSession,
                     },
 
                     RedirectUris = { new Uri("https://localhost:5002/signin-callback") },
