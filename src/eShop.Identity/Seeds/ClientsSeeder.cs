@@ -57,11 +57,12 @@ namespace eShop.Identity.Seeds
 
                     Permissions =
                     {
-                        // Response type permissions
-                        Permissions.ResponseTypes.Code,
-
                         // Grant type permissions
                         Permissions.GrantTypes.AuthorizationCode,
+                        Permissions.GrantTypes.RefreshToken,
+
+                        // Response type permissions
+                        Permissions.ResponseTypes.Code,
 
                         // Scope permissions
                         Permissions.Scopes.Email,

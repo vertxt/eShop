@@ -3,7 +3,6 @@ using eShop.Data.Entities.ProductAggregate;
 using eShop.Data.Entities.UserAggregate;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using OpenIddict.Abstractions;
 
 namespace eShop.Data.Seeds
 {
@@ -12,20 +11,17 @@ namespace eShop.Data.Seeds
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        // private readonly IOpenIddictApplicationManager _applicationManager;
 
         public DataSeeder
         (
             ApplicationDbContext context,
             UserManager<User> userManager,
             RoleManager<IdentityRole> roleManager
-            // IOpenIddictApplicationManager applicationManager
         )
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
-            // _applicationManager = applicationManager;
         }
 
         public async Task SeedDataAsync()
@@ -37,7 +33,6 @@ namespace eShop.Data.Seeds
                 await SeedProductsAsync();
                 await SeedRolesAsync();
                 await SeedUsersAsync();
-                // await SeedClientsAsync();
             }
             catch (Exception ex)
             {
@@ -97,52 +92,6 @@ namespace eShop.Data.Seeds
                 }
             }
         }
-
-        // private async Task SeedClientsAsync()
-        // {
-        //     // Customer Site (Web)
-        //     if (await _applicationManager.FindByClientIdAsync("customer_site") == null)
-        //     {
-        //         await _applicationManager.CreateAsync(new OpenIddictApplicationDescriptor
-        //         {
-        //             ClientId = "customer_site",
-        //             ClientSecret = "customer_secret",
-        //             DisplayName = "Customer Site",
-        //             RedirectUris = { new Uri("https://localhost:5001/signin-oidc") },
-        //             Permissions =
-        //         {
-        //             OpenIddictConstants.Permissions.Endpoints.Authorization,
-        //             OpenIddictConstants.Permissions.Endpoints.Token,
-        //             OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
-        //             OpenIddictConstants.Permissions.GrantTypes.RefreshToken,
-        //             OpenIddictConstants.Permissions.Scopes.Profile,
-        //             OpenIddictConstants.Permissions.Scopes.Email,
-        //             OpenIddictConstants.Permissions.Scopes.Roles,
-        //         }
-        //         });
-        //     }
-
-        //     // Admin Site (React)
-        //     if (await _applicationManager.FindByClientIdAsync("admin_site") == null)
-        //     {
-        //         await _applicationManager.CreateAsync(new OpenIddictApplicationDescriptor
-        //         {
-        //             ClientId = "admin_site",
-        //             ClientSecret = "admin-secret",
-        //             DisplayName = "Admin Site",
-        //             RedirectUris = { new Uri("https://localhost:5002/callback") }, // React callback
-        //             Permissions =
-        //         {
-        //             OpenIddictConstants.Permissions.Endpoints.Authorization,
-        //             OpenIddictConstants.Permissions.Endpoints.Token,
-        //             OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
-        //             OpenIddictConstants.Permissions.Scopes.Profile,
-        //             OpenIddictConstants.Permissions.Scopes.Email,
-        //             OpenIddictConstants.Permissions.Scopes.Roles,
-        //         }
-        //         });
-        //     }
-        // }
 
         private async Task SeedProductsAsync()
         {

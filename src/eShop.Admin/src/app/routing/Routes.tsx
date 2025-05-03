@@ -13,6 +13,9 @@ import CategoryCreateWrapper from "../../features/categories/CategoryCreateWrapp
 import ProductPage from "../../features/products/ProductPage";
 import AddProductPage from "../../features/products/AddProductPage";
 import EditProductPage from "../../features/products/EditProductPage";
+import PrivateRoute from "../../shared/components/PrivateRoute";
+import LoginCallback from "../../features/auth/LoginCallback";
+import LogoutCallback from "../../features/auth/LogoutCallback";
 
 export const router = createBrowserRouter([
     {
@@ -20,56 +23,69 @@ export const router = createBrowserRouter([
         element: <App />,
         children: [
             {
-                path: 'dashboard',
-                element: <Dashboard />
+                path: 'signin-callback',
+                element: <LoginCallback />
             },
             {
-                path: 'products',
-                element: <ProductPage />
+                path: 'signout-callback',
+                element: <LogoutCallback />
             },
             {
-                path: 'categories',
-                element: <CategoryListView />
-            },
-            {
-                path: 'users',
-                element: <UserListView />
-            },
-            {
-                path: 'orders',
-                element: <OrderListView />
-            },
-            {
-                path: 'reviews',
-                element: <ReviewListView />
-            },
-            {
-                path: 'errors',
-                element: <ErrorsControl />
-            },
-            {
-                path: 'errors/server',
-                element: <ServerError />
-            },
-            {
-                path: 'errors/notfound',
-                element: <NotFound />
-            },
-            {
-                path: 'products/create',
-                element: <AddProductPage />
-            },
-            {
-                path: 'products/edit/:id',
-                element: <EditProductPage />
-            },
-            {
-                path: 'categories/create',
-                element: <CategoryCreateWrapper />
-            },
-            {
-                path: 'categories/edit/:id',
-                element: <CategoryEditWrapper />
+                element: <PrivateRoute />,
+                children: [
+                    {
+                        path: 'dashboard',
+                        element: <Dashboard />
+                    },
+                    {
+                        path: 'products',
+                        element: <ProductPage />
+                    },
+                    {
+                        path: 'categories',
+                        element: <CategoryListView />
+                    },
+                    {
+                        path: 'users',
+                        element: <UserListView />
+                    },
+                    {
+                        path: 'orders',
+                        element: <OrderListView />
+                    },
+                    {
+                        path: 'reviews',
+                        element: <ReviewListView />
+                    },
+                    {
+                        path: 'errors',
+                        element: <ErrorsControl />
+                    },
+                    {
+                        path: 'errors/server',
+                        element: <ServerError />
+                    },
+                    {
+                        path: 'errors/notfound',
+                        element: <NotFound />
+                    },
+                    {
+                        path: 'products/create',
+                        element: <AddProductPage />
+                    },
+                    {
+                        path: 'products/edit/:id',
+                        element: <EditProductPage />
+                    },
+                    {
+                        path: 'categories/create',
+                        element: <CategoryCreateWrapper />
+                    },
+                    {
+                        path: 'categories/edit/:id',
+                        element: <CategoryEditWrapper />
+                    },
+                ]
             },
         ]
     }

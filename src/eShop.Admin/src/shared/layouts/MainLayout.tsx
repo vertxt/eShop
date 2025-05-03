@@ -1,18 +1,8 @@
 import { ReactNode, useState } from "react";
-import {
-  Box,
-  Toolbar,
-  IconButton,
-  Typography,
-} from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import { AppBar } from "../components/AppBar";
+import { Box } from "@mui/material";
 import Sidebar from "../components/Sidebar";
 import DrawerHeader from "../components/DrawerHeader";
-import { switchTheme } from "../../app/store/uiSlice";
-import { DarkMode, LightMode } from "@mui/icons-material";
-import { useAppDispatch, useAppSelector } from "../../app/store/store";
-import GlobalLoadingIndicator from "../../features/loading/GlobalLoadingIndicator";
+import AppTopBar from "../components/AppTopBar";
 
 const drawerWidth = 240;
 
@@ -22,42 +12,21 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children }: MainLayoutProps) {
   const [open, setOpen] = useState(false);
-  const theme = useAppSelector(state => state.ui.theme)
-  const dispatch = useAppDispatch();
 
   const handleDrawerOpen = () => {
     setOpen(true);
   };
-
   const handleDrawerClose = () => {
     setOpen(false);
   };
 
   return (
     <Box sx={{ display: "flex", minHeight: '100vh', minWidth: '100vw' }}>
-      <AppBar position="fixed" open={open} drawerWidth={drawerWidth}>
-        <GlobalLoadingIndicator />
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{
-              marginRight: 5,
-              ...(open && { display: "none" }),
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            eShop
-          </Typography>
-          <IconButton onClick={() => dispatch(switchTheme())}>
-            {theme === 'dark' ? <DarkMode /> : <LightMode />}
-          </IconButton>
-        </Toolbar>
-      </AppBar>
+      <AppTopBar
+        open={open}
+        drawerWidth={drawerWidth}
+        onDrawerOpen={handleDrawerOpen}
+      />
 
       <Sidebar
         open={open}

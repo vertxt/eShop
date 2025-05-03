@@ -1,6 +1,7 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
 using eShop.Shared.DTOs.Carts;
+using eShop.Web.Extensions;
 using eShop.Web.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 
@@ -25,11 +26,7 @@ namespace eShop.Web.Services
         private async Task AttachBearerTokenAsync()
         {
             var token = await _httpContextAccessor.HttpContext!.GetTokenAsync("access_token");
-            var id_token = await _httpContextAccessor.HttpContext!.GetTokenAsync("id_token");
 
-            Console.WriteLine("Access Token here: " + token);
-            Console.WriteLine("Token is null or empty: " + string.IsNullOrEmpty(token));
-            Console.WriteLine("Id token: " + id_token);
             if (!string.IsNullOrEmpty(token))
             {
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -38,22 +35,22 @@ namespace eShop.Web.Services
 
         public async Task<CartDto> GetCartAsync()
         {
-            await AttachBearerTokenAsync();
-            var response = await _httpClient.GetFromJsonAsync<CartDto>("cart");
+            var httpClient = await _httpClient.AddTokenAsync(_httpContextAccessor);
+            var response = await httpClient.GetFromJsonAsync<CartDto>("cart");
             return response ?? new CartDto();
         }
 
         public async Task<CartSummaryDto> GetCartSummaryAsync()
         {
-            await AttachBearerTokenAsync();
-            var response = await _httpClient.GetFromJsonAsync<CartSummaryDto>("cart/summary");
+            var httpClient = await _httpClient.AddTokenAsync(_httpContextAccessor);
+            var response = await httpClient.GetFromJsonAsync<CartSummaryDto>("cart/summary");
             return response ?? new CartSummaryDto();
         }
 
         public async Task<CartDto> AddToCartAsync(AddToCartDto addToCartDto)
         {
-            await AttachBearerTokenAsync();
-            var response = await _httpClient.PostAsJsonAsync("cart/items", addToCartDto);
+            var httpClient = await _httpClient.AddTokenAsync(_httpContextAccessor);
+            var response = await httpClient.PostAsJsonAsync("cart/items", addToCartDto);
             response.EnsureSuccessStatusCode();
 
             return await response.Content.ReadFromJsonAsync<CartDto>(_jsonOptions) ?? new CartDto();
@@ -61,8 +58,8 @@ namespace eShop.Web.Services
 
         public async Task<CartDto> UpdateCartItemAsync(UpdateCartItemDto updateCartDto)
         {
-            await AttachBearerTokenAsync();
-            var response = await _httpClient.PutAsJsonAsync("cart/items", updateCartDto);
+            var httpClient = await _httpClient.AddTokenAsync(_httpContextAccessor);
+            var response = await httpClient.PutAsJsonAsync("cart/items", updateCartDto);
             response.EnsureSuccessStatusCode();
 
             return await response.Content.ReadFromJsonAsync<CartDto>(_jsonOptions) ?? new CartDto();
@@ -70,8 +67,8 @@ namespace eShop.Web.Services
 
         public async Task<CartDto> RemoveCartItemAsync(int cartItemId)
         {
-            await AttachBearerTokenAsync();
-            var response = await _httpClient.DeleteAsync($"cart/items/{cartItemId}");
+            var httpClient = await _httpClient.AddTokenAsync(_httpContextAccessor);
+            var response = await httpClient.DeleteAsync($"cart/items/{cartItemId}");
             response.EnsureSuccessStatusCode();
 
             return await response.Content.ReadFromJsonAsync<CartDto>(_jsonOptions) ?? new CartDto();
@@ -79,8 +76,8 @@ namespace eShop.Web.Services
 
         public async Task<CartDto> ClearCartAsync()
         {
-            await AttachBearerTokenAsync();
-            var response = await _httpClient.DeleteAsync("cart");
+            var httpClient = await _httpClient.AddTokenAsync(_httpContextAccessor);
+            var response = await httpClient.DeleteAsync("cart");
             response.EnsureSuccessStatusCode();
 
             return await response.Content.ReadFromJsonAsync<CartDto>(_jsonOptions) ?? new CartDto();

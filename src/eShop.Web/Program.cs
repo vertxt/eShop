@@ -38,9 +38,19 @@ builder.Services.AddAuthentication(options =>
     options.CallbackPath = "/signin-oidc";
     options.SignedOutCallbackPath = "/signout-callback-oidc";
     options.SignedOutRedirectUri = "/";
+
+    options.Events = new OpenIdConnectEvents
+    {
+        OnAuthenticationFailed = context =>
+        {
+            context.Response.Redirect("/Error/AuthFailed");
+            context.HandleResponse();
+            return Task.CompletedTask;
+        }
+    };
 });
 
-builder.Services.AddHttpClient("API", options => 
+builder.Services.AddHttpClient("API", options =>
 {
     options.BaseAddress = new Uri("https://localhost:5000/api/");
 });
@@ -51,15 +61,15 @@ builder.Services.AddScoped<ICartService, CartService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
 else
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseExceptionHandler("/Error");
+    app.UseStatusCodePagesWithReExecute("/Error/{0}");
+    // HTTP strict transport security
     app.UseHsts();
 }
 

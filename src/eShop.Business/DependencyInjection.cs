@@ -17,6 +17,7 @@ namespace eShop.Business
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<ICartService, CartService>();
+            services.AddScoped<IUserService, UserService>();
 
             // External services
             // Cloudinary
