@@ -8,7 +8,7 @@ namespace eShop.Web.Pages
 {
     public class DetailsModel : PageModel
     {
-        private readonly HttpClient _httpClient;
+        private readonly IApiClientWrapper _apiClientWrapper;
         private readonly IReviewService _reviewService;
 
         public ProductDetailDto? Product { get; private set; }
@@ -17,21 +17,21 @@ namespace eShop.Web.Pages
         public CreateReviewDto NewReview { get; set; } = new();
 
         public DetailsModel(
-            IHttpClientFactory httpClientFactory,
-            IReviewService reviewService
+            IReviewService reviewService,
+            IApiClientWrapper apiClientWrapper
         )
         {
-            _httpClient = httpClientFactory.CreateClient("API");
             _reviewService = reviewService;
+            _apiClientWrapper = apiClientWrapper;
         }
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            Product = await _httpClient.GetFromJsonAsync<ProductDetailDto>($"products/details/{id}");
-            if (Product is null)
-            {
-                return NotFound();
-            }
+            Product = await _apiClientWrapper.GetAsync<ProductDetailDto>($"products/details/{id}", requiresAuth: false);
+            // if (Product is null)
+            // {
+            //     return NotFound();
+            // }
 
             return Page();
         }
@@ -40,7 +40,7 @@ namespace eShop.Web.Pages
         {
             if (!ModelState.IsValid)
             {
-                Product = await _httpClient.GetFromJsonAsync<ProductDetailDto>($"products/details/{id}");
+                Product = await _apiClientWrapper.GetAsync<ProductDetailDto>($"products/details/{id}", requiresAuth: false);
                 return Page();
             }
 
@@ -52,7 +52,7 @@ namespace eShop.Web.Pages
             {
                 ModelState.AddModelError(string.Empty, $"Error submitting review: {ex.Message}");
 
-                Product = await _httpClient.GetFromJsonAsync<ProductDetailDto>($"products/details/{id}");
+                Product = await _apiClientWrapper.GetAsync<ProductDetailDto>($"products/details/{id}", requiresAuth: false);
                 return Page();
             }
         }

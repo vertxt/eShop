@@ -9,26 +9,23 @@ namespace eShop.Web.Services
 {
     public class ProductService : IProductService
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IApiClientWrapper _apiClientWrapper;
 
-        public ProductService(IHttpClientFactory httpClientFactory)
+        public ProductService(IApiClientWrapper apiClientWrapper)
         {
-            _httpClientFactory = httpClientFactory;
+            _apiClientWrapper = apiClientWrapper;
         }
 
         public async Task<PagedList<ProductDto>?> GetProductsAsync(ProductParameters productParams)
         {
-            var httpClient = _httpClientFactory.CreateClient("API");
             var queryString = BuildProductsQueryString(productParams);
 
-            return await httpClient.GetFromJsonAsync<PagedList<ProductDto>?>($"products{queryString}");
+            return await _apiClientWrapper.GetAsync<PagedList<ProductDto>>($"products{queryString}", requiresAuth: false);
         }
 
         public async Task<List<CategoryDto>?> GetCategoriesAsync()
         {
-            var httpClient = _httpClientFactory.CreateClient("API");
-
-            return await httpClient.GetFromJsonAsync<List<CategoryDto>?>("categories");
+            return await _apiClientWrapper.GetAsync<List<CategoryDto>>("categories");
         }
 
         private QueryString BuildProductsQueryString(ProductParameters productParams)
