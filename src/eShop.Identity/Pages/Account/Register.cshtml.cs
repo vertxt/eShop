@@ -29,6 +29,15 @@ namespace eShop.Identity.Pages.Account
 
         public class InputModel
         {
+
+            [Required, StringLength(50, ErrorMessage = "The {0} must be less than {1} characters long.")]
+            [Display(Name = "First name")]
+            public string FirstName { get; set; } = string.Empty;
+
+            [Required, StringLength(50, ErrorMessage = "The {0} must be less than {1} characters long.")]
+            [Display(Name = "Last name")]
+            public string LastName { get; set; } = string.Empty;
+
             [Required(ErrorMessage = "Username is required")]
             [Display(Name = "Username")]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 3)]
@@ -65,27 +74,42 @@ namespace eShop.Identity.Pages.Account
                 var user = new User
                 {
                     UserName = Input.Username,
-                    Email = Input.Email
+                    Email = Input.Email,
+                    FirstName = Input.FirstName,
+                    LastName = Input.LastName,
                 };
 
                 var result = await _userManager.CreateAsync(user, Input.Password);
-
-                if (result.Succeeded)
+                if (!result.Succeeded)
                 {
-                    _logger.LogInformation("User {Username} created a new account with password.", Input.Username);
+                    _logger.LogError("User {Username} created failed", Input.Username);
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
 
-                    // Automatically sign in the user after registration
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    return LocalRedirect(returnUrl);
+                    return Page();
                 }
 
-                foreach (var error in result.Errors)
+                var roleResult = await _userManager.AddToRoleAsync(user, "Customer");
+                if (!roleResult.Succeeded)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    _logger.LogError("Failed to add user {Username} to Customer role: {Errors}",
+                                     Input.Username,
+                                     string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+                    foreach (var error in roleResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+
+                    return Page();
                 }
+
+                _logger.LogInformation("User {Username} created and added to Customer role.", Input.Username);
+                await _signInManager.SignInAsync(user, isPersistent: false);
+                return LocalRedirect(returnUrl);
             }
 
-            // If we got this far, something failed, redisplay form
             return Page();
         }
     }

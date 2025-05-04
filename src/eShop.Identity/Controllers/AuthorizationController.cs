@@ -46,8 +46,12 @@ namespace eShop.Identity.Controllers
             // Create a new ClaimsPrincipal with the required claims
             var principal = await _signInManager.CreateUserPrincipalAsync(user);
 
+            // Manually add additional information here
+            principal.SetClaim(Claims.GivenName, user.FirstName);
+            principal.SetClaim(Claims.FamilyName, user.LastName);
+
             // Ensure a subject claim exists
-            if (principal.FindFirst(Claims.Subject) == null)
+            if (principal.FindFirst(Claims.Subject) is null)
             {
                 var userId = await _userManager.GetUserIdAsync(user);
                 principal.SetClaim(Claims.Subject, userId);
@@ -59,9 +63,6 @@ namespace eShop.Identity.Controllers
             {
                 principal.SetClaim(Claims.Role, role);
             }
-
-            // Set the requested scopes as principal scopes
-            principal.SetScopes(request.GetScopes());
 
             // Set appropriate destinations for each claim
             principal.SetScopes(request.GetScopes());
@@ -163,6 +164,13 @@ namespace eShop.Identity.Controllers
                 case Claims.Role:
                     yield return Destinations.AccessToken;
                     if (principal.HasScope(Scopes.Roles))
+                        yield return Destinations.IdentityToken;
+                    yield break;
+
+                case Claims.GivenName:
+                case Claims.FamilyName:
+                    yield return Destinations.AccessToken;
+                    if (principal.HasScope(Scopes.Profile))
                         yield return Destinations.IdentityToken;
                     yield break;
 

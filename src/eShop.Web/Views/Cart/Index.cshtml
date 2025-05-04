@@ -11,7 +11,7 @@
     {
         <div class="alert alert-info">
             <p>Your shopping cart is empty.</p>
-            <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-3">Continue Shopping</a>
+            <a asp-controller="Products" asp-action="Index" class="btn btn-primary mt-3">Continue Shopping</a>
         </div>
     }
     else
@@ -88,7 +88,7 @@
                     </div>
                     <div class="card-footer">
                         <div class="d-flex justify-content-between">
-                            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">
+                            <a asp-controller="Products" asp-action="Index" class="btn btn-outline-primary">
                                 <i class="bi bi-arrow-left"></i> Continue Shopping
                             </a>
                             <form asp-action="Clear" method="post">

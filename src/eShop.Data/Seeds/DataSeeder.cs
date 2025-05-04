@@ -58,6 +58,8 @@ namespace eShop.Data.Seeds
             {
                 UserName = "admin@example.com",
                 Email = "admin@example.com",
+                FirstName = "Jimmy",
+                LastName = "McGill",
             };
 
             if (await _userManager.FindByEmailAsync(adminUser.Email) == null)
@@ -73,18 +75,83 @@ namespace eShop.Data.Seeds
                 }
             }
 
-            var customerUser = new User
+            var customerUser1 = new User
             {
-                UserName = "customer@example.com",
-                Email = "customer@example.com",
+                UserName = "john.doe@gmail.com",
+                Email = "john.doe@gmail.com",
+                FirstName = "John",
+                LastName = "Doe",
             };
 
-            if (await _userManager.FindByEmailAsync(customerUser.Email) == null)
+            if (await _userManager.FindByEmailAsync(customerUser1.Email) == null)
             {
-                var result = await _userManager.CreateAsync(customerUser);
+                var result = await _userManager.CreateAsync(customerUser1, "Customer@123");
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(customerUser, "Customer@123");
+                    await _userManager.AddToRoleAsync(customerUser1, "Customer");
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Failed to create customer user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                }
+            }
+
+            var customerUser2 = new User
+            {
+                UserName = "jane.doe@gmail.com",
+                Email = "jane.doe@gmail.com",
+                FirstName = "Jane",
+                LastName = "Doe",
+            };
+
+            if (await _userManager.FindByEmailAsync(customerUser2.Email) == null)
+            {
+                var result = await _userManager.CreateAsync(customerUser2, "Customer@123");
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(customerUser2, "Customer");
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Failed to create customer user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                }
+            }
+
+            var customerUser3 = new User
+            {
+                UserName = "michael@gmail.com",
+                Email = "michael@gmail.com",
+                FirstName = "Mike",
+                LastName = "Ehrmantraut",
+            };
+
+            if (await _userManager.FindByEmailAsync(customerUser3.Email) == null)
+            {
+                var result = await _userManager.CreateAsync(customerUser3, "Customer@123");
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(customerUser3, "Customer");
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Failed to create customer user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                }
+            }
+
+            var customerUser4 = new User
+            {
+                UserName = "lydia@gmail.com",
+                Email = "lydia@gmail.com",
+                FirstName = "Lydia",
+                LastName = "Rodarte-Quayle"
+            };
+
+            if (await _userManager.FindByEmailAsync(customerUser4.Email) == null)
+            {
+                var result = await _userManager.CreateAsync(customerUser4, "Customer@123");
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(customerUser4, "Customer");
                 }
                 else
                 {

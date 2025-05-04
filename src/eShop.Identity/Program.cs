@@ -79,7 +79,6 @@ builder.Services.AddOpenIddict()
         options.UseAspNetCore();
     });
 
-
 builder.Services.AddRazorPages();
 
 builder.Services.AddCors(options =>

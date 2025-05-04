@@ -6,9 +6,6 @@ using eShop.Shared.Common.Pagination;
 using eShop.Shared.Parameters;
 using eShop.Shared.DTOs.Products;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Identity.Client;
-using System.Reflection.Metadata.Ecma335;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 
 namespace eShop.Business.Services
