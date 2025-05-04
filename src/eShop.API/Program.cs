@@ -2,7 +2,6 @@ using eShop.API.Middleware;
 using eShop.Business;
 using eShop.Data;
 using eShop.Data.Seeds;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using OpenIddict.Validation.AspNetCore;
 

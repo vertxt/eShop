@@ -6,6 +6,7 @@ using eShop.Data.Entities.UserAggregate;
 using eShop.Shared.DTOs.Carts;
 using eShop.Shared.DTOs.Categories;
 using eShop.Shared.DTOs.Products;
+using eShop.Shared.DTOs.Reviews;
 
 namespace eShop.Business.Mappings
 {
@@ -50,13 +51,6 @@ namespace eShop.Business.Mappings
                     opt.MapFrom(src => src.Attribute.Name))
                 .ForMember(dest => dest.DisplayName, opt =>
                     opt.MapFrom(src => src.Attribute.DisplayName ?? src.Attribute.Name));
-
-            // Review -> ProductReviewDto
-            CreateMap<Review, ProductReviewDto>()
-                .ForMember(dest => dest.ReviewerName, opt =>
-                    opt.MapFrom(src => src.User.UserName))
-                .ForMember(dest => dest.Rating, opt =>
-                    opt.MapFrom(src => Math.Round(src.Rating, 2)));
 
             // CreateProductDto -> Product
             CreateMap<CreateProductDto, Product>()
@@ -126,6 +120,17 @@ namespace eShop.Business.Mappings
                     opt => opt.MapFrom(src => src.VariantId));
 
             CreateMap<UpdateCartItemDto, CartItem>();
+
+            // Product Review
+            // Review -> ReviewDto
+            CreateMap<Review, ReviewDto>()
+                .ForMember(dest => dest.UserName, opt =>
+                    opt.MapFrom(src => src.User.UserName))
+                .ForMember(dest => dest.Rating, opt =>
+                    opt.MapFrom(src => Math.Round(src.Rating, 2)));
+            CreateMap<CreateReviewDto, Review>()
+                .ForMember(dest => dest.CreatedDate, opt =>
+                    opt.MapFrom(_ => DateTime.UtcNow));
         }
     }
 }

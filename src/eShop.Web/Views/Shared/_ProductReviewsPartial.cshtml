@@ -1,0 +1,80 @@
+@model eShop.Web.Pages.DetailsModel
+@using eShop.Shared.DTOs.Reviews
+
+<div class="product-reviews">
+    @if (Model.Product.Reviews.Any())
+    {
+        <div class="mb-4">
+            <h4>Customer Reviews</h4>
+            <div class="d-flex align-items-center mb-3">
+                <h2 class="mb-0 me-2">@Model.Product.AverageRating.ToString("0.0")</h2>
+                <div>
+                    <vc:star-rating rating="@Model.Product.AverageRating" total-reviews="@Model.Product.Reviews.Count" show-count="false" />
+                    <small class="text-muted">Based on @Model.Product.Reviews.Count reviews</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="review-list">
+            @foreach (var review in Model.Product.Reviews.OrderByDescending(r => r.CreatedDate))
+            {
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5 class="mb-1">@review.Title</h5>
+                                <vc:star-rating rating="@review.Rating" show-count="false" css-class="mb-2" />
+                            </div>
+                            <small class="text-muted">@review.CreatedDate.ToString("MMM dd, yyyy")</small>
+                        </div>
+                        <p class="mb-1">@review.Body</p>
+                        <footer class="text-muted small">By @review.UserName</footer>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-chat" style="font-size: 3rem; color: #ccc;"></i>
+            <p class="mt-3">No reviews yet. Be the first to review this product!</p>
+        </div>
+    }
+    
+    <!-- Write a Review Form -->
+    <div class="mt-4">
+        <h5>Write a Review</h5>
+        <form method="post" asp-page-handler="SubmitReview" asp-route-id="@Model.Product.Id">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="mb-3">
+                <label asp-for="NewReview.Title" class="form-label">Title</label>
+                <input asp-for="NewReview.Title" class="form-control" id="reviewTitle">
+                <span asp-validation-for="NewReview.Title" class="text-danger"></span>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Rating</label>
+                <div>
+                    <div class="rating">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <input type="radio" id="star@(i)" asp-for="NewReview.Rating" value="@i" />
+                            <label for="star@(i)"><i class="bi bi-star-fill"></i></label>
+                        }
+                    </div>
+                    <span asp-validation-for="NewReview.Rating" class="text-danger"></span>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label asp-for="NewReview.Body" class="form-label">Review</label>
+                <textarea asp-for="NewReview.Body" class="form-control" id="reviewComment" rows="3"></textarea>
+                <span asp-validation-for="NewReview.Body" class="text-danger"></span>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Submit Review</button>
+        </form>
+    </div>
+</div>

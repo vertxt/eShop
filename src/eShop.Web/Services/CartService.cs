@@ -1,9 +1,7 @@
-using System.Net.Http.Headers;
 using System.Text.Json;
 using eShop.Shared.DTOs.Carts;
 using eShop.Web.Extensions;
 using eShop.Web.Interfaces;
-using Microsoft.AspNetCore.Authentication;
 
 namespace eShop.Web.Services
 {
@@ -21,16 +19,6 @@ namespace eShop.Web.Services
             {
                 PropertyNameCaseInsensitive = true,
             };
-        }
-
-        private async Task AttachBearerTokenAsync()
-        {
-            var token = await _httpContextAccessor.HttpContext!.GetTokenAsync("access_token");
-
-            if (!string.IsNullOrEmpty(token))
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            }
         }
 
         public async Task<CartDto> GetCartAsync()

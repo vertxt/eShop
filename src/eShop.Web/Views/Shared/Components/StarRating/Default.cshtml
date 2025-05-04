@@ -1,0 +1,30 @@
+@{
+    var rating = ViewBag.Rating as decimal? ?? 0;
+    var totalReviews = ViewBag.TotalReviews as int? ?? 0;
+    var showCount = ViewBag.ShowCount as bool? ?? true;
+    var cssClass = ViewBag.CssClass as string ?? "";
+}
+
+<div class="d-flex align-items-center @cssClass">
+    <div class="me-2">
+        @for (int i = 1; i <= 5; i++)
+        {
+            if (i <= Math.Floor(rating))
+            {
+                <i class="bi bi-star-fill text-warning"></i>
+            }
+            else if (i - rating < 1 && i - rating > 0)
+            {
+                <i class="bi bi-star-half text-warning"></i>
+            }
+            else
+            {
+                <i class="bi bi-star text-warning"></i>
+            }
+        }
+    </div>
+    @if (showCount && totalReviews > 0)
+    {
+        <small class="text-muted">(@totalReviews @(totalReviews == 1 ? "review" : "reviews"))</small>
+    }
+</div>
