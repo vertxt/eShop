@@ -37,51 +37,7 @@
                             <tbody>
                                 @foreach (var item in Model.Items)
                                 {
-                                    <tr>
-                                        <td>
-                                            @if (!string.IsNullOrEmpty(item.ProductImage))
-                                            {
-                                                <img src="@item.ProductImage" alt="@item.ProductName" class="img-thumbnail" style="max-width: 60px;">
-                                            }
-                                            else
-                                            {
-                                                <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                                                    <i class="bi bi-image"></i>
-                                                </div>
-                                            }
-                                        </td>
-                                        <td>
-                                            <a asp-controller="Product" asp-action="Details" asp-route-id="@item.ProductId" class="text-decoration-none">
-                                                <strong>@item.ProductName</strong>
-                                            </a>
-                                            @if (!string.IsNullOrEmpty(item.VariantName))
-                                            {
-                                                <div class="small text-muted">Variant: @item.VariantName</div>
-                                            }
-                                        </td>
-                                        <td>$@item.Price.ToString("F2")</td>
-                                        <td>
-                                            <form asp-action="UpdateItem" method="post" class="d-flex" style="max-width: 120px;">
-                                                <input type="hidden" name="CartItemId" value="@item.Id" />
-                                                <div class="input-group input-group-sm">
-                                                    <button type="button" class="btn btn-outline-secondary quantity-minus">-</button>
-                                                    <input type="number" name="Quantity" value="@item.Quantity" min="1" max="99" class="form-control text-center quantity-input" />
-                                                    <button type="button" class="btn btn-outline-secondary quantity-plus">+</button>
-                                                </div>
-                                                <button type="submit" class="btn btn-sm btn-primary ms-2 update-quantity d-none">
-                                                    <i class="bi bi-check"></i>
-                                                </button>
-                                            </form>
-                                        </td>
-                                        <td>$@(item.Price * item.Quantity).ToString("F2")</td>
-                                        <td>
-                                            <form asp-action="RemoveItem" asp-route-id="@item.Id" method="post">
-                                                <button type="submit" class="btn btn-sm btn-danger">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
+                                    <partial name="_CartItem" model="item" />
                                 }
                             </tbody>
                         </table>
@@ -91,7 +47,7 @@
                             <a asp-controller="Products" asp-action="Index" class="btn btn-outline-primary">
                                 <i class="bi bi-arrow-left"></i> Continue Shopping
                             </a>
-                            <form asp-action="Clear" method="post">
+                            <form asp-controller="Cart" asp-action="ClearCart" method="post">
                                 <button type="submit" class="btn btn-outline-danger">
                                     <i class="bi bi-trash"></i> Clear Cart
                                 </button>
@@ -101,32 +57,25 @@
                 </div>
             </div>
             <div class="col-lg-4 mt-4 mt-lg-0">
-                <div class="card">
-                    <div class="card-header bg-light">
-                        <h5 class="mb-0">Order Summary</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Subtotal:</span>
-                            <span>$@Model.Summary.TotalPrice.ToString("F2")</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Shipping:</span>
-                            <span>TBD</span>
-                        </div>
-                        <hr />
-                        <div class="d-flex justify-content-between mb-2">
-                            <strong>Total:</strong>
-                            <strong>$@Model.Summary.TotalPrice.ToString("F2")</strong>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <a href="#" class="btn btn-success w-100">
-                            <i class="bi bi-credit-card"></i> Proceed to Checkout
-                        </a>
-                    </div>
-                </div>
+                <vc:order-summary summary="@Model.Summary"></vc:order-summary>
             </div>
         </div>
     }
 </div>
+
+<style>
+    .quantity-input::-webkit-inner-spin-button,
+    .quantity-input::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .quantity-input {
+        -moz-appearance: textfield;
+    }
+</style>
+
+
+@section Scripts {
+    <script src="~/js/cart.js"></script>
+}

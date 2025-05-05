@@ -1,0 +1,51 @@
+@model CartItemDto
+
+<tr>
+    <td>
+        @if (!string.IsNullOrEmpty(Model.ProductImage))
+        {
+            <img src="@Model.ProductImage" alt="@Model.ProductName" class="img-thumbnail" style="max-width: 60px;">
+        }
+        else
+        {
+            <div class="bg-secondary text-white d-flex align-items-center justify-content-center"
+                style="width: 60px; height: 60px;">
+                <i class="bi bi-image"></i>
+            </div>
+        }
+    </td>
+    <td>
+        <a asp-controller="Product" asp-action="Details" asp-route-id="@Model.ProductId" class="text-decoration-none">
+            <strong>@Model.ProductName</strong>
+        </a>
+        @if (!string.IsNullOrEmpty(Model.VariantName))
+        {
+            <div class="small text-muted">Variant: @Model.VariantName</div>
+        }
+    </td>
+    <td>$@Model.Price.ToString("F2")</td>
+    <td>
+        <form asp-controller="Cart" asp-action="UpdateCartItem" method="post" class="d-flex quantity-form"
+            style="max-width: 120px;">
+            <input type="hidden" name="CartItemId" value="@Model.Id" />
+            <div class="input-group input-group-sm">
+                <button type="button" class="btn btn-outline-secondary quantity-minus">-</button>
+                <input type="number" name="Quantity" value="@Model.Quantity" min="1" max="99"
+                    class="form-control text-center quantity-input" />
+                <button type="button" class="btn btn-outline-secondary quantity-plus">+</button>
+            </div>
+            <button type="submit" class="btn btn-sm btn-primary ms-1 update-quantity d-none">
+                <i class="bi bi-check"></i>
+            </button>
+        </form>
+    </td>
+    <td>$@((Model.Price * Model.Quantity).ToString("F2"))</td>
+    <td>
+        <form asp-controller="Cart" asp-action="RemoveCartItem" method="post">
+            <input type="hidden" name="cartItemId" value="@Model.Id" />
+            <button type="submit" class="btn btn-sm btn-danger">
+                <i class="bi bi-trash"></i>
+            </button>
+        </form>
+    </td>
+</tr>
