@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using eShop.Business.Interfaces;
+using eShop.Shared.Common.Pagination;
 using eShop.Shared.DTOs.Reviews;
+using eShop.Shared.Parameters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Validation.AspNetCore;
@@ -19,9 +21,9 @@ namespace eShop.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ReviewDto>>> Get(int productId)
+        public async Task<ActionResult<PagedList<ReviewDto>>> Get(int productId, [FromQuery] PaginationParameters paginationParameters)
         {
-            var reviews = await _service.GetProductReviewsAsync(productId);
+            var reviews = await _service.GetProductReviewsAsync(productId, paginationParameters);
             return Ok(reviews);
         }
 

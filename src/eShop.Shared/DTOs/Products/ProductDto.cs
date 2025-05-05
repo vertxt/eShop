@@ -40,7 +40,8 @@ namespace eShop.Shared.DTOs.Products
         public ICollection<ProductImageDto> Images { get; set; } = new List<ProductImageDto>();
         public ICollection<ProductVariantDto> Variants { get; set; } = new List<ProductVariantDto>();
         public ICollection<ProductAttributeDto> Attributes { get; set; } = new List<ProductAttributeDto>();
-        public ICollection<ReviewDto> Reviews { get; set; } = new List<ReviewDto>();
+        // public ICollection<ReviewDto> Reviews { get; set; } = new List<ReviewDto>();
+        public int ReviewCount { get; set; }
         public decimal AverageRating { get; set; }
     }
 

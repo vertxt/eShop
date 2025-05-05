@@ -1,0 +1,159 @@
+@{
+    string? firstName = User.FindFirst(ClaimTypes.GivenName)?.Value ?? null;
+    string? lastName = User.FindFirst(ClaimTypes.Surname)?.Value ?? null;
+}
+
+<header class="navbar-custom">
+    <!-- Top Utility Bar -->
+    <div class="utility-bar py-1">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="d-none d-md-flex align-items-center">
+                <span class="text-white-50 me-3"><i class="bi bi-telephone me-1"></i> 1-800-SHOP-NOW</span>
+                <span class="text-white-50"><i class="bi bi-envelope me-1"></i> support@yourstore.com</span>
+            </div>
+            <div class="d-flex justify-content-end">
+                @if (User.Identity is not null && User.Identity.IsAuthenticated)
+                {
+                    @if (firstName is not null && lastName is not null)
+                    {
+                        <span class="text-white-50 me-3">Welcome, @(firstName + " " + lastName)</span>
+                    }
+                    <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
+                        <button type="submit"
+                            class="btn btn-link p-0 text-white-50 text-decoration-none border-0 shadow-none d-flex">
+                            <i class="bi bi-box-arrow-right me-1"></i> Logout
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-area="" asp-controller="Account" asp-action="Register"
+                        class="ms-3 text-white-50 text-decoration-none"><i class="bi bi-person-add me-1"></i>Register</a>
+                    <a asp-area="" asp-controller="Account" asp-action="Login"
+                        class="ms-3 text-white-50 text-decoration-none"><i class="bi bi-box-arrow-in-right me-1"></i>Login</a>
+                }
+                <a class="ms-3 text-white-50 text-decoration-none"><i class="bi bi-question-circle me-1"></i> Help</a>
+                <div class="dropdown ms-3">
+                    <button
+                        class="btn btn-link p-0 text-white-50 text-decoration-none border-0 shadow-none dropdown-toggle"
+                        type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-globe me-1"></i> EN
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end custom-dropdown" aria-labelledby="languageDropdown">
+                        <li><a class="dropdown-item text-white-50" href="#">English</a></li>
+                        <li><a class="dropdown-item text-white-50" href="#">Español</a></li>
+                        <li><a class="dropdown-item text-white-50" href="#">Français</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Middle Main Bar -->
+    <div class="main-bar py-3">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <!-- Logo -->
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/headerLogo.svg" width="120" alt="eShop logo" class="transition-all hover:scale-105">
+                </a>
+
+                <!-- Search Bar (visible on desktop) -->
+                <div class="flex-grow-1 mx-4 d-none d-lg-block">
+                    <div class="position-relative">
+                        <i class="bi bi-search position-absolute ms-3"
+                            style="top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.6);"></i>
+                        <input type="text" class="form-control search-input rounded-pill ps-5"
+                            placeholder="Search for products...">
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-none d-md-flex">
+                    <a
+                        href="#"
+                        class="btn action-btn rounded-pill position-relative me-2 text-white-50"
+                        aria-label="Wishlist"
+                    >
+                        <i class="bi bi-heart fs-5"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            3
+                        </span>
+                    </a>
+                    <vc:mini-cart></vc:mini-cart>
+                    <a 
+                        href="#"
+                        class="btn action-btn rounded-pill text-white-50"
+                        aria-label="Account"
+                    >
+                        <i class="bi bi-person fs-5"></i>
+                    </a>
+                </div>
+
+                <!-- Mobile Toggle -->
+                <button class="btn border-0 d-md-none rounded-circle p-2 action-btn" type="button"
+                    data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+                    <i class="bi bi-list fs-4"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Menu Bar -->
+    <partial name="_NavbarPartial" />
+</header>
+
+<!-- Mobile Off-Canvas Menu -->
+<div class="offcanvas offcanvas-start offcanvas-custom" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title text-white" id="mobileMenuLabel">Menu</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="mb-4">
+            <div class="position-relative">
+                <i class="bi bi-search position-absolute ms-3"
+                    style="top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.6);"></i>
+                <input type="text" class="form-control search-input rounded-pill ps-5"
+                    placeholder="Search for products...">
+            </div>
+        </div>
+
+        <div class="list-group list-group-flush mb-4">
+            <a href="#" class="list-group-item bg-transparent text-white-50 border-bottom border-secondary">Home</a>
+            <a href="#"
+                class="list-group-item bg-transparent text-white-50 border-bottom border-secondary">Categories</a>
+            <a href="#" class="list-group-item bg-transparent text-white-50 border-bottom border-secondary">New
+                Arrivals</a>
+            <a href="#" class="list-group-item bg-transparent text-white-50 border-bottom border-secondary">Deals</a>
+            <a href="#" class="list-group-item bg-transparent text-white-50 border-bottom border-secondary">Catalog</a>
+            <a href="#" class="list-group-item bg-transparent text-white-50 border-bottom border-secondary">Contact</a>
+        </div>
+
+        <div class="d-flex flex-column">
+            <a href="#" class="btn btn-outline-light mb-2">
+                <i class="bi bi-person me-2"></i> My Account
+            </a>
+            <a href="#" class="btn btn-outline-light mb-2">
+                <i class="bi bi-heart me-2"></i> Wishlist
+            </a>
+            <a href="#" class="btn btn-outline-light mb-2">
+                <i class="bi bi-cart3 me-2"></i> Cart
+            </a>
+            <a href="#" class="btn btn-outline-light mb-2">
+                <i class="bi bi-truck me-2"></i> Track Order
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Mobile Menu Toggle -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Fix for dropdown carets
+        const dropdownToggle = document.querySelectorAll('.dropdown-toggle');
+        dropdownToggle.forEach(toggle => {
+            toggle.style.verticalAlign = 'middle';
+        });
+    });
+</script>

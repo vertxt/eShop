@@ -9,7 +9,7 @@ namespace eShop.Shared.DTOs.Reviews
         public decimal Rating { get; set; }
         public string Title { get; set; }
         public string Body { get; set; } = string.Empty;
-        public string UserName { get; set; }
+        public string Reviewer { get; set; }
         public DateTime CreatedDate { get; set; }
     }
 

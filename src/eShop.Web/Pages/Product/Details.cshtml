@@ -22,22 +22,25 @@ else
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Home</a></li>
-                <li class="breadcrumb-item"><a href="/category/@Model.Product.CategoryId">@Model.Product.CategoryName</a></li>
+                <li class="breadcrumb-item"><a href="/category/@Model.Product.CategoryId">@Model.Product.CategoryName</a>
+                </li>
                 <li class="breadcrumb-item active" aria-current="page">@Model.Product.Name</li>
             </ol>
         </nav>
-        
+
         <div class="row mt-4">
             <!-- Product Images Gallery -->
             <div class="col-md-6 mb-4">
                 @if (Model.Product.Images.Any())
                 {
                     <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner">
+                        <div class="carousel-inner bg-light">
                             @foreach (var image in Model.Product.Images.Select((img, i) => new { Img = img, Index = i }))
                             {
                                 <div class="carousel-item @(image.Index == 0 ? "active" : "")">
-                                    <img src="@image.Img.Url" class="d-block w-100 img-fluid rounded" alt="@Model.Product.Name">
+                                    <div class="ratio ratio-4x3">
+                                        <img src="@image.Img.Url" class="img-fluid product-image" alt="@Model.Product.Name">
+                                    </div>
                                 </div>
                             }
                         </div>
@@ -53,7 +56,7 @@ else
                             </button>
                         }
                     </div>
-                    
+
                     <!-- Thumbnail Navigation -->
                     @if (Model.Product.Images.Count > 1)
                     {
@@ -61,9 +64,11 @@ else
                             @foreach (var thumb in Model.Product.Images.Select((img, i) => new { Img = img, Index = i }))
                             {
                                 <div class="col-3 mb-2">
-                                    <img src="@thumb.Img.Url" class="img-thumbnail" 
-                                         alt="Thumbnail" onclick="$('#productCarousel').carousel(@thumb.Index)"
-                                         style="cursor:pointer;">
+                                    <div class="ratio ratio-1x1">
+                                        <img src="@thumb.Img.Url" class="img-thumbnail thumb-image"
+                                            alt="Thumbnail" onclick="$('#productCarousel').carousel(@thumb.Index)"
+                                            style="cursor:pointer;">
+                                    </div>
                                 </div>
                             }
                         </div>
@@ -79,14 +84,15 @@ else
                     </div>
                 }
             </div>
-            
+
             <!-- Product Information -->
             <div class="col-md-6">
                 <div class="mb-3">
                     <h1 class="mb-1">@Model.Product.Name</h1>
-                    <vc:star-rating rating="@Model.Product.AverageRating" total-reviews="@Model.Product.Reviews.Count" css-class="mb-2" />
+                    <vc:star-rating rating="@Model.Product.AverageRating" total-reviews="@Model.Product.ReviewCount"
+                        css-class="mb-2" />
                 </div>
-                
+
                 <div class="mb-4">
                     <h2 class="text-danger fw-bold">$@Model.Product.BasePrice.ToString("0.00")</h2>
                     @if (!Model.Product.IsActive)
@@ -98,14 +104,14 @@ else
                         <div class="badge bg-warning text-dark mb-2">Only @Model.Product.QuantityInStock left in stock!</div>
                     }
                 </div>
-                
+
                 @if (!string.IsNullOrEmpty(Model.Product.ShortDescription))
                 {
                     <div class="mb-4">
                         <p class="lead">@Model.Product.ShortDescription</p>
                     </div>
                 }
-                
+
                 <!-- Product Variants Selection -->
                 @if (Model.Product.HasVariants && Model.Product.Variants.Any())
                 {
@@ -122,7 +128,7 @@ else
                         </form>
                     </div>
                 }
-                
+
                 <!-- Product Attributes -->
                 @if (Model.Product.Attributes.Any())
                 {
@@ -134,7 +140,7 @@ else
                                     @foreach (var attr in Model.Product.Attributes)
                                     {
                                         <tr>
-                                            <th scope="row">@attr.Name</th>
+                                            <th scope="row">@attr.DisplayName</th>
                                             <td>@attr.Value</td>
                                         </tr>
                                     }
@@ -143,12 +149,12 @@ else
                         </div>
                     </div>
                 }
-                
+
                 <!-- Add to Cart -->
                 <div class="mb-4">
                     <div class="d-flex">
-                        <input type="number" class="form-control me-2" style="max-width: 100px;" value="1" min="1" 
-                               max="@(Model.Product.QuantityInStock ?? 100)" />
+                        <input type="number" class="form-control me-2" style="max-width: 100px;" value="1" min="1"
+                            max="@(Model.Product.QuantityInStock ?? 100)" />
                         <button class="btn btn-primary flex-grow-1">
                             <i class="bi bi-cart-plus"></i> Add to Cart
                         </button>
@@ -156,47 +162,48 @@ else
                 </div>
             </div>
         </div>
-        
+
         <!-- Product Description & Reviews -->
         <div class="row mt-5">
             <div class="col-12">
                 <ul class="nav nav-tabs" id="productTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="description-tab" data-bs-toggle="tab" 
-                                data-bs-target="#description" type="button" role="tab" 
-                                aria-controls="description" aria-selected="true">Description</button>
+                        <button class="nav-link active" id="description-tab" data-bs-toggle="tab"
+                            data-bs-target="#description" type="button" role="tab" aria-controls="description"
+                            aria-selected="true">Description</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" 
-                                data-bs-target="#reviews" type="button" role="tab" 
-                                aria-controls="reviews" aria-selected="false">Reviews (@Model.Product.Reviews.Count)</button>
+                        <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews"
+                            type="button" role="tab" aria-controls="reviews" aria-selected="false">Reviews
+                            (@Model.Product.ReviewCount)</button>
                     </li>
                 </ul>
                 <div class="tab-content p-4 border border-top-0 rounded-bottom" id="productTabsContent">
-                    <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+                    <div class="tab-pane fade show active" id="description" role="tabpanel"
+                        aria-labelledby="description-tab">
                         <div class="product-description">
                             @Html.Raw(Model.Product.Description)
                         </div>
                     </div>
                     <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
-                        <partial name="_ProductReviewsPartial" model="Model" />
+                        <partial name="_ProductReviewsTabPanel" model="Model" />
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <!-- Related Products -->
+        <!-- to be implemented -->
         <div class="row mt-5">
             <div class="col-12">
                 <h3 class="mb-4">You May Also Like</h3>
-                <!-- This would be implemented in your controller to show related products -->
-                <!-- Placeholder for demonstration purposes -->
                 <div class="row">
                     @for (int i = 0; i < 4; i++)
                     {
                         <div class="col-md-3 col-6 mb-4">
                             <div class="card h-100">
-                                <div class="bg-light" style="height: 200px; display: flex; align-items: center; justify-content: center;">
+                                <div class="bg-light"
+                                    style="height: 200px; display: flex; align-items: center; justify-content: center;">
                                     <i class="bi bi-image" style="font-size: 3rem; color: #ddd;"></i>
                                 </div>
                                 <div class="card-body">
@@ -215,54 +222,59 @@ else
 
 @section Styles {
     <style>
-        /* Star Rating System */
         .rating {
             display: inline-flex;
             flex-direction: row-reverse;
             gap: 3px;
         }
-        
+
         .rating input {
             display: none;
         }
-        
+
         .rating label {
             color: #ddd;
             font-size: 1.5rem;
             cursor: pointer;
         }
-        
-        .rating input:checked ~ label,
-        .rating input:hover ~ label {
+
+        .rating input:checked~label,
+        .rating input:hover~label {
             color: #ffc107;
         }
-        
-        /* Product Description */
+
         .product-description {
             line-height: 1.7;
         }
-        
+
         .product-description img {
             max-width: 100%;
             height: auto;
+        }
+
+        .product-image {
+            object-fit: contain;
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .thumb-image {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
         }
     </style>
 }
 
 @section Scripts {
     <script>
-        $(document).ready(function() {
-            // Initialize product image carousel
+        $(document).ready(function () {
             var productCarousel = document.querySelector('#productCarousel')
             if (productCarousel) {
                 new bootstrap.Carousel(productCarousel)
             }
         });
     </script>
-    
-    <!-- Client-side validation -->
+
     <partial name="_ValidationScriptsPartial" />
-    
-    <!-- Reviews script -->
-    <script src="~/js/reviews.js"></script>
 }

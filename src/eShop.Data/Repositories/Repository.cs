@@ -16,7 +16,7 @@ namespace eShop.Data.Repositories
 
         public IQueryable<TEntity> GetAll()
         {
-            return _entities.AsQueryable<TEntity>();
+            return _entities;
         }
 
         public async Task<TEntity?> GetByIdAsync(int id)

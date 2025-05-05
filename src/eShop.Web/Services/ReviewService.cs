@@ -1,7 +1,8 @@
-using System.Text.Json;
+using eShop.Shared.Common.Pagination;
 using eShop.Shared.DTOs.Reviews;
-using eShop.Web.Extensions;
+using eShop.Shared.Parameters;
 using eShop.Web.Interfaces;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace eShop.Web.Services
 {
@@ -13,9 +14,17 @@ namespace eShop.Web.Services
             _apiClientWrapper = apiClientWrapper;
         }
 
-        public async Task<IEnumerable<ReviewDto>> GetProductReviewsAsync(int productId)
+        public async Task<PagedList<ReviewDto>> GetProductReviewsAsync(int productId, PaginationParameters paginationParameters)
         {
-            return await _apiClientWrapper.GetAsync<List<ReviewDto>>($"products/{productId}/reviews");
+            var queryBuilder = new QueryBuilder
+            {
+                { "PageNumber", paginationParameters.PageNumber.ToString() },
+                { "PageSize", paginationParameters.PageSize.ToString() }
+            };
+
+            var queryString = queryBuilder.ToQueryString();
+
+            return await _apiClientWrapper.GetAsync<PagedList<ReviewDto>>($"products/{productId}/reviews{queryString}");
         }
 
         public async Task<ReviewDto> AddReviewAsync(int productId, CreateReviewDto createReviewDto)

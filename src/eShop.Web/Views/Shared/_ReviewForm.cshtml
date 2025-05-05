@@ -1,0 +1,36 @@
+@model CreateReviewDto
+
+<div class="mt-4">
+    <h5>Write a Review</h5>
+    <form method="post" asp-page-handler="SubmitReview" asp-route-id="@ViewData["ProductId"]">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label">Title</label>
+            <input asp-for="Title" class="form-control" id="reviewTitle">
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Rating</label>
+            <div>
+                <div class="rating">
+                    @for (int i = 5; i > 0; i--)
+                    {
+                        <input type="radio" id="star@(i)" asp-for="Rating" value="@i" />
+                        <label for="star@(i)"><i class="bi bi-star-fill"></i></label>
+                    }
+                </div>
+                <span asp-validation-for="Rating" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Body" class="form-label">Review</label>
+            <textarea asp-for="Body" class="form-control" id="reviewComment" rows="3"></textarea>
+            <span asp-validation-for="Body" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit Review</button>
+    </form>
+</div>

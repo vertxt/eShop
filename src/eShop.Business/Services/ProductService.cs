@@ -7,6 +7,7 @@ using eShop.Shared.Parameters;
 using eShop.Shared.DTOs.Products;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using AutoMapper.QueryableExtensions;
 
 namespace eShop.Business.Services
 {
@@ -34,13 +35,15 @@ namespace eShop.Business.Services
 
         public async Task<PagedList<ProductDto>> GetAllAsync(ProductParameters productParams)
         {
-            var pagedResult = await _productRepository.GetAllWithBasicDetails()
+            var query = _productRepository.GetAll()
                 .Search(productParams.SearchTerm)
                 .Sort(productParams.SortBy)
-                .Filter(productParams)
+                .Filter(productParams);
+
+            var pagedResult = await query.ProjectTo<ProductDto>(_mapper.ConfigurationProvider)
                 .ToPagedList(productParams.PageNumber, productParams.PageSize);
 
-            return pagedResult.MapItems<Product, ProductDto>(_mapper);
+            return pagedResult;
         }
 
         public async Task<ProductDto> GetByIdAsync(int id)

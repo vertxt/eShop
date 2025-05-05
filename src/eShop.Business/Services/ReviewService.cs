@@ -1,9 +1,12 @@
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using eShop.Business.Extensions;
 using eShop.Business.Interfaces;
 using eShop.Data.Entities.UserAggregate;
 using eShop.Data.Interfaces;
+using eShop.Shared.Common.Pagination;
 using eShop.Shared.DTOs.Reviews;
-using Microsoft.EntityFrameworkCore;
+using eShop.Shared.Parameters;
 
 namespace eShop.Business.Services
 {
@@ -18,10 +21,13 @@ namespace eShop.Business.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ReviewDto>> GetProductReviewsAsync(int productId)
+        public async Task<PagedList<ReviewDto>> GetProductReviewsAsync(int productId, PaginationParameters paginationParameters)
         {
-            var reviews = await _reviewRepository.GetByProductIdAsync(productId).ToListAsync();
-            return _mapper.Map<List<ReviewDto>>(reviews);
+            var query = _reviewRepository.GetByProductIdAsync(productId);
+
+            var pagedResult = await query.ProjectTo<ReviewDto>(_mapper.ConfigurationProvider).ToPagedList(paginationParameters.PageNumber, paginationParameters.PageSize);
+
+            return pagedResult;
         }
 
         public async Task<ReviewDto> AddAsync(int productId, string? userId, CreateReviewDto createReviewDto)

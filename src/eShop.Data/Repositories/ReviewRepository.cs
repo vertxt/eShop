@@ -10,7 +10,7 @@ namespace eShop.Data.Repositories
 
         public IQueryable<Review> GetByProductIdAsync(int productId)
         {
-            return _entities.Include(r => r.User)
+            return _entities
                 .Where(r => r.ProductId == productId)
                 .OrderByDescending(r => r.CreatedDate);
         }

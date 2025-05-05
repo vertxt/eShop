@@ -27,6 +27,7 @@ namespace eShop.Business.Mappings
             CreateMap<Product, ProductDetailDto>()
                 .ForMember(dest => dest.CategoryName, opt =>
                     opt.MapFrom(src => src.Category.Name))
+                .ForMember(dest => dest.ReviewCount, opt => opt.MapFrom(src => src.Reviews.Count))
                 .ForMember(dest => dest.AverageRating, opt =>
                     opt.MapFrom(src => src.Reviews.Any() ?
                         Math.Round(src.Reviews.Average(r => r.Rating), 2) : 0));
@@ -124,8 +125,8 @@ namespace eShop.Business.Mappings
             // Product Review
             // Review -> ReviewDto
             CreateMap<Review, ReviewDto>()
-                .ForMember(dest => dest.UserName, opt =>
-                    opt.MapFrom(src => src.User.UserName))
+                .ForMember(dest => dest.Reviewer, opt =>
+                    opt.MapFrom(src => $"{src.User.FirstName} {src.User.LastName}"))
                 .ForMember(dest => dest.Rating, opt =>
                     opt.MapFrom(src => Math.Round(src.Rating, 2)));
             CreateMap<CreateReviewDto, Review>()
