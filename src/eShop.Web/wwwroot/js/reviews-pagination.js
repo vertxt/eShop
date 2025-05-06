@@ -42,7 +42,7 @@ class ReviewsPagination {
             btn.setAttribute('data-current-page', nextPage);
             
             // Hide button if no more pages
-            if (data.metadata.currentPage === data.metadata.totalPages) {
+            if (!data.metadata.hasNextPage) {
                 btn.style.display = 'none';
             }
         })

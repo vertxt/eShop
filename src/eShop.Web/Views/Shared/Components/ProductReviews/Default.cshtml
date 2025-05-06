@@ -20,7 +20,7 @@
         }
     </div>
 
-    @if (Model.Reviews.Metadata.CurrentPage < Model.Reviews.Metadata.TotalPages)
+    @if (Model.Reviews.Metadata.HasNextPage)
     {
         <div class="text-center mt-4 mb-3">
             <button type="button" id="loadMoreReviews" class="btn btn-outline-primary" data-product-id="@Model.ProductId"

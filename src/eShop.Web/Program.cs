@@ -56,23 +56,25 @@ builder.Services.AddHttpClient("API", options =>
 });
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddScoped<IApiClientWrapper, ApiClientWrapper>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-}
-else
-{
-    app.UseExceptionHandler("/Error");
-    app.UseStatusCodePagesWithReExecute("/Error/{0}");
-    // HTTP strict transport security
-    app.UseHsts();
-}
+// if (app.Environment.IsDevelopment())
+// {
+//     app.UseDeveloperExceptionPage();
+// }
+// else
+// {
+app.UseExceptionHandler("/Error");
+app.UseStatusCodePagesWithReExecute("/Error/{0}");
+// HTTP strict transport security
+app.UseHsts();
+// }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
