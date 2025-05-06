@@ -25,9 +25,12 @@ namespace eShop.Business.Services
                 result.Add(new UserDto
                 {
                     Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
                     UserName = user.UserName,
                     Email = user.Email,
                     Roles = roles,
+                    JoinedDate = user.JoinedDate.ToString("dd/MM/yyyy"),
                 });
             }
 

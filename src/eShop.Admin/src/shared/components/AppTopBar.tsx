@@ -64,9 +64,9 @@ export default function AppTopBar({ open, drawerWidth, onDrawerOpen }: Props) {
                             aria-label="account"
                             sx={{ ml: 1 }}
                         >
-                            {user?.profile.name
-                                ? (<Avatar>{user.profile.name[0]}</Avatar>)
-                                : (<AccountCircle fontSize="medium" />)}
+                            {user?.profile.given_name && user.profile.family_name
+                                ? (<Avatar>{`${user.profile.given_name[0]}${user.profile.family_name[0]}`}</Avatar>)
+                                : (<AccountCircle />)}
                         </IconButton>
 
                         <Menu
@@ -83,6 +83,9 @@ export default function AppTopBar({ open, drawerWidth, onDrawerOpen }: Props) {
                                 horizontal: 'right',
                             }}
                         >
+                            <MenuItem key="email">
+                                <Typography>{user?.profile.email ?? "anonymous"}</Typography>
+                            </MenuItem>
                             <MenuItem
                                 key="logout"
                                 onClick={handleLogout}

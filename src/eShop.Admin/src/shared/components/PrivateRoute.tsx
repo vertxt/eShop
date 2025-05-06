@@ -1,6 +1,7 @@
+import { Typography } from "@mui/material";
 import { useEffect } from "react";
 import { useAuth } from "react-oidc-context";
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
 export default function PrivateRoute() {
     const auth = useAuth();
@@ -11,15 +12,14 @@ export default function PrivateRoute() {
         }
     }, [auth.isLoading, auth.isAuthenticated, auth.signinRedirect]);
 
-    if (auth.isLoading) return <div>Loading...</div>;
+    if (auth.isLoading) return <Typography>Loading...</Typography>;
+    if (!auth.isAuthenticated) return <Typography>Redirecting to login...</Typography>;
 
-    if (!auth.isAuthenticated) return <div>Redirecting to login...</div>;
-
-    if (auth.isAuthenticated)
-    {
-        const roles = auth.user?.profile;
-        console.log(roles);
+    const role = auth.user?.profile.role;
+    if (role && role === "Admin") {
+        return <Outlet />
     }
-
-    return <Outlet />
+    else {
+        return <Navigate to="/access-denied" />
+    }
 }

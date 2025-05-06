@@ -49,6 +49,7 @@ namespace eShop.Identity.Controllers
             // Manually add additional information here
             principal.SetClaim(Claims.GivenName, user.FirstName);
             principal.SetClaim(Claims.FamilyName, user.LastName);
+            principal.SetClaim(Claims.Email, user.Email);
 
             // Ensure a subject claim exists
             if (principal.FindFirst(Claims.Subject) is null)

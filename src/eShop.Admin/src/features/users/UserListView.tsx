@@ -30,11 +30,13 @@ export default function UserListView() {
     const getRoleColor = (role: string) => {
         switch (role.toLowerCase()) {
             case 'admin':
-                return 'error';
+                return 'success';
             default:
-                return 'default';
+                return 'primary';
         }
     };
+
+    console.log(users);
 
     return (
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
@@ -105,9 +107,10 @@ export default function UserListView() {
                                     <Table>
                                         <TableHead>
                                             <TableRow>
-                                                <TableCell>Username</TableCell>
+                                                <TableCell>Full name</TableCell>
                                                 <TableCell>Email</TableCell>
                                                 <TableCell>Roles</TableCell>
+                                                <TableCell>Joined</TableCell>
                                                 <TableCell align="right">Actions</TableCell>
                                             </TableRow>
                                         </TableHead>
@@ -115,7 +118,7 @@ export default function UserListView() {
                                             {users && users.length > 0 ? (
                                                 users.map((user) => (
                                                     <TableRow key={user.id} hover>
-                                                        <TableCell>{user.username}</TableCell>
+                                                        <TableCell>{`${user.firstName} ${user.lastName}`}</TableCell>
                                                         <TableCell>{user.email}</TableCell>
                                                         <TableCell>
                                                             {user.roles?.map((role) => (
@@ -128,6 +131,7 @@ export default function UserListView() {
                                                                 />
                                                             ))}
                                                         </TableCell>
+                                                        <TableCell>{user.joinedDate ?? "NaN"}</TableCell>
                                                         <TableCell align="right">
                                                             <Tooltip title="View Details">
                                                                 <IconButton>

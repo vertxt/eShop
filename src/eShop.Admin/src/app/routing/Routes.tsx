@@ -16,6 +16,8 @@ import EditProductPage from "../../features/products/EditProductPage";
 import PrivateRoute from "../../shared/components/PrivateRoute";
 import LoginCallback from "../../features/auth/LoginCallback";
 import LogoutCallback from "../../features/auth/LogoutCallback";
+import AccessDenied from "../../features/auth/AccessDenied";
+import LandingPage from "../../shared/components/LandingPage";
 
 export const router = createBrowserRouter([
     {
@@ -23,12 +25,20 @@ export const router = createBrowserRouter([
         element: <App />,
         children: [
             {
+                index: true,
+                element: <LandingPage />
+            },
+            {
                 path: 'signin-callback',
                 element: <LoginCallback />
             },
             {
                 path: 'signout-callback',
                 element: <LogoutCallback />
+            },
+            {
+                path: 'access-denied',
+                element: <AccessDenied />
             },
             {
                 element: <PrivateRoute />,
