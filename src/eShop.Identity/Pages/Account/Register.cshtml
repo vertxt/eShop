@@ -1,0 +1,109 @@
+@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Create Account";
+}
+
+<div class="container">
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-6 col-lg-5">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h2 class="mb-0">Create Account</h2>
+                </div>
+                <div class="card-body p-4">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <form method="post">
+                        <p class="form-text text-muted">
+                            Note: New accounts can only be registered as <strong>Customer</strong>.
+                        </p>
+                        <div class="mb-3">
+                            <label asp-for="Input.FirstName" class="form-label">First Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-alphabet"></i></span>
+                                <input asp-for="Input.FirstName" class="form-control" autocomplete="given-name"
+                                    placeholder="Enter your first name" />
+                            </div>
+                            <span asp-validation-for="Input.FirstName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.LastName" class="form-label">Last Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-alphabet"></i></span>
+                                <input asp-for="Input.LastName" class="form-control" autocomplete="family-name"
+                                    placeholder="Enter your last name" />
+                            </div>
+                            <span asp-validation-for="Input.LastName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Username" class="form-label">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+                                <input asp-for="Input.Username" class="form-control" autocomplete="username"
+                                    placeholder="Choose a username" />
+                            </div>
+                            <span asp-validation-for="Input.Username" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Email" class="form-label">Email</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+                                <input asp-for="Input.Email" class="form-control" autocomplete="email"
+                                    placeholder="Enter your email" />
+                            </div>
+                            <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                                <input asp-for="Input.Password" type="password" class="form-control"
+                                    autocomplete="new-password" placeholder="Create a password" />
+                                <button class="btn btn-outline-secondary toggle-password" type="button" tabindex="-1">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <div class="mt-1 mb-2">
+                                <div class="progress" style="height: 5px;">
+                                    <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <small class="text-muted">Password strength: <span
+                                        class="password-feedback">None</span></small>
+                            </div>
+                            <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Input.ConfirmPassword" class="form-label">Confirm Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                                <input asp-for="Input.ConfirmPassword" type="password" class="form-control"
+                                    autocomplete="new-password" placeholder="Confirm your password" />
+                                <button class="btn btn-outline-secondary toggle-password" type="button" tabindex="-1">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary py-2">Create Account</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer bg-light text-center py-3">
+                    <div>Already have an account? <a asp-page="./Login" class="text-primary">Sign in</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

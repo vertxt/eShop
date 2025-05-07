@@ -55,7 +55,7 @@ namespace eShop.API.Middleware
             context.Response.ContentType = "application/problem+json";
             context.Response.StatusCode = statusCode;
             
-            return context.Response.WriteAsJsonAsync(response);
+            return context.Response.WriteAsJsonAsync(response, options: null, contentType: "application/problem+json");
         }
     }
 }

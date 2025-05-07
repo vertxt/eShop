@@ -12,7 +12,7 @@ namespace eShop.Business.Extensions
                 return query;
             }
             string normalizedString = searchTerm.Trim().ToLower();
-            return query.Where(item => item.Name.Contains(normalizedString));
+            return query.Where(item => item.Name.Trim().ToLower().Contains(normalizedString));
         }
 
         public static IQueryable<Product> Sort(this IQueryable<Product> query, string sortBy)
@@ -31,7 +31,7 @@ namespace eShop.Business.Extensions
             };
         }
 
-        public static IQueryable<Product> Filter(this IQueryable<Product> query, ProductParameters filterParams)
+        public static IQueryable<Product> Filter(this IQueryable<Product> query, ProductParameters? filterParams)
         {
             if (filterParams is null)
             {

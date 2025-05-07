@@ -1,0 +1,43 @@
+@model ProductReviewsViewModel
+
+@if (Model.Reviews.Items.Any())
+{
+    <div class="mb-4">
+        <h4>Customer Reviews</h4>
+        <div class="d-flex align-items-center mb-3">
+            <h2 class="mb-0 me-2">@Model.AverageRating.ToString("0.0")</h2>
+            <div>
+                <vc:star-rating rating="@Model.AverageRating" total-reviews="@Model.Count" show-count="false" />
+                <small class="text-muted">Based on @Model.Count reviews</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="review-list" id="reviewsList">
+        @foreach (var review in Model.Reviews.Items)
+        {
+            <partial name="_ReviewItem" model="review" />
+        }
+    </div>
+
+    @if (Model.Reviews.Metadata.HasNextPage)
+    {
+        <div class="text-center mt-4 mb-3">
+            <button type="button" id="loadMoreReviews" class="btn btn-outline-primary" data-product-id="@Model.ProductId"
+                data-current-page="@Model.Reviews.Metadata.CurrentPage" data-page-size="@Model.Reviews.Metadata.PageSize">
+                Load More
+            </button>
+        </div>
+    }
+}
+else
+{
+    <div class="text-center py-5">
+        <i class="bi bi-chat" style="font-size: 3rem; color: #ccc;"></i>
+        <p class="mt-3">No reviews yet. Be the first to review this product!</p>
+    </div>
+}
+
+@section Scripts {
+    <script src="~/js/reviews-pagination.js"></script>
+}

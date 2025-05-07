@@ -485,3 +485,9 @@ $RECYCLE.BIN/
 
 # VsCode configs and settings
 .vscode/
+
+# Unit Test Code Coverage Report
+CoverageReport/
+
+# coverlet runsettings
+coverlet.runsettings

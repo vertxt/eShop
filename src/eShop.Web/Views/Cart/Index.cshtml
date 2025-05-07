@@ -1,0 +1,81 @@
+@model CartDto
+
+@{
+    ViewData["Title"] = "Your Shopping Cart";
+}
+
+<div class="container my-5">
+    <h1 class="mb-4">@ViewData["Title"]</h1>
+
+    @if (Model.Items.Count == 0)
+    {
+        <div class="alert alert-info">
+            <p>Your shopping cart is empty.</p>
+            <a asp-controller="Products" asp-action="Index" class="btn btn-primary mt-3">Continue Shopping</a>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Cart Items (@Model.Summary.TotalItems)</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width: 60px"></th>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Items)
+                                {
+                                    <partial name="_CartItem" model="item" />
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between">
+                            <a asp-controller="Products" asp-action="Index" class="btn btn-outline-primary">
+                                <i class="bi bi-arrow-left"></i> Continue Shopping
+                            </a>
+                            <form asp-controller="Cart" asp-action="ClearCart" method="post">
+                                <button type="submit" class="btn btn-outline-danger">
+                                    <i class="bi bi-trash"></i> Clear Cart
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mt-4 mt-lg-0">
+                <vc:order-summary summary="@Model.Summary"></vc:order-summary>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .quantity-input::-webkit-inner-spin-button,
+    .quantity-input::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .quantity-input {
+        -moz-appearance: textfield;
+    }
+</style>
+
+
+@section Scripts {
+    <script src="~/js/cart.js"></script>
+}

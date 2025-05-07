@@ -1,10 +1,6 @@
-using eShop.Shared.Common.Pagination;
-using eShop.Shared.DTOs.Categories;
-using eShop.Shared.DTOs.Products;
 using eShop.Shared.Parameters;
+using eShop.Web.Interfaces;
 using eShop.Web.Models;
-using eShop.Web.Services;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eShop.Web.Controllers

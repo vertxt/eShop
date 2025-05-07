@@ -1,3 +1,4 @@
+using eShop.Web.Interfaces;
 using eShop.Web.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -14,52 +15,69 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+    options.DefaultSignOutScheme = OpenIdConnectDefaults.AuthenticationScheme;
 })
 .AddCookie()
 .AddOpenIdConnect(options =>
 {
-    options.Authority = "https://localhost:5003";
-    options.ClientId = "eShop.Web";
-    options.ClientSecret = "web-client-secret";
+    options.Authority = "https://localhost:5005";
+    options.ClientId = "customer_site";
+    options.ClientSecret = "customer_secret";
     options.ResponseType = OpenIdConnectResponseType.Code;
+    options.RequireHttpsMetadata = true;
     options.SaveTokens = true;
 
-    options.Scope.Clear();
-    options.Scope.Add("openid");
-    options.Scope.Add("profile");
     options.Scope.Add("email");
+    options.Scope.Add("profile");
     options.Scope.Add("roles");
     options.Scope.Add("api");
 
     options.GetClaimsFromUserInfoEndpoint = true;
     options.TokenValidationParameters.NameClaimType = "name";
     options.TokenValidationParameters.RoleClaimType = "role";
+    options.CallbackPath = "/signin-oidc";
+    options.SignedOutCallbackPath = "/signout-callback-oidc";
+    options.SignedOutRedirectUri = "/";
+
+    options.Events = new OpenIdConnectEvents
+    {
+        OnAuthenticationFailed = context =>
+        {
+            context.Response.Redirect("/Error/AuthFailed");
+            context.HandleResponse();
+            return Task.CompletedTask;
+        }
+    };
 });
 
-builder.Services.AddHttpClient("API", options => 
+builder.Services.AddHttpClient("API", options =>
 {
     options.BaseAddress = new Uri("https://localhost:5000/api/");
 });
+builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddScoped<IApiClientWrapper, ApiClientWrapper>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-}
-else
-{
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
+// if (app.Environment.IsDevelopment())
+// {
+//     app.UseDeveloperExceptionPage();
+// }
+// else
+// {
+app.UseExceptionHandler("/Error");
+app.UseStatusCodePagesWithReExecute("/Error/{0}");
+// HTTP strict transport security
+app.UseHsts();
+// }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 
 app.UseAuthentication();

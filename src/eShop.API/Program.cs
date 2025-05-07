@@ -2,9 +2,8 @@ using eShop.API.Middleware;
 using eShop.Business;
 using eShop.Data;
 using eShop.Data.Seeds;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using static OpenIddict.Abstractions.OpenIddictConstants;
+using OpenIddict.Validation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,37 +19,32 @@ builder.Services.AddCors(options =>
         });
 });
 
+builder.Services.AddOpenIddict()
+    .AddValidation(options =>
+    {
+        // Note: the validation handler uses OpenID Connect discovery
+        // to retrieve the issuer signing keys used to validate tokens.
+        options.SetIssuer("https://localhost:5005/");
+
+        // Register the encryption credentials. This sample uses a symmetric
+        // encryption key that is shared between the server and the API project.
+        options.AddEncryptionKey(new SymmetricSecurityKey(
+            Convert.FromBase64String("DRjd/GnduI3Efzen9V9BvbNUfc/VKgXltV7Kbk9sMkY=")));
+
+        options.UseSystemNetHttp();
+        options.UseAspNetCore();
+    });
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
+});
+
 // Add services to the container.
 builder.Services.AddControllers();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-
-// var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-// var secretKey = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"] ?? "");
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.Authority = "https://localhost:5003";
-    options.Audience = "eShop.API";
-    options.RequireHttpsMetadata = builder.Environment.IsProduction();
-    options.SaveToken = true;
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        NameClaimType = Claims.Name,
-        RoleClaimType = Claims.Role,
-    };
-});
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
-    options.AddPolicy("RequireCustomerRole", policy => policy.RequireRole("Customer"));
-});
 
 builder.Services.AddDataLayer(builder.Configuration);
 builder.Services.AddBusinessLayer(builder.Configuration);

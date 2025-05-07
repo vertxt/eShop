@@ -25,6 +25,7 @@ namespace eShop.Data.Repositories
         public async Task<Product?> GetByIdWithDetailsAsync(int id)
         {
             return await _entities
+                .AsSplitQuery()
                 .Include(p => p.Category)
                 .Include(p => p.Images)
                 .Include(p => p.Variants)

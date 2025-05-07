@@ -86,45 +86,5 @@ namespace eShop.Business.Services
 
             await _categoryRepository.DeleteAsync(id);
         }
-
-
-        /* UNUSED METHODS (commented out) */
-        // public async Task<int> AddAttributeAsync(int categoryId, CreateCategoryAttributeDto createCategoryAttributeDto)
-        // {
-        //     var category = await _categoryRepository.GetByIdAsync(categoryId);
-        //     if (category is null)
-        //     {
-        //         throw new KeyNotFoundException($"Category with ID {categoryId} not found");
-        //     }
-
-        //     var attribute = _mapper.Map<CategoryAttribute>(createCategoryAttributeDto);
-        //     attribute.CategoryId = categoryId;
-
-        //     await _categoryRepository.AddAttributeAsync(attribute);
-        //     return attribute.Id;
-        // }
-
-        // public async Task<bool> UpdateAttributeAsync(int attributeId, UpdateCategoryAttributeDto updateCategoryAttributeDto)
-        // {
-        //     var attribute = await _categoryRepository.GetAttributeByIdAsync(attributeId);
-        //     if (attribute is null)
-        //     {
-        //         throw new KeyNotFoundException($"Category attribute with ID {attributeId} not found");
-        //     }
-
-        //     _mapper.Map(updateCategoryAttributeDto, attribute);
-
-        //     return await _categoryRepository.UpdateAttributeAsync(attribute);
-        // }
-
-        // public async Task<bool> DeleteAttributeAsync(int attributeId)
-        // {
-        //     var attribute = _categoryRepository.GetAttributeByIdAsync(attributeId);
-        //     if (attribute is null)
-        //     {
-        //         throw new KeyNotFoundException($"Category Attribute with ID {attributeId} not found");
-        //     }
-        //     return await _categoryRepository.DeleteAttributeAsync(attributeId);
-        // }
     }
 }

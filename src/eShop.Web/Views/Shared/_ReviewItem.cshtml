@@ -1,0 +1,15 @@
+@model ReviewDto
+
+<div class="card mb-3">
+    <div class="card-body">
+        <div class="d-flex justify-content-between">
+            <div>
+                <h5 class="mb-1">@Model.Title</h5>
+                <vc:star-rating rating="@Model.Rating" show-count="false" css-class="mb-2" />
+            </div>
+            <small class="text-muted">@Model.CreatedDate.ToString("MMM dd, yyyy")</small>
+        </div>
+        <p class="mb-1">@Model.Body</p>
+        <footer class="text-muted small">By @Model.Reviewer</footer>
+    </div>
+</div>

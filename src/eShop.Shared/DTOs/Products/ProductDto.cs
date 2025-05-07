@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using eShop.Shared.DTOs.Reviews;
 
 namespace eShop.Shared.DTOs.Products
 {
@@ -39,7 +40,8 @@ namespace eShop.Shared.DTOs.Products
         public ICollection<ProductImageDto> Images { get; set; } = new List<ProductImageDto>();
         public ICollection<ProductVariantDto> Variants { get; set; } = new List<ProductVariantDto>();
         public ICollection<ProductAttributeDto> Attributes { get; set; } = new List<ProductAttributeDto>();
-        public ICollection<ProductReviewDto> Reviews { get; set; } = new List<ProductReviewDto>();
+        // public ICollection<ReviewDto> Reviews { get; set; } = new List<ReviewDto>();
+        public int ReviewCount { get; set; }
         public decimal AverageRating { get; set; }
     }
 
@@ -70,15 +72,5 @@ namespace eShop.Shared.DTOs.Products
         public string Name { get; set; }
         public string DisplayName { get; set; }
         public string Value { get; set; }
-    }
-
-    public class ProductReviewDto
-    {
-        public int Id { get; set; }
-        public string ReviewerName { get; set; }
-        public decimal Rating { get; set; }
-        public string Title { get; set; }
-        public string Body { get; set; }
-        public DateTime CreatedDate { get; set; }
     }
 }
