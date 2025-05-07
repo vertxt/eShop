@@ -29,7 +29,7 @@ namespace eShop.Business.Services
         {
             var cart = await _cartRepository.GetCartAsync(userId, sessionId);
 
-            var product = await _productRepository.GetByIdAsync(addToCartDto.ProductId);
+            var product = await _productRepository.GetByIdWithDetailsAsync(addToCartDto.ProductId);
             if (product is null)
             {
                 throw new KeyNotFoundException($"Product with ID {addToCartDto.ProductId} not found");

@@ -3,7 +3,6 @@ using eShop.Business.Interfaces;
 using eShop.Shared.Common.Pagination;
 using eShop.Shared.DTOs.Products;
 using eShop.Shared.Parameters;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit.Abstractions;
@@ -12,8 +11,8 @@ namespace eShop.API.Tests
 {
     public class ProductsControllerTests
     {
-        private readonly ProductsController _controller;
         private readonly Mock<IProductService> _mockProductService;
+        private readonly ProductsController _controller;
         private readonly ITestOutputHelper _output;
 
         public ProductsControllerTests(ITestOutputHelper output)
@@ -27,18 +26,26 @@ namespace eShop.API.Tests
         public async Task GetAll_ReturnsOkResult_WithPagedListOfProducts()
         {
             // Arrange
-            var parameters = new ProductParameters();
-            var products = new PagedList<ProductDto>(new List<ProductDto>(), 0, 1, 10);
+            var parameters = new ProductParameters { PageNumber = 1, PageSize = 10 };
+            var products = new PagedList<ProductDto>(
+                new List<ProductDto>
+                {
+                    new ProductDto { Id = 1, Name = "Product 1", BasePrice = 99.99m },
+                    new ProductDto { Id = 2, Name = "Product 2", BasePrice = 149.99m }
+                },
+                2, 1, 10);
+
             _mockProductService.Setup(service => service.GetAllAsync(parameters)).ReturnsAsync(products);
 
             // Act
             var result = await _controller.GetAll(parameters);
 
             // Assert
-            var okResult = result.Result as OkObjectResult;
-            Assert.NotNull(okResult);
-            Assert.Equal(StatusCodes.Status200OK, okResult.StatusCode);
-            Assert.Equal(products, okResult.Value);
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnValue = Assert.IsType<PagedList<ProductDto>>(okResult.Value);
+            Assert.Equal(2, returnValue.Items.Count());
+            Assert.Equal(2, returnValue.Metadata.TotalCount);
+            _mockProductService.Verify(s => s.GetAllAsync(parameters), Times.Once);
         }
 
         [Fact]
@@ -50,7 +57,7 @@ namespace eShop.API.Tests
             {
                 Id = 1,
                 Name = "Test Product",
-                BasePrice = 100
+                BasePrice = 99.99m
             };
             _mockProductService.Setup(service => service.GetByIdAsync(id)).ReturnsAsync(product);
 
@@ -58,137 +65,143 @@ namespace eShop.API.Tests
             var result = await _controller.GetById(id);
 
             // Assert
-            var okResult = result.Result as OkObjectResult;
-            Assert.NotNull(okResult);
-            Assert.Equal(StatusCodes.Status200OK, okResult.StatusCode);
-            Assert.Equal(product, okResult.Value);
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnValue = Assert.IsType<ProductDto>(okResult.Value);
+            Assert.Equal(id, returnValue.Id);
+            Assert.Equal("Test Product", returnValue.Name);
+            Assert.Equal(99.99m, returnValue.BasePrice);
+            _mockProductService.Verify(s => s.GetByIdAsync(id), Times.Once);
         }
 
         [Fact]
         public async Task GetByUuid_ReturnsOkResult_WithProduct()
         {
             // Arrange
-            var uuid = Guid.NewGuid().ToString();
-            var product = new ProductDto
+            string uuid = "12345678-1234-1234-1234-123456789012";
+            var expectedProduct = new ProductDto
             {
                 Id = 1,
                 Uuid = uuid,
                 Name = "Test Product",
-                BasePrice = 100,
+                BasePrice = 99.99m
             };
-            _mockProductService.Setup(service => service.GetByUuidAsync(uuid)).ReturnsAsync(product);
+
+            _mockProductService.Setup(s => s.GetByUuidAsync(uuid))
+                .ReturnsAsync(expectedProduct);
 
             // Act
             var result = await _controller.GetByUuid(uuid);
 
             // Assert
-            var okResult = result.Result as OkObjectResult;
-            Assert.NotNull(okResult);
-            Assert.Equal(StatusCodes.Status200OK, okResult.StatusCode);
-            Assert.Equal(product, okResult.Value);
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnValue = Assert.IsType<ProductDto>(okResult.Value);
+            Assert.Equal(uuid, returnValue.Uuid);
+            Assert.Equal("Test Product", returnValue.Name);
+            _mockProductService.Verify(s => s.GetByUuidAsync(uuid), Times.Once);
         }
 
         [Fact]
         public async Task GetDetailsById_ReturnsOkResult_WithProductDetails()
         {
             // Arrange
-            int id = 1;
-            var productDetails = new ProductDetailDto
+            int productId = 1;
+            var expectedProduct = new ProductDetailDto
             {
-                Id = 1,
+                Id = productId,
                 Name = "Test Product",
-                BasePrice = 100,
+                BasePrice = 99.99m,
+                Description = "Detailed description",
+                Images = new List<ProductImageDto>
+                {
+                    new ProductImageDto { Id = 1, Url = "image1.jpg" }
+                }
             };
-            _mockProductService.Setup(service => service.GetDetailByIdAsync(id)).ReturnsAsync(productDetails);
+
+            _mockProductService.Setup(s => s.GetDetailByIdAsync(productId))
+                .ReturnsAsync(expectedProduct);
 
             // Act
-            var result = await _controller.GetDetailsById(id);
+            var result = await _controller.GetDetailsById(productId);
 
             // Assert
-            var okResult = result.Result as OkObjectResult;
-            Assert.NotNull(okResult);
-            Assert.Equal(StatusCodes.Status200OK, okResult.StatusCode);
-            Assert.Equal(productDetails, okResult.Value);
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnValue = Assert.IsType<ProductDetailDto>(okResult.Value);
+            Assert.Equal(productId, returnValue.Id);
+            Assert.Equal("Test Product", returnValue.Name);
+            Assert.Equal("Detailed description", returnValue.Description);
+            Assert.Single(returnValue.Images);
+            _mockProductService.Verify(s => s.GetDetailByIdAsync(productId), Times.Once);
         }
 
         [Fact]
-        public async Task Create_ReturnsCreatedAtActionResult_WithCreatedProduct()
+        public async Task Create_ReturnsCreatedAtActionResult_WithNewProduct()
         {
             // Arrange
-            var createDto = new CreateProductDto
+            var createProductDto = new CreateProductDto
             {
                 Name = "New Product",
-                BasePrice = 100,
-                Description = "Long Description",
-                ShortDescription = "Short Description",
-                CategoryId = 1,
-                IsActive = true,
-                HasVariants = false,
-                QuantityInStock = 100,
+                BasePrice = 149.99m,
+                Description = "Product description",
+                CategoryId = 1
             };
+
             var createdProduct = new ProductDto
             {
-                Uuid = Guid.NewGuid().ToString(),
+                Id = 3,
                 Name = "New Product",
-                BasePrice = 100,
-                ShortDescription = "Thort Description",
-                IsActive = true,
-                HasVariants = false,
-                QuantityInStock = 100,
+                BasePrice = 149.99m
             };
-            _mockProductService.Setup(service => service.CreateAsync(createDto)).ReturnsAsync(createdProduct);
+
+            _mockProductService.Setup(s => s.CreateAsync(createProductDto))
+                .ReturnsAsync(createdProduct);
 
             // Act
-            var result = await _controller.Create(createDto);
+            var result = await _controller.Create(createProductDto);
 
             // Assert
-            var createdResult = result as CreatedAtActionResult;
-            Assert.NotNull(createdResult);
-            Assert.Equal(StatusCodes.Status201Created, createdResult.StatusCode);
-            Assert.Equivalent(createdProduct, createdResult.Value);
+            var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
+            Assert.Equal("GetById", createdAtActionResult.ActionName);
+            Assert.NotNull(createdAtActionResult.RouteValues);
+            Assert.Equal(3, createdAtActionResult.RouteValues["id"]);
+            var returnValue = Assert.IsType<ProductDto>(createdAtActionResult.Value);
+            Assert.Equal(3, returnValue.Id);
+            Assert.Equal("New Product", returnValue.Name);
+            _mockProductService.Verify(s => s.CreateAsync(createProductDto), Times.Once);
         }
 
         [Fact]
-        public async Task Update_ReturnsNoContent_WhenSuccessful()
-        {
-            // Arrange
-            int id = 1;
-            var updateDto = new UpdateProductDto
-            {
-                Name = "Updated Name",
-                Description = "Updated Description",
-            };
-            var updatedProduct = new ProductDto
-            {
-                Id = 1,
-                Name = "Updated Name",
-                BasePrice = 100,
-            };
-            _mockProductService.Setup(service => service.UpdateAsync(id, updateDto)).ReturnsAsync(updatedProduct);
-
-            // Act
-            var result = await _controller.Update(id, updateDto);
-
-            // Assert
-            var noContentResult = result as NoContentResult;
-            Assert.NotNull(result);
-            Assert.Equal(StatusCodes.Status204NoContent, noContentResult?.StatusCode);
-        }
-
-        [Fact]
-        public async Task Delete_ReturnsNoContent_WhenSuccessful()
+        public async Task Update_ReturnsNoContent_WhenUpdateSucceeds()
         {
             // Arrange
             int productId = 1;
-            _mockProductService.Setup(service => service.DeleteAsync(productId)).Returns(Task.CompletedTask);
+            var updateProductDto = new UpdateProductDto
+            {
+                Name = "Updated Product",
+                BasePrice = 199.99m,
+                Description = "Updated description",
+                CategoryId = 2
+            };
+
+            // Act
+            var result = await _controller.Update(productId, updateProductDto);
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+            _mockProductService.Verify(s => s.UpdateAsync(productId, updateProductDto), Times.Once);
+        }
+
+        [Fact]
+        public async Task Delete_ReturnsNoContent_WhenDeleteSucceeds()
+        {
+            // Arrange
+            int productId = 1;
 
             // Act
             var result = await _controller.Delete(productId);
 
             // Assert
-            var noContentResult = result as NoContentResult;
-            Assert.NotNull(noContentResult);
-            Assert.Equal(StatusCodes.Status204NoContent, noContentResult.StatusCode);
+            Assert.IsType<NoContentResult>(result);
+            _mockProductService.Verify(s => s.DeleteAsync(productId), Times.Once);
         }
     }
 }

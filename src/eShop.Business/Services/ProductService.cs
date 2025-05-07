@@ -87,7 +87,7 @@ namespace eShop.Business.Services
                 throw new KeyNotFoundException($"Category with ID {dto.CategoryId} not found");
             }
 
-            if (dto.Attributes.Any())
+            if (dto.Attributes.Count != 0)
             {
                 foreach (var attributeDto in dto.Attributes)
                 {
@@ -100,7 +100,7 @@ namespace eShop.Business.Services
             }
 
             var product = _mapper.Map<Product>(dto);
-            product.HasVariants = dto.Variants?.Any() == true;
+            product.HasVariants = (dto.Variants?.Count ?? 0) > 0;
 
             if (dto.Images.Count != dto.ImageMetadata.Count)
             {
@@ -128,7 +128,7 @@ namespace eShop.Business.Services
                 });
             }
 
-            if (!product.Images.Any(i => i.IsMain))
+            if (!product.Images.Any(i => i.IsMain) && product.Images.Count > 0)
             {
                 product.Images.First().IsMain = true;
             }
@@ -205,6 +205,8 @@ namespace eShop.Business.Services
                     product.Variants.Add(_mapper.Map<ProductVariant>(v));
                 }
             }
+            // Update HasVarients boolean prop
+            product.HasVariants = product.Variants.Count > 0;
 
             // Update images
             foreach (var image in product.Images.Where(i => !dto.ExistingImageIds.Contains(i.Id)).ToList())
@@ -279,277 +281,5 @@ namespace eShop.Business.Services
 
             await _productRepository.DeleteAsync(id);
         }
-
-
-        /* UNUSED METHODS (commented out) */
-        // Variant methods
-        // public async Task<ProductVariantDto> GetVariantByIdAsync(int variantId)
-        // {
-        //     var variant = await _productRepository.GetVariantByIdAsync(variantId);
-        //     if (variant is null)
-        //     {
-        //         throw new KeyNotFoundException($"Variant with ID {variantId} not found");
-        //     }
-
-        //     return _mapper.Map<ProductVariantDto>(variant);
-        // }
-        // public async Task<int> AddVariantAsync(int productId, CreateProductVariantDto createProductVariantDto)
-        // {
-        //     var product = await _productRepository.GetByIdAsync(productId);
-        //     if (product is null)
-        //     {
-        //         throw new KeyNotFoundException($"Product with ID {productId} not found");
-        //     }
-
-        //     var variant = _mapper.Map<ProductVariant>(createProductVariantDto);
-        //     variant.ProductId = productId;
-
-        //     if (string.IsNullOrEmpty(variant.SKU))
-        //     {
-        //         variant.SKU = GenerateSku(product.Name, variant.Name);
-        //     }
-
-        //     if (!product.HasVariants)
-        //     {
-        //         product.HasVariants = true;
-        //         await _productRepository.UpdateAsync(product);
-        //     }
-
-        //     await _productRepository.AddVariantAsync(variant);
-        //     return variant.Id;
-        // }
-        // public async Task<bool> UpdateVariantAsync(int variantId, UpdateProductVariantDto updateProductVariantDto)
-        // {
-        //     var variant = await _productRepository.GetVariantByIdAsync(variantId);
-        //     if (variant is null)
-        //     {
-        //         throw new KeyNotFoundException($"Variant with ID {variantId} not found");
-        //     }
-
-        //     _mapper.Map(updateProductVariantDto, variant);
-        //     return await _productRepository.UpdateVariantAsync(variant);
-        // }
-        // public async Task<bool> DeleteVariantAsync(int variantId)
-        // {
-        //     var variant = await _productRepository.GetVariantByIdAsync(variantId);
-        //     if (variant is null)
-        //     {
-        //         throw new KeyNotFoundException($"Variant with ID {variantId} not found");
-        //     }
-
-        //     var product = await _productRepository.GetByIdAsync(variant.ProductId);
-        //     var result = await _productRepository.DeleteVariantAsync(variantId);
-
-        //     if (result && product != null && product.Variants.Count <= 1)
-        //     {
-        //         product.HasVariants = false;
-        //         await _productRepository.UpdateAsync(product);
-        //     }
-
-        //     return result;
-        // }
-
-        // Image methods
-        // public async Task<int> AddImageAsync(CreateProductImageDto createProductImageDto, int? productId = null, int? variantId = null)
-        // {
-        //     if (productId is null && variantId is null)
-        //     {
-        //         throw new ArgumentException("Either productId or variantId must be provided!");
-        //     }
-
-        //     var image = _mapper.Map<ProductImage>(createProductImageDto);
-        //     image.ProductId = productId;
-        //     image.ProductVariantId = variantId;
-
-        //     IEnumerable<ProductImage> existingImages;
-
-        //     if (productId.HasValue)
-        //     {
-        //         var product = await _productRepository.GetByIdAsync(productId.Value);
-        //         if (product is null)
-        //         {
-        //             throw new KeyNotFoundException($"Product with ID {productId} not found");
-        //         }
-
-        //         existingImages = await _productRepository.GetImagesByProductId(productId.Value).ToListAsync();
-        //     }
-        //     else
-        //     {
-        //         var variant = await _productRepository.GetVariantByIdAsync(variantId!.Value);
-        //         if (variant is null)
-        //         {
-        //             throw new KeyNotFoundException($"Variant with ID {variantId} not found");
-        //         }
-
-        //         existingImages = await _productRepository.GetImagesByVariantId(variantId.Value).ToListAsync();
-        //     }
-
-        //     if (!existingImages.Any() || createProductImageDto.IsMain)
-        //     {
-        //         image.IsMain = true;
-
-        //         if (existingImages.Any() && createProductImageDto.IsMain)
-        //         {
-        //             foreach (var existingImage in existingImages.Where(i => i.IsMain))
-        //             {
-        //                 existingImage.IsMain = false;
-        //                 await _productRepository.UpdateImageAsync(existingImage);
-        //             }
-        //         }
-        //     }
-
-        //     await _productRepository.AddImageAsync(image);
-        //     return image.Id;
-        // }
-
-        // public async Task<int> AddProductImageAsync(int productId, CreateProductImageDto createProductImageDto)
-        // {
-        //     return await AddImageAsync(createProductImageDto, productId: productId);
-        // }
-        // public async Task<int> AddVariantImageAsync(int variantId, CreateProductImageDto createProductImageDto)
-        // {
-        //     return await AddImageAsync(createProductImageDto, variantId: variantId);
-        // }
-
-        // public async Task<bool> UpdateProductImageAsync(int imageId, UpdateProductImageDto updateProductImageDto)
-        // {
-        //     var image = await _productRepository.GetImageByIdAsync(imageId);
-        //     if (image == null)
-        //     {
-        //         throw new KeyNotFoundException($"Image with ID {imageId} not found");
-        //     }
-
-        //     _mapper.Map(updateProductImageDto, image);
-
-        //     if (updateProductImageDto.IsMain && !image.IsMain)
-        //     {
-        //         if (!image.ProductId.HasValue && !image.ProductVariantId.HasValue)
-        //         {
-        //             throw new InvalidOperationException("Image is not associated with a product or variant.");
-        //         }
-
-        //         bool mainImageSetSuccess = image.ProductId.HasValue
-        //             ? await _productRepository.SetMainImageAsync(image.ProductId.Value, imageId)
-        //             : await _productRepository.SetMainVariantImageAsync(image.ProductVariantId!.Value, imageId);
-
-        //         if (!mainImageSetSuccess)
-        //         {
-        //             return false;
-        //         }
-        //     }
-
-        //     return await _productRepository.UpdateImageAsync(image);
-        // }
-
-        // public async Task<bool> DeleteProductImageAsync(int imageId)
-        // {
-        //     var image = await _productRepository.GetImageByIdAsync(imageId);
-        //     if (image == null)
-        //     {
-        //         throw new KeyNotFoundException($"Image with ID {imageId} not found");
-        //     }
-
-        //     // If this is a main image, set another image as main
-        //     if (image.IsMain)
-        //     {
-        //         IEnumerable<ProductImage> relatedImages;
-
-        //         if (image.ProductId.HasValue)
-        //         {
-        //             relatedImages = await _productRepository.GetImagesByProductId(image.ProductId.Value).ToListAsync();
-        //         }
-        //         else if (image.ProductVariantId.HasValue)
-        //         {
-        //             relatedImages = await _productRepository.GetImagesByVariantId(image.ProductVariantId.Value).ToListAsync();
-        //         }
-        //         else
-        //         {
-        //             throw new InvalidOperationException("Image is not associated with a product or variant.");
-        //         }
-
-        //         // Set the first remaining image as main (if any exist)
-        //         var firstImage = relatedImages.FirstOrDefault(i => i.Id != imageId);
-        //         if (firstImage != null)
-        //         {
-        //             firstImage.IsMain = true;
-        //             await _productRepository.UpdateImageAsync(firstImage);
-        //         }
-        //     }
-
-        //     return await _productRepository.DeleteImageAsync(imageId);
-        // }
-
-        // Attribute methods
-        // public async Task<ProductAttributeDto> GetAttributeByIdAsync(int attributeId)
-        // {
-        //     var attribute = await _productRepository.GetAttributeByIdAsync(attributeId);
-        //     if (attribute is null)
-        //     {
-        //         throw new KeyNotFoundException($"Product attribute with ID {attributeId} not found");
-        //     }
-
-        //     return _mapper.Map<ProductAttributeDto>(attribute);
-        // }
-
-        // public async Task<int> AddAttributeAsync(int productId, CreateProductAttributeDto createProductAttributeDto)
-        // {
-        //     var product = await _productRepository.GetByIdAsync(productId);
-        //     if (product is null)
-        //     {
-        //         throw new KeyNotFoundException($"Product with ID {productId} not found");
-        //     }
-
-        //     var categoryAttribute = await _categoryRepository.GetAttributeByIdAsync(createProductAttributeDto.AttributeId);
-        //     if (categoryAttribute is null)
-        //     {
-        //         throw new InvalidOperationException($"Category attribute with ID {createProductAttributeDto.AttributeId} not found");
-        //     }
-
-        //     if (categoryAttribute.CategoryId != product.CategoryId)
-        //     {
-        //         throw new InvalidOperationException($"Category attribute with ID {createProductAttributeDto.AttributeId} does not belong to the product's category");
-        //     }
-
-        //     var attribute = _mapper.Map<ProductAttribute>(createProductAttributeDto);
-        //     attribute.ProductId = productId;
-        //     await _productRepository.AddAttributeAsync(attribute);
-
-        //     return attribute.Id;
-        // }
-
-        // public async Task<bool> UpdateAttributeAsync(int attributeId, UpdateProductAttributeDto updateProductAttributeDto)
-        // {
-        //     var attribute = await _productRepository.GetAttributeByIdAsync(attributeId);
-        //     if (attribute is null)
-        //     {
-        //         throw new KeyNotFoundException($"Product attribute with ID {attributeId} not found");
-        //     }
-
-        //     _mapper.Map(updateProductAttributeDto, attribute);
-        //     return await _productRepository.UpdateAttributeAsync(attribute);
-        // }
-
-        // public async Task<bool> DeleteAttributeAsync(int attributeId)
-        // {
-        //     var attribute = await _productRepository.GetAttributeByIdAsync(attributeId);
-        //     if (attribute is null)
-        //     {
-        //         throw new KeyNotFoundException($"Product attribute with ID {attributeId} not found");
-        //     }
-
-        //     return await _productRepository.DeleteAttributeAsync(attributeId);
-        // }
-
-        // public async Task<IEnumerable<ProductAttributeDto>> GetAttributesByProductIdAsync(int productId)
-        // {
-        //     var product = await _productRepository.GetByIdAsync(productId);
-        //     if (product is null)
-        //     {
-        //         throw new KeyNotFoundException($"Product with ID {productId} not found");
-        //     }
-
-        //     var attributes = product.Attributes;
-        //     return _mapper.Map<IEnumerable<ProductAttributeDto>>(attributes);
-        // }
     }
 }
