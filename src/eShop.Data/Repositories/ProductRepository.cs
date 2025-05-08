@@ -48,5 +48,22 @@ namespace eShop.Data.Repositories
         {
             _context.ProductImages.Remove(image);
         }
+
+        // Temporary solution to avoid violating the CartItems_Products foreign key constraint
+        public async Task DeleteProductAsync(int productId)
+        {
+            var cartItems = await _context.CartItems
+                .Where(ci => ci.ProductId == productId)
+                .ToListAsync();
+            _context.CartItems.RemoveRange(cartItems);
+
+            var product = await _context.Products.FindAsync(productId);
+            if (product != null)
+            {
+                _context.Products.Remove(product);
+            }
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

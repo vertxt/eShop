@@ -12,5 +12,7 @@ namespace eShop.Data.Interfaces
 
         // CRUD operations
         void RemoveImageAsync(ProductImage image);
+
+        Task DeleteProductAsync(int productId);
     }
 }

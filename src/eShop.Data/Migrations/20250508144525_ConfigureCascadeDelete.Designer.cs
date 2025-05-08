@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eShop.Data;
 
@@ -11,9 +12,11 @@ using eShop.Data;
 namespace eShop.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250508144525_ConfigureCascadeDelete")]
+    partial class ConfigureCascadeDelete
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -390,7 +393,7 @@ namespace eShop.Data.Migrations
                         .IsUnique()
                         .HasFilter("UserId IS NOT NULL");
 
-                    b.ToTable("Carts", (string)null);
+                    b.ToTable("Carts");
                 });
 
             modelBuilder.Entity("eShop.Data.Entities.CartAggregate.CartItem", b =>
@@ -421,7 +424,7 @@ namespace eShop.Data.Migrations
 
                     b.HasIndex("ProductVariantId");
 
-                    b.ToTable("CartItems", (string)null);
+                    b.ToTable("CartItems");
                 });
 
             modelBuilder.Entity("eShop.Data.Entities.CategoryAggregate.Category", b =>
@@ -441,7 +444,7 @@ namespace eShop.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("eShop.Data.Entities.CategoryAggregate.CategoryAttribute", b =>
@@ -466,7 +469,7 @@ namespace eShop.Data.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("CategoryAttributes", (string)null);
+                    b.ToTable("CategoryAttributes");
                 });
 
             modelBuilder.Entity("eShop.Data.Entities.ProductAggregate.Product", b =>
@@ -524,7 +527,7 @@ namespace eShop.Data.Migrations
                     b.HasIndex("Uuid")
                         .IsUnique();
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("eShop.Data.Entities.ProductAggregate.ProductAttribute", b =>
@@ -552,7 +555,7 @@ namespace eShop.Data.Migrations
                     b.HasIndex("ProductId", "AttributeId")
                         .IsUnique();
 
-                    b.ToTable("ProductAttributes", (string)null);
+                    b.ToTable("ProductAttributes");
                 });
 
             modelBuilder.Entity("eShop.Data.Entities.ProductAggregate.ProductImage", b =>
@@ -588,7 +591,7 @@ namespace eShop.Data.Migrations
 
                     b.HasIndex("ProductVariantId");
 
-                    b.ToTable("ProductImages", null, t =>
+                    b.ToTable("ProductImages", t =>
                         {
                             t.HasCheckConstraint("CK_ProductImage_OneForeignKey", "(\r\n                        (ProductId IS NOT NULL AND ProductVariantId IS NULL)\r\n                        OR (ProductId IS NULL AND ProductVariantId IS NOT NULL)\r\n                    )");
                         });
@@ -626,7 +629,7 @@ namespace eShop.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductVariants", (string)null);
+                    b.ToTable("ProductVariants");
                 });
 
             modelBuilder.Entity("eShop.Data.Entities.UserAggregate.Review", b =>
@@ -665,7 +668,7 @@ namespace eShop.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("eShop.Data.Entities.UserAggregate.User", b =>
@@ -844,8 +847,7 @@ namespace eShop.Data.Migrations
 
                     b.HasOne("eShop.Data.Entities.ProductAggregate.ProductVariant", "ProductVariant")
                         .WithMany()
-                        .HasForeignKey("ProductVariantId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("ProductVariantId");
 
                     b.Navigation("Cart");
 
