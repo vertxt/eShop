@@ -131,17 +131,21 @@ export default function ProductListView() {
         return (
             <Box sx={{ p: 3 }}>
                 <Typography variant="h6">No products found.</Typography>
-                <Button
-                    variant="contained"
-                    sx={{ mt: 2 }}
-                    onClick={() => {
-                        dispatch(setSearchTerm(''));
-                        dispatch(setSortBy('name'));
-                        dispatch(setPageNumber(1));
-                    }}
-                >
-                    Reset Filters
-                </Button>
+                <Box display="flex" alignItems="center" gap={2} sx={{ mt: 2 }}>
+                    <Button
+                        variant="outlined"
+                        onClick={() => {
+                            dispatch(setSearchTerm(''));
+                            dispatch(setSortBy('name'));
+                            dispatch(setPageNumber(1));
+                        }}
+                    >
+                        Reset Filters
+                    </Button>
+                    <Button component={Link} to="/products/create" variant="contained" startIcon={<Add />}>
+                        Create new product
+                    </Button>
+                </Box>
             </Box>
         );
     }

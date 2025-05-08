@@ -5,7 +5,7 @@ import { FieldErrors, useForm } from "react-hook-form";
 import { productSchema, ProductSchema } from "../../shared/schemas/createProductSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
-import { Box, Button, Card, CardContent, Tab, Tabs, Typography } from "@mui/material";
+import { Alert, AlertTitle, Box, Button, Card, CardContent, Stack, Tab, Tabs, Typography } from "@mui/material";
 import TabPanel from "../../shared/components/TabPanel";
 import { Cancel, Save } from "@mui/icons-material";
 import AttributesTab from "./AttributesTab";
@@ -69,8 +69,8 @@ export default function ProductForm({ productId, onSuccess, returnUrl = "/produc
         { skip: !categoryId }
     );
 
-    const [createProduct, { isLoading: isAddingProduct }] = useCreateProductMutation();
-    const [updateProduct, { isLoading: isUpdatingProduct }] = useUpdateProductMutation();
+    const [createProduct, { isLoading: isAddingProduct, error: createProductError }] = useCreateProductMutation();
+    const [updateProduct, { isLoading: isUpdatingProduct, error: updateProductError }] = useUpdateProductMutation();
 
     const isSubmitting = isAddingProduct || isUpdatingProduct;
 
@@ -99,7 +99,7 @@ export default function ProductForm({ productId, onSuccess, returnUrl = "/produc
     useEffect(() => {
         if (existingProduct && !isFormInitialized) {
             const preloadData = productDetailToForm(existingProduct);
-            console.log('Loading product data: ', JSON.stringify(preloadData));
+            // console.log('Loading product data: ', JSON.stringify(preloadData));
             reset(preloadData);
 
             // set images here for ImagesTab
@@ -235,9 +235,9 @@ export default function ProductForm({ productId, onSuccess, returnUrl = "/produc
 
         try {
             const productData = createFormData(processedData);
-            for (let [key, value] of productData.entries()) {
-                console.log(key, value);
-            }
+            // for (let [key, value] of productData.entries()) {
+            //     console.log(key, value);
+            // }
             if (isEditMode && productId) {
                 const payload = await updateProduct({ id: productId, data: productData }).unwrap();
                 console.log("Update product", productId, payload);
@@ -370,6 +370,32 @@ export default function ProductForm({ productId, onSuccess, returnUrl = "/produc
                     </Box>
                 </Box>
             </CardContent>
+
+            {/* Display API validation errors */}
+            {createProductError && 'fieldErrors' in createProductError && createProductError.fieldErrors && (
+                <Stack sx={{ width: '100%', mt: '1rem' }} spacing={1}>
+                    {Object.entries(createProductError.fieldErrors).map(
+                        ([field, messages], index) => (
+                            <Alert key={index} severity="error">
+                                <AlertTitle>{field}</AlertTitle>
+                                {messages}
+                            </Alert>
+                        )
+                    )}
+                </Stack>
+            )}
+            {updateProductError && 'fieldErrors' in updateProductError && updateProductError.fieldErrors && (
+                <Stack sx={{ width: '100%', mt: '1rem' }} spacing={1}>
+                    {Object.entries(updateProductError.fieldErrors).map(
+                        ([field, messages], index) => (
+                            <Alert key={index} severity="error">
+                                <AlertTitle>{field}</AlertTitle>
+                                {messages}
+                            </Alert>
+                        )
+                    )}
+                </Stack>
+            )}
         </Card>
     )
 }

@@ -22,7 +22,10 @@ else
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Home</a></li>
-                <li class="breadcrumb-item"><a href="/category/@Model.Product.CategoryId">@Model.Product.CategoryName</a>
+                <li class="breadcrumb-item">
+                    <a href="@Url.Action("Index", "Products", new { CategoryIds = new List<int>([Model.Product.CategoryId]) })">
+                        @Model.Product.CategoryName
+                    </a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">@Model.Product.Name</li>
             </ol>
@@ -312,6 +315,30 @@ else
                     updateFormState();
                 });
             }
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // only run when flag is set
+            var reviewFailed = @((ViewData["ReviewFailed"] as bool? == true).ToString().ToLower());
+            if (!reviewFailed) return;
+
+            // 1) Activate the Reviews tab
+            var reviewsTabEl = document.querySelector('#reviews-tab');
+            if (reviewsTabEl) {
+                new bootstrap.Tab(reviewsTabEl).show();
+            }
+
+            // 2) Scroll to the first error message
+            var err = document.querySelector('.text-danger, .validation-summary-errors');
+            if (err) {
+                err.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            // 3) Reset URL to avoid repost on refresh
+            var cleanUrl = window.location.pathname + window.location.search
+                .replace(/(\?|&)handler=[^&]*/g, '')
+                .replace(/&$/, '');
+            history.replaceState(null, '', cleanUrl);
         });
     </script>
 

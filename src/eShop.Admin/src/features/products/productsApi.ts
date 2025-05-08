@@ -10,6 +10,7 @@ import { ReviewListParams } from "../../shared/types/reviewListParams";
 export const productsApi = createApi({
     reducerPath: 'productsApi',
     baseQuery: customQueryWithErrorHandling,
+    tagTypes: ['Products', 'Product'],
     endpoints: builder => ({
         fetchProducts: builder.query<{ items: Product[], metadata: PaginationMetadata }, ProductListParams>({
             query: (params) => {
@@ -17,15 +18,18 @@ export const productsApi = createApi({
                     url: '/products',
                     params: cleanParams(params),
                 };
-            }
+            },
+            providesTags: ['Products'],
         }),
 
         fetchProduct: builder.query<Product, number>({
-            query: (id) => `/products/${id}`
+            query: (id) => `/products/${id}`,
+            providesTags: ['Product'],
         }),
 
         fetchProductDetails: builder.query<ProductDetail, number>({
-            query: (params) => `/products/details/${params}`
+            query: (params) => `/products/details/${params}`,
+            providesTags: ['Product'],
         }),
 
         createProduct: builder.mutation<Product, FormData>({
@@ -35,7 +39,8 @@ export const productsApi = createApi({
                     method: 'POST',
                     body: data,
                 };
-            }
+            },
+            invalidatesTags: ['Products', 'Product'],
         }),
 
         updateProduct: builder.mutation<void, { id: number, data: FormData }>({
@@ -47,7 +52,8 @@ export const productsApi = createApi({
                     method: 'PUT',
                     body: data,
                 };
-            }
+            },
+            invalidatesTags: ['Products', 'Product'],
         }),
 
         deleteProduct: builder.mutation<void, number>({
@@ -56,7 +62,8 @@ export const productsApi = createApi({
                     url: `/products/${id}`,
                     method: 'DELETE',
                 };
-            }
+            },
+            invalidatesTags: ['Products', 'Product'],
         }),
 
         fetchProductReviews: builder.query<{ items: Review[], metadata: PaginationMetadata }, { productId: number, params: ReviewListParams }>({
