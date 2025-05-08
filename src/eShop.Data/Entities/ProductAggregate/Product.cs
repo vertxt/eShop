@@ -14,6 +14,7 @@ namespace eShop.Data.Entities.ProductAggregate
         public required string Description { get; set; }
         public string? ShortDescription { get; set; }
         public bool IsActive { get; set; } = true;
+        public bool IsFeatured { get; set; }
         public int CategoryId { get; set; }
         public Category Category { get; set; } = null!;
         public bool HasVariants { get; set; }

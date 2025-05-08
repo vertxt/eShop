@@ -20,21 +20,36 @@ import {
     SelectChangeEvent,
     TablePagination,
     TablePaginationActionsSlotPropsOverrides,
+    Tooltip,
+    IconButton,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
+    CircularProgress,
 } from "@mui/material";
-import { useFetchProductsQuery } from "./productsApi";
+import { useDeleteProductMutation, useFetchProductsQuery } from "./productsApi";
 import { FormEvent, useState } from "react";
-import { Add } from "@mui/icons-material";
+import { Add, CommentOutlined, DeleteOutline, Refresh } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "../../app/store/store";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { setPageNumber, setPageSize, setSearchTerm, setSortBy } from "./productsSlice";
+import { toast } from "react-toastify";
 
 const EmptyAction = (_props: TablePaginationActionsSlotPropsOverrides) => null;
 
 export default function ProductListView() {
     const productListParams = useAppSelector(state => state.products);
-    const { data, isLoading, error } = useFetchProductsQuery(productListParams);
+    const { data, isLoading, error, refetch } = useFetchProductsQuery(productListParams);
+    const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation();
     const [localSearch, setLocalSearch] = useState(productListParams.searchTerm || '');
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+
+    // State for delete confirmation dialog
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [productToDelete, setProductToDelete] = useState<number | null>(null);
 
     const handleSearchSubmit = (e: FormEvent) => {
         e.preventDefault();
@@ -58,11 +73,38 @@ export default function ProductListView() {
         dispatch(setPageSize(parseInt(e.target.value, 10)));
     };
 
+    const handleRowClick = (productId: number) => {
+        navigate(`/products/edit/${productId}`);
+    }
+
+    const handleReviewsClick = (e: React.MouseEvent, productId: number) => {
+        e.stopPropagation();
+        navigate(`/products/${productId}/reviews`);
+    }
+
+    const handleDeleteClick = (e: React.MouseEvent, productId: number) => {
+        e.stopPropagation();
+        setProductToDelete(productId);
+        setDeleteDialogOpen(true);
+    }
+
+    const confirmDelete = async () => {
+        if (productToDelete) {
+            try {
+                await deleteProduct(productToDelete).unwrap();
+                toast.success("Product deleted successfully");
+                setDeleteDialogOpen(false);
+            } catch (err) {
+                console.error("Delete error: " + err);
+                toast.error("Error deleting product");
+            }
+        }
+    }
 
     if (isLoading) {
         return (
-            <Box sx={{ p: 3 }}>
-                <Typography variant="h6">Loading products...</Typography>
+            <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+                <CircularProgress />
             </Box>
         );
     }
@@ -74,6 +116,13 @@ export default function ProductListView() {
                     Error loading products. Please try again.
                 </Typography>
                 {error && <Typography>An unexpected error occurred</Typography>}
+                <Button
+                    variant="contained"
+                    onClick={() => refetch()}
+                    sx={{ mt: 2 }}
+                >
+                    Retry
+                </Button>
             </Box>
         );
     }
@@ -82,17 +131,21 @@ export default function ProductListView() {
         return (
             <Box sx={{ p: 3 }}>
                 <Typography variant="h6">No products found.</Typography>
-                <Button
-                    variant="contained"
-                    sx={{ mt: 2 }}
-                    onClick={() => {
-                        dispatch(setSearchTerm(''));
-                        dispatch(setSortBy('name'));
-                        dispatch(setPageNumber(1));
-                    }}
-                >
-                    Reset Filters
-                </Button>
+                <Box display="flex" alignItems="center" gap={2} sx={{ mt: 2 }}>
+                    <Button
+                        variant="outlined"
+                        onClick={() => {
+                            dispatch(setSearchTerm(''));
+                            dispatch(setSortBy('name'));
+                            dispatch(setPageNumber(1));
+                        }}
+                    >
+                        Reset Filters
+                    </Button>
+                    <Button component={Link} to="/products/create" variant="contained" startIcon={<Add />}>
+                        Create new product
+                    </Button>
+                </Box>
             </Box>
         );
     }
@@ -145,10 +198,15 @@ export default function ProductListView() {
                 </FormControl>
             </Box>
 
-            <Box>
+            <Box display="flex" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
                 <Button component={Link} to="/products/create" variant="outlined" startIcon={<Add />}>
                     Create
                 </Button>
+                <Tooltip title="Refresh data">
+                    <IconButton onClick={() => refetch()}>
+                        <Refresh />
+                    </IconButton>
+                </Tooltip>
             </Box>
 
             <TableContainer component={Paper} sx={{ mb: 2 }}>
@@ -168,7 +226,14 @@ export default function ProductListView() {
                     </TableHead>
                     <TableBody>
                         {data.items.map(item => (
-                            <TableRow key={item.id}>
+                            <TableRow
+                                key={item.id}
+                                onClick={() => handleRowClick(item.id)}
+                                hover
+                                sx={{
+                                    cursor: 'pointer',
+                                }}
+                            >
                                 <TableCell>{item.id}</TableCell>
                                 <TableCell>{item.name}</TableCell>
                                 <TableCell>${item.basePrice.toFixed(2)}</TableCell>
@@ -186,22 +251,24 @@ export default function ProductListView() {
                                         ? new Date(item.updatedDate).toLocaleDateString()
                                         : "Never"}
                                 </TableCell>
-                                <TableCell align="right">
-                                    <Button
-                                        component={Link}
-                                        to={`/products/edit/${item.id}`}
-                                        variant="outlined"
-                                        sx={{ mr: 1 }}
-                                    >
-                                        Edit
-                                    </Button>
-                                    <Button
-                                        component={Link}
-                                        to={`/products/${item.id}`}
-                                        variant="contained"
-                                    >
-                                        View
-                                    </Button>
+                                <TableCell align="right" onClick={(e) => e.stopPropagation()}>
+                                    <Tooltip title="View reviews">
+                                        <IconButton
+                                            color="primary"
+                                            onClick={(e) => handleReviewsClick(e, item.id)}
+                                            sx={{ mr: 1 }}
+                                        >
+                                            <CommentOutlined />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="Delete product">
+                                        <IconButton
+                                            color="error"
+                                            onClick={(e) => handleDeleteClick(e, item.id)}
+                                        >
+                                            <DeleteOutline />
+                                        </IconButton>
+                                    </Tooltip>
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -227,7 +294,26 @@ export default function ProductListView() {
                     onChange={handlePageNumberChange}
                 />
             </Box>
+
+            <Dialog
+                open={deleteDialogOpen}
+                onClose={() => setDeleteDialogOpen(false)}
+            >
+                <DialogTitle>Delete Product</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you want to delete this product? This action cannot be undone.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setDeleteDialogOpen(false)} disabled={isDeleting}>
+                        Cancel
+                    </Button>
+                    <Button onClick={confirmDelete} color="error" disabled={isDeleting}>
+                        {isDeleting ? 'Deleting...' : 'Delete'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }
-

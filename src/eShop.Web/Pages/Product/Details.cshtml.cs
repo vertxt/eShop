@@ -28,19 +28,15 @@ namespace eShop.Web.Pages
         public async Task<IActionResult> OnGetAsync(int id)
         {
             Product = await _apiClientWrapper.GetAsync<ProductDetailDto>($"products/details/{id}", requiresAuth: false);
-            // if (Product is null)
-            // {
-            //     return NotFound();
-            // }
-
             return Page();
         }
 
         public async Task<IActionResult> OnPostSubmitReviewAsync(int id)
         {
+            Product = await _apiClientWrapper.GetAsync<ProductDetailDto>($"products/details/{id}", requiresAuth: false);
             if (!ModelState.IsValid)
             {
-                Product = await _apiClientWrapper.GetAsync<ProductDetailDto>($"products/details/{id}", requiresAuth: false);
+                ViewData["ReviewFailed"] = true;
                 return Page();
             }
 
@@ -51,8 +47,7 @@ namespace eShop.Web.Pages
             catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty, $"Error submitting review: {ex.Message}");
-
-                Product = await _apiClientWrapper.GetAsync<ProductDetailDto>($"products/details/{id}", requiresAuth: false);
+                ViewData["ReviewFailed"] = true;
                 return Page();
             }
         }

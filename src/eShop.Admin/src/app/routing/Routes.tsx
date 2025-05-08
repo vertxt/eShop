@@ -88,6 +88,10 @@ export const router = createBrowserRouter([
                         element: <EditProductPage />
                     },
                     {
+                        path: 'products/:productId/reviews',
+                        element: <ReviewListView />
+                    },
+                    {
                         path: 'categories/create',
                         element: <CategoryCreateWrapper />
                     },

@@ -10,8 +10,8 @@ namespace eShop.Web.Extensions
             if (httpContextAccessor.HttpContext is not null)
             {
                 var accessToken = await httpContextAccessor.HttpContext.GetTokenAsync("access_token");
-                Console.WriteLine("Access Token here: " + accessToken);
-                Console.WriteLine("Token is null or empty: " + string.IsNullOrEmpty(accessToken));
+                // Console.WriteLine("Access Token here: " + accessToken);
+                // Console.WriteLine("Token is null or empty: " + string.IsNullOrEmpty(accessToken));
                 if (!string.IsNullOrEmpty(accessToken))
                 {
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);

@@ -1,21 +1,47 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using eShop.Web.Models;
+using eShop.Web.Interfaces;
+using eShop.Shared.DTOs.Products;
+using eShop.Shared.DTOs.Categories;
 
 namespace eShop.Web.Controllers;
 
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly IProductService _productService;
+    private readonly ICategoryService _categoryService;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, IProductService productService, ICategoryService categoryService)
     {
         _logger = logger;
+        _productService = productService;
+        _categoryService = categoryService;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        try
+        {
+            var featuredProductsTask = _productService.GetFeaturedProductsAsync();
+            var categoriesTask = _productService.GetCategoriesAsync();
+            
+            await Task.WhenAll(featuredProductsTask, categoriesTask);
+            
+            var viewModel = new HomeViewModel
+            {
+                FeaturedProducts = await featuredProductsTask ?? Enumerable.Empty<ProductDto>(),
+                Categories = await categoriesTask ?? Enumerable.Empty<CategoryDto>()
+            };
+            
+            return View(viewModel);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching featured products");
+            return View(new HomeViewModel());
+        }
     }
 
     public IActionResult Privacy()

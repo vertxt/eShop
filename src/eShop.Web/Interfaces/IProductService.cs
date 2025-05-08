@@ -8,6 +8,7 @@ namespace eShop.Web.Interfaces
     public interface IProductService
     {
         Task<PagedList<ProductDto>?> GetProductsAsync(ProductParameters productParams);
+        Task<IEnumerable<ProductDto>?> GetFeaturedProductsAsync();
         Task<List<CategoryDto>?> GetCategoriesAsync();
     }
 }

@@ -20,6 +20,7 @@ namespace eShop.Data
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(connectionString);
+                options.UseOpenIddict();
             });
 
             services.AddIdentity<User, IdentityRole>(options =>

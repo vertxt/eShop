@@ -167,7 +167,7 @@ namespace eShop.API.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetOrCreateSessionId_CreatesCookie_WhenNoCookieExists()
+        public void GetOrCreateSessionId_CreatesCookie_WhenNoCookieExists()
         {
             // Arrange
             _controller.ControllerContext.HttpContext.Request.Headers.Remove("Cookie");

@@ -7,10 +7,12 @@ import { categoriesApi } from "../../features/categories/categoriesApi";
 import { errorsApi } from "../../features/errors/errorsApi";
 import { loadingMiddleware } from "../../features/loading/loadingMiddleware";
 import { usersApi } from "../../features/users/usersApi";
+import { reviewsReducer } from "../../features/products/reviewsSlice";
 
 export const store = configureStore({
   reducer: {
     products: productsReducer,
+    reviews: reviewsReducer,
     ui: uiReducer,
     [productsApi.reducerPath]: productsApi.reducer,
     [categoriesApi.reducerPath]: categoriesApi.reducer,

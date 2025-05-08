@@ -24,10 +24,17 @@ namespace eShop.API.Controllers
             return Ok(products);
         }
 
+        [HttpGet("featured")]
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetFeaturedProducts()
+        {
+            var products = await _productService.GetFeaturedProductsAsync();
+            return Ok(products);
+        }
+
         [HttpGet("{id:int}")]
         public async Task<ActionResult<ProductDto>> GetById(int id)
         {
-            var product = await _productService.GetByIdAsync(id);
+            var product = await _productService.GetByIdWithBasicDetailsAsync(id);
             return Ok(product);
         }
 

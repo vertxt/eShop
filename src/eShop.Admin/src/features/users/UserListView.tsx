@@ -36,7 +36,7 @@ export default function UserListView() {
         }
     };
 
-    console.log(users);
+    // console.log(users);
 
     return (
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>

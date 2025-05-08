@@ -47,18 +47,18 @@ namespace eShop.Data
                     )"
                 ));
             });
-            
+
             builder.Entity<Cart>(entity =>
             {
                 entity.HasIndex(c => c.UserId)
                  .IsUnique()
                  .HasFilter("UserId IS NOT NULL");
-                 
+
                 entity.HasIndex(c => c.SessionId)
                  .IsUnique()
                  .HasFilter("SessionId IS NOT NULL");
             });
-            
+
             builder.Entity<Product>()
                 .HasIndex(p => p.Uuid)
                 .IsUnique();
@@ -66,6 +66,18 @@ namespace eShop.Data
             builder.Entity<ProductAttribute>()
                 .HasIndex(pa => new { pa.ProductId, pa.AttributeId })
                 .IsUnique();
+
+            builder.Entity<Product>()
+                .HasMany(p => p.Images)
+                .WithOne(pi => pi.Product)
+                .HasForeignKey(pi => pi.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<CartItem>()
+                .HasOne(ci => ci.ProductVariant)
+                .WithMany()
+                .HasForeignKey(ci => ci.ProductVariantId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

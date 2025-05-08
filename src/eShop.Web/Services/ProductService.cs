@@ -23,6 +23,11 @@ namespace eShop.Web.Services
             return await _apiClientWrapper.GetAsync<PagedList<ProductDto>>($"products{queryString}", requiresAuth: false);
         }
 
+        public async Task<IEnumerable<ProductDto>?> GetFeaturedProductsAsync()
+        {
+            return await _apiClientWrapper.GetAsync<List<ProductDto>>("products/featured", requiresAuth: false);
+        }
+
         public async Task<List<CategoryDto>?> GetCategoriesAsync()
         {
             return await _apiClientWrapper.GetAsync<List<CategoryDto>>("categories");

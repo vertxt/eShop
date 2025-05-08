@@ -5,18 +5,20 @@ import { FieldErrors, useForm } from "react-hook-form";
 import { productSchema, ProductSchema } from "../../shared/schemas/createProductSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
-import { Box, Button, Card, CardContent, Tab, Tabs, Typography } from "@mui/material";
+import { Alert, AlertTitle, Box, Button, Card, CardContent, Stack, Tab, Tabs, Typography } from "@mui/material";
 import TabPanel from "../../shared/components/TabPanel";
-import { Save } from "@mui/icons-material";
+import { Cancel, Save } from "@mui/icons-material";
 import AttributesTab from "./AttributesTab";
 import BasicInfoTab from "./BasicInfoTab";
 import ImagesTab from "./ImagesTab";
 import VariantsTab from "./VariantsTab";
 import { productDetailToForm } from "../../shared/utils/productMappers";
+import { useLocation, useNavigate } from "react-router-dom";
 
 type Props = {
     productId?: number | null,
     onSuccess?: () => void,
+    returnUrl?: string,
 }
 
 export interface ImageFile {
@@ -28,12 +30,15 @@ export interface ImageFile {
     existingImageId?: number,
 }
 
-export default function ProductForm({ productId, onSuccess }: Props) {
+export default function ProductForm({ productId, onSuccess, returnUrl = "/products" }: Props) {
     const [activeTab, setActiveTab] = useState<number>(0);
     const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
+    const [isFormInitialized, setIsFormInitialized] = useState<boolean>(false);
     const isEditMode = Boolean(productId);
+    const navigate = useNavigate();
+    const location = useLocation();
 
-    const { control, handleSubmit, watch, reset, formState: { errors } } = useForm<ProductSchema>({
+    const { control, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm<ProductSchema>({
         resolver: zodResolver(productSchema),
         mode: 'onBlur',
         defaultValues: {
@@ -43,6 +48,7 @@ export default function ProductForm({ productId, onSuccess }: Props) {
             shortDescription: '',
             categoryId: 1,
             isActive: true,
+            isFeatured: false,
             hasVariants: false,
             quantityInStock: 0,
             attributes: [],
@@ -58,10 +64,13 @@ export default function ProductForm({ productId, onSuccess }: Props) {
         productId!,
         { skip: !isEditMode }
     );
-    const { data: attributes, isLoading: isLoadingAttributes } = useFetchCategoryAttributesQuery(categoryId!, { skip: !categoryId });
+    const { data: attributes, isLoading: isLoadingAttributes } = useFetchCategoryAttributesQuery(
+        categoryId!,
+        { skip: !categoryId }
+    );
 
-    const [createProduct, { isLoading: isAddingProduct }] = useCreateProductMutation();
-    const [updateProduct, { isLoading: isUpdatingProduct }] = useUpdateProductMutation();
+    const [createProduct, { isLoading: isAddingProduct, error: createProductError }] = useCreateProductMutation();
+    const [updateProduct, { isLoading: isUpdatingProduct, error: updateProductError }] = useUpdateProductMutation();
 
     const isSubmitting = isAddingProduct || isUpdatingProduct;
 
@@ -69,8 +78,13 @@ export default function ProductForm({ productId, onSuccess }: Props) {
         setActiveTab(newValue);
     };
 
+    const handleCancel = () => {
+        navigate(returnUrl);
+    }
+
+    // Initialize form with category attributes (only once per category change)
     useEffect(() => {
-        if (categoryId && attributes && !isEditMode) {
+        if (categoryId && attributes && !isEditMode && !isFormInitialized) {
             reset((current) => ({
                 ...current,
                 attributes: attributes.map(attr => ({
@@ -79,44 +93,63 @@ export default function ProductForm({ productId, onSuccess }: Props) {
                 }))
             }));
         }
-    }, [categoryId, attributes, reset, isEditMode]);
+    }, [categoryId, attributes, reset, isEditMode, isFormInitialized]);
 
+    // Initialize form with existing product data (only once when data loads)
     useEffect(() => {
-        if (!existingProduct) return;
-        const preloadData = productDetailToForm(existingProduct);
-        console.log(JSON.stringify(preloadData));
-        reset(preloadData);
+        if (existingProduct && !isFormInitialized) {
+            const preloadData = productDetailToForm(existingProduct);
+            // console.log('Loading product data: ', JSON.stringify(preloadData));
+            reset(preloadData);
 
-        // set images here for ImagesTab
-        const preloadImages: ImageFile[] = existingProduct.images.map(img => ({
-            id: img.id.toString(),
-            preview: img.url,
-            isMain: img.isMain,
-            displayOrder: img.displayOrder,
-            file: null,
-            existingImageId: img.id,
-        }));
-        setImageFiles(preloadImages);
-    }, [existingProduct, reset])
+            // set images here for ImagesTab
+            const preloadImages: ImageFile[] = existingProduct.images.map(img => ({
+                id: img.id.toString(),
+                preview: img.url,
+                isMain: img.isMain,
+                displayOrder: img.displayOrder,
+                file: null,
+                existingImageId: img.id,
+            }));
+            setImageFiles(preloadImages);
+            setIsFormInitialized(true);
+        }
+    }, [existingProduct, reset, isFormInitialized])
 
+    // Variants initialization (with dependencies on form values)
     useEffect(() => {
+        if (!isFormInitialized) return;
+
         if (hasVariants) {
             const currentVariants = watch('variants') || [];
             if (currentVariants.length === 0) {
-                reset({
-                    ...watch(),
-                    variants: [{
-                        id: undefined,
-                        name: '',
-                        sku: '',
-                        price: watch('basePrice') || 0,
-                        quantityInStock: watch('quantityInStock') || 0,
-                        isActive: true,
-                    }]
-                });
+                setValue('variants', [{
+                    id: undefined,
+                    name: '',
+                    sku: '',
+                    price: watch('basePrice') || 0,
+                    quantityInStock: watch('quantityInStock') || 0,
+                    isActive: true,
+                }], { shouldValidate: true });
             }
+        } else {
+            setValue('variants', [], { shouldValidate: true });
         }
-    }, [hasVariants, reset, watch]);
+    }, [hasVariants, reset, watch, setValue, isFormInitialized]);
+
+    // Mark form as initialized on first load
+    useEffect(() => {
+        if (!isEditMode && !isFormInitialized) {
+            setIsFormInitialized(true);
+        }
+    }, [isEditMode, isFormInitialized]);
+
+    // Reset form initialization flag when location changes
+    useEffect(() => {
+        return () => {
+            setIsFormInitialized(false);
+        };
+    }, [location.pathname]);
 
     const createFormData = (data: ProductSchema) => {
         const formData = new FormData();
@@ -189,6 +222,11 @@ export default function ProductForm({ productId, onSuccess }: Props) {
     };
 
     const onSubmit = async (data: ProductSchema) => {
+        const processedData = {
+            ...data,
+            variants: hasVariants ? data.variants : []
+        };
+
         if (Object.keys(errors).length > 0) {
             console.log('Form validation errors:', errors);
             toast.error('Please fix the form errors before submitting.');
@@ -196,10 +234,10 @@ export default function ProductForm({ productId, onSuccess }: Props) {
         }
 
         try {
-            const productData = createFormData(data);
-            for (let [key, value] of productData.entries()) {
-                console.log(key, value);
-            }
+            const productData = createFormData(processedData);
+            // for (let [key, value] of productData.entries()) {
+            //     console.log(key, value);
+            // }
             if (isEditMode && productId) {
                 const payload = await updateProduct({ id: productId, data: productData }).unwrap();
                 console.log("Update product", productId, payload);
@@ -219,8 +257,13 @@ export default function ProductForm({ productId, onSuccess }: Props) {
     const onInvalid = (errors: FieldErrors<ProductSchema>) => {
         console.log('Validation errors:', errors);
         toast.error('Please fix the form errors before submitting.');
+
         if (errors.variants && activeTab !== 3) {
             setActiveTab(3);
+        } else if (errors.attributes && activeTab !== 1) {
+            setActiveTab(1);
+        } else if ((errors.name || errors.basePrice || errors.categoryId || errors.isFeatured) && activeTab !== 0) {
+            setActiveTab(0);
         }
     };
 
@@ -284,13 +327,24 @@ export default function ProductForm({ productId, onSuccess }: Props) {
                     </TabPanel>
 
                     <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
-                        <Button
-                            variant="outlined"
-                            onClick={() => handleTabChange(null as any, Math.max(0, activeTab - 1))}
-                            disabled={activeTab === 0}
-                        >
-                            Previous
-                        </Button>
+                        <Box>
+                            <Button
+                                variant="outlined"
+                                color="secondary"
+                                startIcon={<Cancel />}
+                                onClick={handleCancel}
+                                sx={{ mr: 2 }}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                onClick={() => handleTabChange(null as any, Math.max(0, activeTab - 1))}
+                                disabled={activeTab === 0}
+                            >
+                                Previous
+                            </Button>
+                        </Box>
 
                         <Box>
                             {activeTab < 3 && (
@@ -316,6 +370,32 @@ export default function ProductForm({ productId, onSuccess }: Props) {
                     </Box>
                 </Box>
             </CardContent>
+
+            {/* Display API validation errors */}
+            {createProductError && 'fieldErrors' in createProductError && createProductError.fieldErrors && (
+                <Stack sx={{ width: '100%', mt: '1rem' }} spacing={1}>
+                    {Object.entries(createProductError.fieldErrors).map(
+                        ([field, messages], index) => (
+                            <Alert key={index} severity="error">
+                                <AlertTitle>{field}</AlertTitle>
+                                {messages}
+                            </Alert>
+                        )
+                    )}
+                </Stack>
+            )}
+            {updateProductError && 'fieldErrors' in updateProductError && updateProductError.fieldErrors && (
+                <Stack sx={{ width: '100%', mt: '1rem' }} spacing={1}>
+                    {Object.entries(updateProductError.fieldErrors).map(
+                        ([field, messages], index) => (
+                            <Alert key={index} severity="error">
+                                <AlertTitle>{field}</AlertTitle>
+                                {messages}
+                            </Alert>
+                        )
+                    )}
+                </Stack>
+            )}
         </Card>
     )
 }
