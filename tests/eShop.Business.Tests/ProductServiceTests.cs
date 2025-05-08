@@ -1284,8 +1284,8 @@ namespace eShop.Business.Tests.Services
             _mockImageService.Setup(svc => svc.DeleteImageAsync(It.IsAny<string>()))
                 .ReturnsAsync(new DeletionResult());
 
-            _mockProductRepository.Setup(repo => repo.DeleteAsync(productId))
-                .ReturnsAsync(true);
+            _mockProductRepository.Setup(repo => repo.DeleteProductAsync(productId))
+                .Returns(Task.CompletedTask);
 
             // Act
             await _productService.DeleteAsync(productId);
@@ -1293,7 +1293,7 @@ namespace eShop.Business.Tests.Services
             // Assert
             _mockProductRepository.Verify(repo => repo.GetByIdAsync(productId), Times.Once);
             _mockImageService.Verify(svc => svc.DeleteImageAsync("test_public_id"), Times.Once);
-            _mockProductRepository.Verify(repo => repo.DeleteAsync(productId), Times.Once);
+            _mockProductRepository.Verify(repo => repo.DeleteProductAsync(productId), Times.Once);
         }
 
         [Fact]
@@ -1307,7 +1307,7 @@ namespace eShop.Business.Tests.Services
             // Act & Assert
             await Assert.ThrowsAsync<KeyNotFoundException>(() => _productService.DeleteAsync(productId));
             _mockProductRepository.Verify(repo => repo.GetByIdAsync(productId), Times.Once);
-            _mockProductRepository.Verify(repo => repo.DeleteAsync(productId), Times.Never);
+            _mockProductRepository.Verify(repo => repo.DeleteProductAsync(productId), Times.Never);
         }
 
 
@@ -1335,8 +1335,8 @@ namespace eShop.Business.Tests.Services
             _mockImageService.Setup(service => service.DeleteImageAsync(It.IsAny<string>()))
                 .ReturnsAsync(new DeletionResult());
 
-            _mockProductRepository.Setup(repo => repo.DeleteAsync(It.IsAny<int>()))
-                .ReturnsAsync(true);
+            _mockProductRepository.Setup(repo => repo.DeleteProductAsync(It.IsAny<int>()))
+                .Returns(Task.CompletedTask);
 
             // Act
             await _productService.DeleteAsync(productId);
@@ -1344,7 +1344,7 @@ namespace eShop.Business.Tests.Services
             // Assert
             _mockImageService.Verify(service => service.DeleteImageAsync("image1_public_id"), Times.Once);
             _mockImageService.Verify(service => service.DeleteImageAsync("image2_public_id"), Times.Once);
-            _mockProductRepository.Verify(repo => repo.DeleteAsync(productId), Times.Once);
+            _mockProductRepository.Verify(repo => repo.DeleteProductAsync(productId), Times.Once);
         }
 
         [Fact]
@@ -1372,7 +1372,7 @@ namespace eShop.Business.Tests.Services
 
             // Act & Assert
             await Assert.ThrowsAsync<InvalidOperationException>(() => _productService.DeleteAsync(1));
-            _mockProductRepository.Verify(repo => repo.DeleteAsync(productId), Times.Never);
+            _mockProductRepository.Verify(repo => repo.DeleteProductAsync(productId), Times.Never);
         }
     }
 }

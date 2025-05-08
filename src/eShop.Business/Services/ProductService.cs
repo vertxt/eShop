@@ -29,9 +29,18 @@ namespace eShop.Business.Services
 
         private string GenerateSku(string productName, string variantName = "base")
         {
-            string baseName = $"{productName}-{variantName}".ToUpper().Replace(" ", "-");
-            string suffix = DateTime.UtcNow.Ticks.ToString("N")[..6];
-            return $"{baseName}-{suffix}";
+            string GetInitials(string input) =>
+                string.Concat(input.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                                    .Select(w => w[0]))
+                                    .ToUpper();
+
+            string pinit = GetInitials(productName);
+            string vinit = GetInitials(variantName);
+
+            var rnd = new Random();
+            string suffix = rnd.Next(0, 999999).ToString("D6");
+
+            return $"{pinit}-{vinit}-{suffix}";
         }
 
         public async Task<PagedList<ProductDto>> GetAllAsync(ProductParameters productParams)
@@ -297,7 +306,7 @@ namespace eShop.Business.Services
                 }
             }
 
-            await _productRepository.DeleteAsync(id);
+            await _productRepository.DeleteProductAsync(id);
         }
     }
 }

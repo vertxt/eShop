@@ -156,12 +156,21 @@ namespace eShop.Web.Services
             {
                 // Try to parse ProblemDetails from the API
                 var content = await response.Content.ReadAsStringAsync();
-                var problemDetails = JsonSerializer.Deserialize<ProblemDetails>(content, _jsonOptions);
-                errorMessage = problemDetails?.Detail ?? problemDetails?.Title ?? "Unknown error occurred";
+
+                if (!string.IsNullOrEmpty(content))
+                {
+                    var problemDetails = JsonSerializer.Deserialize<ProblemDetails>(content, _jsonOptions);
+                    errorMessage = problemDetails?.Detail ?? problemDetails?.Title ?? "Unknown error occurred";
+                }
+                else
+                {
+                    errorMessage = $"Error {(int)statusCode}: {statusCode}";
+                }
             }
-            catch
+            catch (Exception ex)
             {
-                errorMessage = "Error communicating with the service";
+                _logger.LogWarning(ex, "Failed to deserialize error response");
+                errorMessage = $"Error {(int)statusCode}: {statusCode}";
             }
 
             throw statusCode switch

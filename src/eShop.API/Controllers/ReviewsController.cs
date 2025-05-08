@@ -27,7 +27,7 @@ namespace eShop.API.Controllers
             return Ok(reviews);
         }
 
-        [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme, Roles = "Customer")]
         [HttpPost]
         public async Task<ActionResult<ReviewDto>> Post(int productId, CreateReviewDto createReviewDto)
         {
