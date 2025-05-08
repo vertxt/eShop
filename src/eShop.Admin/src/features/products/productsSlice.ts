@@ -43,7 +43,7 @@ export const productsSlice = createSlice({
       state.pageNumber = 1;
     },
 
-    setPriceRange(state, action: PayloadAction<{min: number | null, max: number | null}>) {
+    setPriceRange(state, action: PayloadAction<{ min: number | null, max: number | null }>) {
       state.minPrice = action.payload.min;
       state.maxPrice = action.payload.max;
       state.pageNumber = 1;

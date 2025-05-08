@@ -8,6 +8,7 @@ using eShop.Shared.DTOs.Products;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace eShop.Business.Services
 {
@@ -46,9 +47,26 @@ namespace eShop.Business.Services
             return pagedResult;
         }
 
+        public async Task<IEnumerable<ProductDto>> GetFeaturedProductsAsync()
+        {
+            var products = await _productRepository.GetFeaturedProducts().ProjectTo<ProductDto>(_mapper.ConfigurationProvider).ToListAsync();
+            return products;
+        }
+
         public async Task<ProductDto> GetByIdAsync(int id)
         {
             var product = await _productRepository.GetByIdAsync(id);
+            if (product is null)
+            {
+                throw new KeyNotFoundException($"Product with ID {id} not found.");
+            }
+
+            return _mapper.Map<ProductDto>(product);
+        }
+
+        public async Task<ProductDto> GetByIdWithBasicDetailsAsync(int id)
+        {
+            var product = await _productRepository.GetByIdWithBasicDetailsAsync(id);
             if (product is null)
             {
                 throw new KeyNotFoundException($"Product with ID {id} not found.");

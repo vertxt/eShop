@@ -6,6 +6,7 @@ import { CategoryDetail } from "../../shared/types/category";
 import { createCategorySchema, CreateCategorySchema } from "../../shared/schemas/createCategorySchema";
 import { useCreateCategoryMutation, useUpdateCategoryMutation } from "./categoriesApi";
 import { Add, DeleteOutline } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
     isEditMode?: boolean;
@@ -18,6 +19,7 @@ export default function CategoryForm({ isEditMode = false, existingCategory = nu
     const [updateCategory, { isLoading: isUpdating }] = useUpdateCategoryMutation();
     const [error, setError] = useState<string | null>(null);
     const isLoading = isCreating || isUpdating;
+    const navigate = useNavigate();
 
     const defaultValues: CreateCategorySchema = {
         name: isEditMode && existingCategory?.name ? existingCategory.name : "",
@@ -60,6 +62,10 @@ export default function CategoryForm({ isEditMode = false, existingCategory = nu
         }
     };
 
+    const handleCancel = () => {
+        navigate(-1);
+    }
+
     const addNewAttribute = () => {
         append({
             name: "",
@@ -69,7 +75,7 @@ export default function CategoryForm({ isEditMode = false, existingCategory = nu
 
     return (
         <Paper sx={{ p: 3 }}>
-            <Typography variant="h5" gutterBottom>
+            <Typography variant="h5" sx={{ mb: 2 }}>
                 {isEditMode ? "Edit Category" : "Add New Category"}
             </Typography>
 
@@ -103,15 +109,6 @@ export default function CategoryForm({ isEditMode = false, existingCategory = nu
                             {...register("description")}
                             disabled={isLoading}
                         />
-                    </Grid>
-                    <Grid size={12}>
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            loading={isLoading}
-                        >
-                            {isEditMode ? "Update" : "Create"}
-                        </Button>
                     </Grid>
                     <Grid size={12}>
                         <Divider sx={{ my: 2 }} />
@@ -174,6 +171,23 @@ export default function CategoryForm({ isEditMode = false, existingCategory = nu
                                 No attributes defined. Click "Add Attribute" to define attributes for this category.
                             </Typography>
                         )}
+                    </Grid>
+                    <Grid size={12}>
+                        <Box display="flex" alignItems="center" justifyContent="space-between">
+                            <Button 
+                                variant="outlined"
+                                onClick={handleCancel}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                loading={isLoading}
+                            >
+                                {isEditMode ? "Update" : "Create"}
+                            </Button>
+                        </Box>
                     </Grid>
                 </Grid>
             </Box>

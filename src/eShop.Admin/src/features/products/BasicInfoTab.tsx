@@ -133,6 +133,25 @@ export default function BasicInfoTab({
 
             <Grid size={{ xs: 12, md: 6 }}>
                 <Controller
+                    name="isFeatured"
+                    control={control}
+                    render={({ field }) => (
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={field.value}
+                                    onChange={(e) => field.onChange(e.target.checked)}
+                                    color="primary"
+                                />
+                            }
+                            label="Featured (show in featured sections)"
+                        />
+                    )}
+                />
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 6 }}>
+                <Controller
                     name="hasVariants"
                     control={control}
                     render={({ field }) => (

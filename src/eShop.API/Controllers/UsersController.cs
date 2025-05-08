@@ -15,6 +15,7 @@ namespace eShop.API.Controllers
             _userService = userService;
         }
 
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetAll()
         {
             var users = await _userService.GetAllAsync();

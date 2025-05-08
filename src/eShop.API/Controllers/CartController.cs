@@ -22,7 +22,6 @@ namespace eShop.API.Controllers
 
         private string GetUserId()
         {
-            Console.WriteLine("*****I'm logging here: " + User.FindFirstValue(ClaimTypes.NameIdentifier));
             return User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
         }
 

@@ -7,6 +7,7 @@ export const productSchema = z.object({
     shortDescription: z.string().optional(),
     categoryId: z.coerce.number().positive("Category must be selected"),
     isActive: z.boolean(),
+    isFeatured: z.boolean(),
     hasVariants: z.boolean(),
     quantityInStock: z.coerce.number().optional().nullable(),
     attributes: z.array(

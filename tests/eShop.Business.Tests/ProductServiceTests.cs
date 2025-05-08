@@ -4,6 +4,7 @@ using eShop.Business.Interfaces;
 using eShop.Business.Services;
 using eShop.Data.Entities.CategoryAggregate;
 using eShop.Data.Entities.ProductAggregate;
+using eShop.Data.Entities.UserAggregate;
 using eShop.Data.Interfaces;
 using eShop.Shared.DTOs.Products;
 using Microsoft.AspNetCore.Http;
@@ -70,6 +71,50 @@ namespace eShop.Business.Tests.Services
             // Act & Assert
             await Assert.ThrowsAsync<KeyNotFoundException>(() => _productService.GetByIdAsync(productId));
             _mockProductRepository.Verify(repo => repo.GetByIdAsync(productId), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetByIdWithDetailsAsync_WhenProductExists_ReturnProductDto()
+        {
+            // Arrange
+            var productId = 1;
+            var product = new Product {
+                Id = productId,
+                Name = "Test Product",
+                Description = "Test Description",
+                BasePrice = 10.99m,
+                Reviews = new List<Review>
+                {
+                    new Review
+                    {
+                        Title = "Good Product 1",
+                        Body = "Good Product Description 1",
+                        Rating = 4,
+                    },
+                    new Review
+                    {
+                        Title = "Good Product 2",
+                        Body = "Good Product Description 2",
+                        Rating = 5,
+                    },
+                }
+            };
+            var expectedDto = new ProductDto { Id = productId, Name = "Test Product", BasePrice = 10.99m, AverageRating = 4.5m, ReviewCount = 2 };
+
+            _mockProductRepository.Setup(repo => repo.GetByIdWithBasicDetailsAsync(productId))
+                .ReturnsAsync(product);
+
+            _mockMapper.Setup(m => m.Map<ProductDto>(It.IsAny<Product>()))
+                .Returns(expectedDto);
+
+            // Act
+            var result = await _productService.GetByIdWithBasicDetailsAsync(productId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(productId, result.Id);
+            Assert.Equal("Test Product", result.Name);
+            _mockProductRepository.Verify(repo => repo.GetByIdWithBasicDetailsAsync(productId), Times.Once);
         }
 
         [Fact]
@@ -869,7 +914,7 @@ namespace eShop.Business.Tests.Services
             Assert.DoesNotContain(existingProduct.Attributes, a => a.AttributeId == 202);
             _mockProductRepository.Verify(repo => repo.UpdateAsync(existingProduct), Times.Once);
         }
-        
+
         [Fact]
         public async Task UpdateAsync_WithEmptyAttributes_ClearsAllExistingAttributes()
         {

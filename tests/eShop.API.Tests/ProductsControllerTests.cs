@@ -59,7 +59,7 @@ namespace eShop.API.Tests
                 Name = "Test Product",
                 BasePrice = 99.99m
             };
-            _mockProductService.Setup(service => service.GetByIdAsync(id)).ReturnsAsync(product);
+            _mockProductService.Setup(service => service.GetByIdWithBasicDetailsAsync(id)).ReturnsAsync(product);
 
             // Act
             var result = await _controller.GetById(id);
@@ -70,7 +70,7 @@ namespace eShop.API.Tests
             Assert.Equal(id, returnValue.Id);
             Assert.Equal("Test Product", returnValue.Name);
             Assert.Equal(99.99m, returnValue.BasePrice);
-            _mockProductService.Verify(s => s.GetByIdAsync(id), Times.Once);
+            _mockProductService.Verify(s => s.GetByIdWithBasicDetailsAsync(id), Times.Once);
         }
 
         [Fact]

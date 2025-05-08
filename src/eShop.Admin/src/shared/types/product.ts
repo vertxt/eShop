@@ -23,6 +23,7 @@ export interface ProductDetail {
     description: string;
     shortDescription: string;
     isActive: boolean;
+    isFeatured: boolean;
     categoryId: number;
     categoryName: string;
     hasVariants: boolean;
@@ -32,7 +33,7 @@ export interface ProductDetail {
     images: ProductImage[];
     variants: ProductVariant[];
     attributes: ProductAttribute[];
-    reviews: ProductReview[];
+    // reviews: Review[];
     averageRating: number;
 }
 
@@ -59,13 +60,4 @@ export interface ProductAttribute {
     name: string;
     displayName: string;
     value: string;
-}
-
-export interface ProductReview {
-    id: number;
-    reviewerName: string;
-    rating: number;
-    title: string;
-    body: string;
-    createdDate: string;
 }

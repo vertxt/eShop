@@ -1,15 +1,15 @@
-import { 
-  Box, 
-  Button, 
-  ButtonGroup, 
-  Paper, 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableContainer, 
-  TableHead, 
-  TableRow, 
-  Toolbar, 
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Toolbar,
   Typography,
   Dialog,
   DialogActions,
@@ -18,10 +18,12 @@ import {
   DialogTitle,
   CircularProgress,
   Alert,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 import { useDeleteCategoryMutation, useFetchCategoriesQuery } from "./categoriesApi";
 import { Link, useNavigate } from "react-router-dom";
-import { Add, Edit, Delete } from "@mui/icons-material";
+import { Add, Edit, Delete, Refresh } from "@mui/icons-material";
 import { useState } from "react";
 import { Category } from "../../shared/types/category";
 import { toast } from "react-toastify";
@@ -30,11 +32,11 @@ export default function CategoryListView() {
   const { data, isLoading, error, refetch } = useFetchCategoriesQuery();
   const [deleteCategory, { isLoading: isDeleting }] = useDeleteCategoryMutation();
   const navigate = useNavigate();
-  
+
   // State for delete confirmation dialog
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
-  
+
   const handleEditClick = (category: Category) => {
     navigate(`/categories/edit/${category.id}`);
   };
@@ -46,15 +48,13 @@ export default function CategoryListView() {
 
   const handleDeleteConfirm = async () => {
     if (!categoryToDelete) return;
-    
+
     try {
       await deleteCategory(categoryToDelete.id).unwrap();
       toast.success(`Category "${categoryToDelete.name}" deleted successfully`);
-      // Refresh the list after deletion
-      // refetch();
     } catch (err) {
       console.error("Delete error:", err);
-      toast.error("Failed to delete category. Please try again.");
+      toast.error("Error deleting category");
     } finally {
       setDeleteDialogOpen(false);
       setCategoryToDelete(null);
@@ -83,18 +83,24 @@ export default function CategoryListView() {
         Categories
       </Typography>
 
-      <Toolbar sx={{ p: 0, mb: 2 }}>
-        <Button
-          component={Link}
-          to="/categories/create"
-          variant="contained"
-          color="primary"
-          startIcon={<Add />}
-          sx={{ mr: 2 }}
-        >
-          Create New Category
-        </Button>
-      </Toolbar>
+      <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+        <Toolbar>
+          <Button
+            component={Link}
+            to="/categories/create"
+            variant="contained"
+            color="primary"
+            startIcon={<Add />}
+          >
+            Create New Category
+          </Button>
+        </Toolbar>
+        <Tooltip title="Refresh data">
+          <IconButton onClick={() => refetch()}>
+            <Refresh />
+          </IconButton>
+        </Tooltip>
+      </Box>
 
       {data && data.length > 0 ? (
         <TableContainer component={Paper}>
@@ -147,7 +153,7 @@ export default function CategoryListView() {
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete the category "{categoryToDelete?.name}"? 
+            Are you sure you want to delete the category "{categoryToDelete?.name}"?
             This action cannot be undone.
           </DialogContentText>
         </DialogContent>
@@ -155,9 +161,9 @@ export default function CategoryListView() {
           <Button onClick={() => setDeleteDialogOpen(false)} disabled={isDeleting}>
             Cancel
           </Button>
-          <Button 
-            onClick={handleDeleteConfirm} 
-            color="error" 
+          <Button
+            onClick={handleDeleteConfirm}
+            color="error"
             variant="contained"
             loading={isDeleting}
           >

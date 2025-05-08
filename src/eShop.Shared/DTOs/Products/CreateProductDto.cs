@@ -10,6 +10,7 @@ namespace eShop.Shared.DTOs.Products
         public string Description { get; set; }
         public string ShortDescription { get; set; }
         public bool IsActive { get; set; } = true;
+        public bool IsFeatured { get; set; }
         public int CategoryId { get; set; }
         public bool HasVariants { get; set; }
         public int? QuantityInStock { get; set; }
