@@ -5,7 +5,7 @@ export const oidcConfig = {
     redirect_uri: 'https://localhost:5002/signin-callback',
     post_logout_redirect_uri: 'https://localhost:5002/signout-callback',
     response_type: 'code',
-    scope: 'openid profile email roles api',
+    scope: 'openid profile email roles api offline_access',
     automaticSilentRenew: true,
     loadUserInfo: true,
 }

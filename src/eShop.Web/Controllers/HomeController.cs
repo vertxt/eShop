@@ -25,16 +25,16 @@ public class HomeController : Controller
         try
         {
             var featuredProductsTask = _productService.GetFeaturedProductsAsync();
-            var categoriesTask = _productService.GetCategoriesAsync();
-            
+            var categoriesTask = _categoryService.GetAllAsync();
+
             await Task.WhenAll(featuredProductsTask, categoriesTask);
-            
+
             var viewModel = new HomeViewModel
             {
                 FeaturedProducts = await featuredProductsTask ?? Enumerable.Empty<ProductDto>(),
                 Categories = await categoriesTask ?? Enumerable.Empty<CategoryDto>()
             };
-            
+
             return View(viewModel);
         }
         catch (Exception ex)

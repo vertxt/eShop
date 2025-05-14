@@ -101,7 +101,7 @@ export default function ImagesTab({ imageFiles, setImageFiles }: ImagesTabProps)
                         Uploaded Images ({imageFiles.length})
                     </Typography>
                     <Grid container spacing={2}>
-                        {imageFiles.map((img) => (
+                        {imageFiles.sort((img1, img2) => (img1.displayOrder - img2.displayOrder)).map((img) => (
                             <Grid key={img.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
                                 <Paper elevation={2} sx={{ p: 1, position: 'relative' }}>
                                     <Box
