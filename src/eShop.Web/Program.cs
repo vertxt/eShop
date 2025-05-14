@@ -27,10 +27,13 @@ builder.Services.AddAuthentication(options =>
     options.RequireHttpsMetadata = true;
     options.SaveTokens = true;
 
+    options.Scope.Clear();
+    options.Scope.Add("openid");
     options.Scope.Add("email");
     options.Scope.Add("profile");
     options.Scope.Add("roles");
     options.Scope.Add("api");
+    options.Scope.Add("offline_access");
 
     options.GetClaimsFromUserInfoEndpoint = true;
     options.TokenValidationParameters.NameClaimType = "name";
@@ -50,7 +53,9 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddHttpClient("API", options =>
+// Temporary solution for renewing access token with refresh token: using Duende.AccessTokenManagement package
+builder.Services.AddOpenIdConnectAccessTokenManagement();
+builder.Services.AddUserAccessTokenHttpClient("API", null, options =>
 {
     options.BaseAddress = new Uri("https://localhost:5000/api/");
 });

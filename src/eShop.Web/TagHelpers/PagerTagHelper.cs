@@ -87,7 +87,7 @@ namespace eShop.Web.TagHelpers
             a.InnerHtml.AppendHtml(content);
             
             var pageRouteValues = new RouteValueDictionary(routeValues);
-            pageRouteValues["pageNumber"] = pageNumber;
+            pageRouteValues["PageNumber"] = pageNumber;
             string? href = urlHelper.Action(PageAction, pageRouteValues);
             a.Attributes["href"] = href;
             
