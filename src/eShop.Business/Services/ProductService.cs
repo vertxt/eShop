@@ -281,6 +281,7 @@ namespace eShop.Business.Services
                 });
             }
 
+            product.UpdatedDate = DateTime.UtcNow;
             await _productRepository.UpdateAsync(product);
 
             return _mapper.Map<ProductDto>(product);
