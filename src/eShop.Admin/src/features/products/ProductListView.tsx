@@ -9,7 +9,6 @@ import {
     Box,
     Typography,
     Grid,
-    TextField,
     MenuItem,
     Select,
     FormControl,
@@ -30,12 +29,13 @@ import {
     CircularProgress,
 } from "@mui/material";
 import { useDeleteProductMutation, useFetchProductsQuery } from "./productsApi";
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import { Add, CommentOutlined, DeleteOutline, Refresh } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "../../app/store/store";
 import { Link, useNavigate } from "react-router-dom";
 import { setPageNumber, setPageSize, setSearchTerm, setSortBy } from "./productsSlice";
 import { toast } from "react-toastify";
+import Search from "../../shared/components/Search";
 
 const EmptyAction = (_props: TablePaginationActionsSlotPropsOverrides) => null;
 
@@ -43,7 +43,6 @@ export default function ProductListView() {
     const productListParams = useAppSelector(state => state.products);
     const { data, isLoading, error, refetch } = useFetchProductsQuery(productListParams);
     const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation();
-    const [localSearch, setLocalSearch] = useState(productListParams.searchTerm || '');
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
@@ -51,13 +50,7 @@ export default function ProductListView() {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [productToDelete, setProductToDelete] = useState<number | null>(null);
 
-    const handleSearchSubmit = (e: FormEvent) => {
-        e.preventDefault();
-        dispatch(setSearchTerm(localSearch));
-    };
-
     const handleSearchReset = () => {
-        setLocalSearch('');
         dispatch(setSearchTerm(''));
     };
 
@@ -157,17 +150,8 @@ export default function ProductListView() {
                     <Typography variant="h5">Products</Typography>
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
-                    <Box component="form" sx={{ display: 'flex' }} onSubmit={handleSearchSubmit}>
-                        <TextField
-                            fullWidth
-                            label="Search products"
-                            variant="outlined"
-                            value={localSearch}
-                            onChange={(e) => setLocalSearch(e.target.value)}
-                        />
-                        <Button type="submit" variant="contained" sx={{ ml: 1 }}>
-                            Search
-                        </Button>
+                    <Box sx={{ display: 'flex' }}>
+                        <Search searchTerm={productListParams.searchTerm ?? ""} onSearchChange={(searchTerm: string) => dispatch(setSearchTerm(searchTerm))} />
                         <Button variant="outlined" sx={{ ml: 1 }} onClick={handleSearchReset}>
                             Reset
                         </Button>
@@ -252,23 +236,25 @@ export default function ProductListView() {
                                         : "Never"}
                                 </TableCell>
                                 <TableCell align="right" onClick={(e) => e.stopPropagation()}>
-                                    <Tooltip title="View reviews">
-                                        <IconButton
-                                            color="primary"
-                                            onClick={(e) => handleReviewsClick(e, item.id)}
-                                            sx={{ mr: 1 }}
-                                        >
-                                            <CommentOutlined />
-                                        </IconButton>
-                                    </Tooltip>
-                                    <Tooltip title="Delete product">
-                                        <IconButton
-                                            color="error"
-                                            onClick={(e) => handleDeleteClick(e, item.id)}
-                                        >
-                                            <DeleteOutline />
-                                        </IconButton>
-                                    </Tooltip>
+                                    <Box display="flex" justifyContent="flex-end" alignItems="center">
+                                        <Tooltip title="View reviews">
+                                            <IconButton
+                                                color="primary"
+                                                onClick={(e) => handleReviewsClick(e, item.id)}
+                                                sx={{ mr: 1 }}
+                                            >
+                                                <CommentOutlined />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Tooltip title="Delete product">
+                                            <IconButton
+                                                color="error"
+                                                onClick={(e) => handleDeleteClick(e, item.id)}
+                                            >
+                                                <DeleteOutline />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Box>
                                 </TableCell>
                             </TableRow>
                         ))}

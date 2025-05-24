@@ -18,6 +18,7 @@
 }
 else
 {
+    var reviewFailed = ViewData["ReviewFailed"] as bool? == true;
     <div class="container mt-4">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -31,7 +32,7 @@ else
             </ol>
         </nav>
 
-        <div class="row mt-4">
+        <div class="row mt-4" data-review-failed="@reviewFailed.ToString().ToLower()">
             <!-- Product Images Gallery -->
             <div class="col-md-6 mb-4">
                 @if (Model.Product.Images.Any())
@@ -98,7 +99,7 @@ else
                 </div>
 
                 <div class="mb-4">
-                    <h2 class="text-danger fw-bold">$@Model.Product.BasePrice.ToString("0.00")</h2>
+                    <h2 id="productPrice" class="text-danger fw-bold">$@Model.Product.BasePrice.ToString("0.00")</h2>
                     @if (!Model.Product.IsActive)
                     {
                         <div class="badge bg-danger mb-2">Currently Unavailable</div>
@@ -123,7 +124,7 @@ else
                         <h5>Options</h5>
                         <div id="variant-selection">
                             <select id="variantId" name="variantId" class="form-select mb-3" required>
-                                <option value="" selected>Select variant</option>
+                                <option value="" selected>Default</option>
                                 @foreach (var variant in Model.Product.Variants)
                                 {
                                     <option value="@variant.Id" data-price="@variant.Price.ToString("0.00")">@variant.Name -
@@ -231,116 +232,10 @@ else
 }
 
 @section Styles {
-    <style>
-        .rating {
-            display: inline-flex;
-            flex-direction: row-reverse;
-            gap: 3px;
-        }
-
-        .rating input {
-            display: none;
-        }
-
-        .rating label {
-            color: #ddd;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .rating input:checked~label,
-        .rating input:hover~label {
-            color: #ffc107;
-        }
-
-        .product-description {
-            line-height: 1.7;
-        }
-
-        .product-description img {
-            max-width: 100%;
-            height: auto;
-        }
-
-        .product-image {
-            object-fit: contain;
-            max-width: 100%;
-            max-height: 100%;
-        }
-
-        .thumb-image {
-            object-fit: cover;
-            width: 100%;
-            height: 100%;
-        }
-    </style>
+    <link rel="stylesheet" href="~/css/product-details.css" />
 }
 
 @section Scripts {
-    <script>
-        $(document).ready(function () {
-            var productCarousel = document.querySelector('#productCarousel')
-            if (productCarousel) {
-                new bootstrap.Carousel(productCarousel)
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', function () {
-            // Handle variant selection
-            const variantSelect = document.getElementById('variantId');
-            const selectedVariantInput = document.getElementById('selectedVariantId');
-            const addToCartBtn = document.getElementById('addToCartBtn');
-
-            // Initialize form state
-            function updateFormState() {
-                if (addToCartBtn) {
-                    addToCartBtn.disabled = false;
-                }
-
-                if (selectedVariantInput) {
-                    if (variantSelect && variantSelect.value) {
-                        selectedVariantInput.value = variantSelect.value;
-                    } else {
-                        selectedVariantInput.value = "";
-                    }
-                }
-            }
-
-            // Set initial state
-            updateFormState();
-
-            // Listen for changes to variant select
-            if (variantSelect) {
-                variantSelect.addEventListener('change', function () {
-                    updateFormState();
-                });
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', function () {
-            // only run when flag is set
-            var reviewFailed = @((ViewData["ReviewFailed"] as bool? == true).ToString().ToLower());
-            if (!reviewFailed) return;
-
-            // 1) Activate the Reviews tab
-            var reviewsTabEl = document.querySelector('#reviews-tab');
-            if (reviewsTabEl) {
-                new bootstrap.Tab(reviewsTabEl).show();
-            }
-
-            // 2) Scroll to the first error message
-            var err = document.querySelector('.text-danger, .validation-summary-errors');
-            if (err) {
-                err.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-
-            // 3) Reset URL to avoid repost on refresh
-            var cleanUrl = window.location.pathname + window.location.search
-                .replace(/(\?|&)handler=[^&]*/g, '')
-                .replace(/&$/, '');
-            history.replaceState(null, '', cleanUrl);
-        });
-    </script>
-
+    <script src="~/js/product-details.js"></script>
     <partial name="_ValidationScriptsPartial" />
 }
