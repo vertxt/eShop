@@ -33,7 +33,7 @@ export interface ProductDetail {
     images: ProductImage[];
     variants: ProductVariant[];
     attributes: ProductAttribute[];
-    // reviews: Review[];
+    reviewCount: number;
     averageRating: number;
 }
 

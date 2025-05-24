@@ -4,20 +4,20 @@
 @if (Model.Product is not null)
 {
     <div class="product-reviews">
+        <!-- Write a Review Form -->
+        @{
+            ViewData["ProductId"] = Model.Product.Id;
+        }
+        <partial name="_ReviewForm" model="Model.NewReview" />
+
+        <hr class="my-4" />
+
         <vc:product-reviews product-id="@Model.Product.Id" 
             average-rating="@Model.Product.AverageRating"
             count="@Model.Product.ReviewCount"
             pagination-parameters="new PaginationParameters{ PageNumber = 1, PageSize = 2 }"
         >
         </vc:product-reviews>
-
-        <hr class="my-4" />
-
-        <!-- Write a Review Form -->
-        @{
-            ViewData["ProductId"] = Model.Product.Id;
-        }
-        <partial name="_ReviewForm" model="Model.NewReview" />
     </div>
 }
 else
