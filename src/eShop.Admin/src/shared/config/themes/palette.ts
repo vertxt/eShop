@@ -18,6 +18,11 @@ export const getLightPalette = (): PaletteOptions => ({
     default: '#f8f9fa',
     paper: '#ffffff',
   },
+  text: {
+    primary: 'rgba(0, 0, 0, 0.87)',
+    secondary: 'rgba(0, 0, 0, 0.6)',
+    disabled: 'rgba(0, 0, 0, 0.38)',
+  },
   success: { main: '#34a853', light: '#4caf50', dark: '#2e7d32' },
   error: { main: '#ea4335', light: '#ef5350', dark: '#c62828' },
   warning: { main: '#fbbc04', light: '#ffd54f', dark: '#f9a825' },
@@ -27,9 +32,27 @@ export const getLightPalette = (): PaletteOptions => ({
 
 export const getDarkPalette = (): PaletteOptions => ({
   mode: 'dark',
-  primary: { main: '#90caf9', light: '#e3f2fd', dark: '#42a5f5', contrastText: '#000' },
-  secondary: { main: '#ffb74d', light: '#ffe9d4', dark: '#f57c00', contrastText: '#000' },
-  background: { default: '#121212', paper: '#1e1e1e' },
+  primary: {
+    main: '#90caf9',
+    light: '#e3f2fd',
+    dark: '#42a5f5',
+    contrastText: '#000'
+  },
+  secondary: {
+    main: '#ffb74d',
+    light: '#ffe9d4',
+    dark: '#f57c00',
+    contrastText: '#000'
+  },
+  background: {
+    default: '#121212',
+    paper: '#1e1e1e'
+  },
+  text: {
+    primary: 'rgba(255, 255, 255, 0.87)',
+    secondary: 'rgba(255, 255, 255, 0.6)',
+    disabled: 'rgba(255, 255, 255, 0.38)',
+  },
   success: { main: '#66bb6a', light: '#81c784', dark: '#388e3c' },
   error: { main: '#f44336', light: '#e57373', dark: '#d32f2f' },
   warning: { main: '#ffa726', light: '#ffb74d', dark: '#f57c00' },

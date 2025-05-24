@@ -8,6 +8,7 @@ import { errorsApi } from "../../features/errors/errorsApi";
 import { loadingMiddleware } from "../../features/loading/loadingMiddleware";
 import { usersApi } from "../../features/users/usersApi";
 import { reviewsReducer } from "../../features/products/reviewsSlice";
+import { dashboardApi } from "../../features/dashboard/dashboardApi";
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
     [categoriesApi.reducerPath]: categoriesApi.reducer,
     [usersApi.reducerPath]: usersApi.reducer,
     [errorsApi.reducerPath]: errorsApi.reducer,
+    [dashboardApi.reducerPath]: dashboardApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -25,6 +27,7 @@ export const store = configureStore({
       categoriesApi.middleware,
       usersApi.middleware,
       errorsApi.middleware,
+      dashboardApi.middleware,
       loadingMiddleware
     ),
 });

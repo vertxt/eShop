@@ -4,6 +4,7 @@ namespace eShop.Data.Interfaces
     {
         IQueryable<TEntity> GetAll();
         Task<TEntity?> GetByIdAsync(int id);
+        Task<int> GetCountAsync();
         Task<bool> AddAsync(TEntity entity);
         Task<bool> UpdateAsync(TEntity entity);
         Task<bool> DeleteAsync(int id);

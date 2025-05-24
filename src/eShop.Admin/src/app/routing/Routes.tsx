@@ -64,10 +64,6 @@ export const router = createBrowserRouter([
                         element: <OrderListView />
                     },
                     {
-                        path: 'reviews',
-                        element: <ReviewListView />
-                    },
-                    {
                         path: 'errors',
                         element: <ErrorsControl />
                     },

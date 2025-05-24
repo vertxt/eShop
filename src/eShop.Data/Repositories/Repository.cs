@@ -24,6 +24,11 @@ namespace eShop.Data.Repositories
             return await _entities.FindAsync(id);
         }
 
+        public async Task<int> GetCountAsync()
+        {
+            return await _entities.CountAsync();
+        }
+
         public async Task<bool> AddAsync(TEntity entity)
         {
             await _entities.AddAsync(entity);
